@@ -59,6 +59,8 @@ const Map = ({
     window.open('https://www.google.com/maps/')
   }
 
+  console.log("key : ",import.meta.env.VITE_REACT_APP_MAP_KEY)
+
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_MAP_KEY}>
       <GoogleMap
