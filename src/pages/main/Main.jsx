@@ -107,7 +107,7 @@ function Main() {
   const getVehiclePath = async (vehicleNo) => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/v1/vehicle/vehiclePath",
+        `${config.host}${config.getVehiclePath.url}`,
         {
           params: { vehicleNo },
         }
@@ -126,7 +126,7 @@ function Main() {
   const vehicleCurrentLocation = async (vehicleNo) => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/v1/vehicle/getVehicle",
+        `${config.host}${config.currentLocation.url}`,
         {
           params: { vehicleNo },
         }
@@ -161,7 +161,7 @@ function Main() {
 
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/v1/vehicle/filterPath",
+        `${config.host}${config.filterVehiclePath.url}`,
         {
           params: {
             vehicleNo: vehicleDetails.vehicleNo,

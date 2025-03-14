@@ -59,8 +59,6 @@ const Map = ({
     window.open('https://www.google.com/maps/')
   }
 
-  console.log("key : ",import.meta.env.VITE_REACT_APP_MAP_KEY)
-
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_MAP_KEY}>
       <GoogleMap
@@ -168,65 +166,3 @@ const Map = ({
 };
 
 export default Map;
-
-// import React from "react";
-// import { GoogleMap, LoadScript, Polyline, Marker } from "@react-google-maps/api";
-
-// const containerStyle = {
-//   width: "100%",
-//   height: "100%",
-// };
-
-// const Map = ({ vehiclePath, vehicleCurrentloc, lastLoc }) => {
-
-//   console.log("Path : ", vehiclePath)
-
-//   const isValidLocation =
-//     vehicleCurrentloc &&
-//     typeof vehicleCurrentloc.lat === "number" &&
-//     typeof vehicleCurrentloc.lng === "number";
-
-//   const isValidLastLoc =
-//     lastLoc &&
-//     typeof lastLoc.lat === "number" &&
-//     typeof lastLoc.lng === "number";
-
-//   const center = isValidLocation
-//     ? vehicleCurrentloc
-//     : isValidLastLoc
-//       ? lastLoc
-//       : vehiclePath.length > 0
-//         ? vehiclePath[0]
-//         : { lat: 28.7041, lng: 77.1025 };
-
-//   return (
-//     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_MAP_KEY}>
-//       <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
-//         {vehiclePath.length > 0 && (
-//           <Polyline
-//             path={vehiclePath}
-//             options={{
-//               strokeColor: "#FF0000",
-//               strokeOpacity: 1.0,
-//               strokeWeight: 3,
-//             }}
-//           />
-//         )}
-//         {isValidLocation && (
-//           <Marker position={vehicleCurrentloc} title="Current Vehicle Location" />
-//         )}
-//         {isValidLastLoc && (
-//           <Marker
-//             position={lastLoc}
-//             title="Last Recorded Location"
-//             icon={{
-//               url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-//             }}
-//           />
-//         )}
-//       </GoogleMap>
-//     </LoadScript>
-//   );
-// };
-
-// export default Map;
