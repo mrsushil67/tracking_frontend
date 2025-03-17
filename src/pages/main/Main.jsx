@@ -32,8 +32,8 @@ function Main() {
   const icon1 = window.google?.maps
     ? {
         url: "images/truck1.png", //arrow,
-        scaledSize: new window.google.maps.Size(70, 70),
-        anchor: new window.google.maps.Point(35, 35),
+        scaledSize: new window.google.maps.Size(60, 60),
+        anchor: new window.google.maps.Point(30, 30),
         scale: 1.5,
       }
     : null;
