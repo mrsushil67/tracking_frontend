@@ -63,7 +63,7 @@ const VehicleList = ({
                 </span>
               </div>
             </div>
-            <div>
+            <div className="truncate">
               <span className="font-bold text-sm text-gray-700">
               📍 Address :{" "}
               </span>

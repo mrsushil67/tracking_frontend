@@ -93,10 +93,10 @@ function Main() {
         `${config.host}${config.getAllVehicles.url}`
       );
       // console.log("vehicles : ",response.data.vehicles)
-      const running = response.data?.vehicles.filter(
-        (vehicle) => vehicle.speed > 0
-      );
-      console.log("vehicles : ", running.length);
+      // const running = response.data?.vehicles.filter(
+      //   (vehicle) => vehicle.speed > 0
+      // );
+      // console.log("vehicles : ", running.length);
 
       setVehiclelist(response.data.vehicles);
     } catch (error) {
@@ -205,7 +205,7 @@ function Main() {
       clearVehiclePathInterval(); // Clear previous interval
       intervalIdRef.current = setInterval(() => {
         getVehiclePath(selectedVehicleNo);
-        // vehicleCurrentLocation(selectedVehicleNo);
+        vehicleCurrentLocation(selectedVehicleNo);
       }, 10000);
     }
   };
@@ -222,7 +222,7 @@ function Main() {
     getVehiclePath(selectedVehicleNo);
     intervalIdRef.current = setInterval(() => {
       getVehiclePath(selectedVehicleNo);
-      // vehicleCurrentLocation(selectedVehicleNo);
+      vehicleCurrentLocation(selectedVehicleNo);
     }, 10000);
     return () => clearInterval(intervalIdRef.current);
   }, [selectedVehicleNo]);
@@ -231,6 +231,7 @@ function Main() {
     getAllVehicles();
     const interval = setInterval(() => {
       getAllVehicles();
+      vehicleCurrentLocation(selectedVehicleNo);
     }, 10000);
     return () => clearInterval(interval);
   }, []);
