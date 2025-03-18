@@ -19,6 +19,7 @@ function Main() {
   const [range, setRange] = useState(null);
   const [currentPosition, setCurrentPosition] = useState(null);
   const [index, setIndex] = useState(0);
+  const [markerPosition, setMarkerPosition] = useState([])
   const [tempRange, setTempRange] = useState([
     {
       startDate: new Date(),
@@ -92,7 +93,9 @@ function Main() {
       const response = await axios.get(
         `${config.host}${config.getAllVehicles.url}`
       );
-      // console.log("vehicles : ",response.data.vehicles)
+      const ye = response.data.vehicles
+      console.log("vehicles : ", ye.length);
+      // console.log("Total vehicles : ",response.data.vehicles)
       // const running = response.data?.vehicles.filter(
       //   (vehicle) => vehicle.speed > 0
       // );
@@ -252,6 +255,21 @@ function Main() {
     }
   }, [vehiclePath, index]);
 
+  useEffect(() => {
+    if (vehiclelist && vehiclelist.length > 0) {
+      const markers = vehiclelist.map((vehicle) => ({
+        id: vehicle._id,
+        position: {
+          lat: vehicle.latitude,
+          lng: vehicle.longitude,
+        },
+      }));
+      setMarkerPosition(markers);
+    }
+  },[vehiclelist])
+
+  // console.log("markerPosition : ",markerPosition)
+
   return (
     <div className={`main-container ${showDetails ? "details-open" : ""}`}>
       {/* Vehicle List Section */}
@@ -293,6 +311,7 @@ function Main() {
           getVehiclePath={getVehiclePath}
           currentPosition={currentPosition}
           vehicleDetails={vehicleDetails}
+          markerPosition={markerPosition}
         />
       </div>
     </div>

@@ -5,6 +5,7 @@ import {
   Polyline,
   Marker,
   InfoWindow,
+  Circle,
 } from "@react-google-maps/api";
 import { GrDirections } from "react-icons/gr";
 import { Link } from "react-router-dom";
@@ -13,6 +14,45 @@ const containerStyle = {
   width: "100%",
   height: "100%",
 };
+
+const cityList = [
+  {
+    name: "chicago",
+    center: { lat: 28.878, lng: 77.629 },
+    population: 279,
+  },
+  {
+    name: "newyork",
+    center: { lat: 27.4353, lng: 77.878005 },
+    population: 84,
+  },
+  {
+    name: "losangeles",
+    center: { lat: 27.77854, lng: 78.3245423 },
+    population: 38,
+  },
+  {
+    name: "vancouver",
+    center: { lat: 28.6754625, lng: 78.654623445 },
+    population: 60,
+  },
+];
+
+const allMarkers = [
+  {
+    id: 1,
+    position: { lat: 28.764568, lng: 77.4756666662 },
+    minZoom: 5,
+    maxZoom: 7,
+  },
+  {
+    id: 2,
+    position: { lat: 27.43655479, lng: 78.6534341 },
+    minZoom: 6,
+    maxZoom: 8,
+  },
+  { id: 3, position: { lat: 28.76, lng: 77.76578 }, minZoom: 7, maxZoom: 10 },
+];
 
 const Map = ({
   icon1,
@@ -23,10 +63,21 @@ const Map = ({
   lastLoc,
   getVehiclePath,
   currentPosition,
+  markerPosition
 }) => {
   const mapRef = useRef(null);
   const [marker, setMarker] = React.useState(null);
   const [open, setOpen] = React.useState(false);
+  const [zoom, setZoom] = useState(4);
+  const [visibleMarkers, setVisibleMarkers] = useState(markerPosition);
+
+  // const ZoomChanged = () => {
+  //   if (mapRef.current !== null) {
+  //     const newZoom = this.getZoom();
+  //     console.log("New Zoom : ",newZoom);
+  //     setZoom(newZoom);
+  //   }
+  // };
 
   const handleMarkerClick = (event) => {
     setOpen(true);
@@ -56,16 +107,31 @@ const Map = ({
   const parts = address.split(",");
 
   const handleRedirect = () => {
-    window.open('https://www.google.com/maps/')
+    window.open("https://www.google.com/maps/");
+  };
+
+  function zoomLevel() {
+    setZoom(this.getZoom());
+    filterMarkers(this.getZoom());
   }
 
+  const filterMarkers = (currentZoom) => {
+    const filtered = markerPosition.filter(
+      (marker) => currentZoom >= marker.minZoom && currentZoom <= marker.maxZoom
+    );
+    console.log("filtered : ", filtered);
+    setVisibleMarkers(filtered);
+  };
+
+  console.log("Zoom Level : ", zoom);
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_MAP_KEY}>
       <GoogleMap
         mapContainerStyle={containerStyle}
         ref={mapRef}
         center={center}
-        zoom={10}
+        zoom={zoom}
+        onZoomChanged={zoomLevel}
         options={{
           clickableIcons: false,
           fullscreenControl: true, // for full screen
@@ -86,9 +152,7 @@ const Map = ({
         }}
       >
         {vehicleDetails.currentAddress && (
-          <div
-            className="addressCard-onMap"
-          >
+          <div className="addressCard-onMap">
             <div className="flex justify-between">
               <div className="p-3">
                 <div className="font-bold">{parts[parts.length - 4]}</div>
@@ -99,12 +163,14 @@ const Map = ({
                 <span className="text-gray-700 font-bold text-xs">
                   {parts[parts.length - 2]}
                 </span>
-              
               </div>
               <div className="p-3 items-center cursor-pointer">
                 <div className="flex items-center justify-center font-bold">
                   <div>
-                    <GrDirections onClick={handleRedirect} className="text-blue-400 text-2xl font-bold transition-transform transform hover:scale-110" />
+                    <GrDirections
+                      onClick={handleRedirect}
+                      className="text-blue-400 text-2xl font-bold transition-transform transform hover:scale-110"
+                    />
                   </div>
                 </div>
                 <div className="text-blue-400 font-bold text-xs hover:underline">
@@ -160,6 +226,21 @@ const Map = ({
           </Marker>
         ) : null}
         {/* {currentPosition && <Marker position={currentPosition} label="🚗" />} */}
+        {cityList.map(({ name, center, population }) => (
+          <Circle
+            key={name}
+            strokeColor="#7ad8fa"
+            strokeOpacity={0.5}
+            strokeWeight={1}
+            fillColor="#7ad8fa"
+            fillOpacity={0.2}
+            center={center}
+            radius={Math.sqrt(population) * 100}
+          />
+        ))}
+        {/* {visibleMarkers.map((marker) => (
+          <Marker key={marker.id} position={marker.position} />
+        ))} */}
       </GoogleMap>
     </LoadScript>
   );
