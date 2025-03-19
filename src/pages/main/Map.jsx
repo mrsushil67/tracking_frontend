@@ -6,6 +6,7 @@ import {
   Marker,
   InfoWindow,
   Circle,
+  InfoBox,
 } from "@react-google-maps/api";
 import { GrDirections } from "react-icons/gr";
 import { Link } from "react-router-dom";
@@ -14,45 +15,6 @@ const containerStyle = {
   width: "100%",
   height: "100%",
 };
-
-const cityList = [
-  {
-    name: "chicago",
-    center: { lat: 28.878, lng: 77.629 },
-    population: 279,
-  },
-  {
-    name: "newyork",
-    center: { lat: 27.4353, lng: 77.878005 },
-    population: 84,
-  },
-  {
-    name: "losangeles",
-    center: { lat: 27.77854, lng: 78.3245423 },
-    population: 38,
-  },
-  {
-    name: "vancouver",
-    center: { lat: 28.6754625, lng: 78.654623445 },
-    population: 60,
-  },
-];
-
-const allMarkers = [
-  {
-    id: 1,
-    position: { lat: 28.764568, lng: 77.4756666662 },
-    minZoom: 5,
-    maxZoom: 7,
-  },
-  {
-    id: 2,
-    position: { lat: 27.43655479, lng: 78.6534341 },
-    minZoom: 6,
-    maxZoom: 8,
-  },
-  { id: 3, position: { lat: 28.76, lng: 77.76578 }, minZoom: 7, maxZoom: 10 },
-];
 
 const Map = ({
   icon1,
@@ -63,21 +25,13 @@ const Map = ({
   lastLoc,
   getVehiclePath,
   currentPosition,
-  markerPosition
+  markerPosition,
 }) => {
   const mapRef = useRef(null);
   const [marker, setMarker] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [zoom, setZoom] = useState(4);
   const [visibleMarkers, setVisibleMarkers] = useState(markerPosition);
-
-  // const ZoomChanged = () => {
-  //   if (mapRef.current !== null) {
-  //     const newZoom = this.getZoom();
-  //     console.log("New Zoom : ",newZoom);
-  //     setZoom(newZoom);
-  //   }
-  // };
 
   const handleMarkerClick = (event) => {
     setOpen(true);
@@ -100,8 +54,9 @@ const Map = ({
   // Set the last coordinate as the center
   const center =
     updatedCoordinates.length > 0
-      ? updatedCoordinates[updatedCoordinates.length - 1] || vehicleCurrentloc
-      : { lat: 28.7041, lng: 77.1025 };
+      ? updatedCoordinates[updatedCoordinates.length - 1]
+      || vehicleCurrentloc
+  : { lat: 28.7041, lng: 77.1025 };
 
   const address = vehicleDetails.currentAddress || "";
   const parts = address.split(",");
@@ -119,7 +74,7 @@ const Map = ({
     const filtered = markerPosition.filter(
       (marker) => currentZoom >= marker.minZoom && currentZoom <= marker.maxZoom
     );
-    console.log("filtered : ", filtered);
+    // console.log("filtered : ", filtered);
     setVisibleMarkers(filtered);
   };
 
@@ -131,7 +86,7 @@ const Map = ({
         ref={mapRef}
         center={center}
         zoom={zoom}
-        onZoomChanged={zoomLevel}
+        // onZoomChanged={zoomLevel}
         options={{
           clickableIcons: false,
           fullscreenControl: true, // for full screen
@@ -226,20 +181,28 @@ const Map = ({
           </Marker>
         ) : null}
         {/* {currentPosition && <Marker position={currentPosition} label="🚗" />} */}
-        {cityList.map(({ name, center, population }) => (
-          <Circle
-            key={name}
-            strokeColor="#7ad8fa"
-            strokeOpacity={0.5}
-            strokeWeight={1}
-            fillColor="#7ad8fa"
-            fillOpacity={0.2}
-            center={center}
-            radius={Math.sqrt(population) * 100}
-          />
-        ))}
+
         {/* {visibleMarkers.map((marker) => (
-          <Marker key={marker.id} position={marker.position} />
+          <Marker icon={icon2} key={marker.id} position={marker.position}>
+            <InfoBox
+              position={markerPosition}
+              options={{
+                closeBoxURL: "",
+                enableEventPropagation: true,
+              }}
+            >
+              <div
+                style={{
+                  background: "#565657",
+                  padding: "5px",
+                  borderRadius: "5px",
+                  boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
+                }}
+              >
+                <p className="text-white">{marker.vehicleNo}</p>
+              </div>
+            </InfoBox> 
+          </Marker>
         ))} */}
       </GoogleMap>
     </LoadScript>
