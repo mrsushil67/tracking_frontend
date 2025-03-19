@@ -6,30 +6,6 @@ const containerStyle = {
   height: "100%",
 };
 
-// List of location coordinates
-const locations = [
-  { lat: 28.6139, lng: 77.209 }, // Delhi
-  { lat: 19.076, lng: 72.8777 }, // Mumbai
-  { lat: 13.0827, lng: 80.2707 }, // Chennai
-  { lat: 22.5726, lng: 88.3639 }, // Kolkata
-  { lat: 12.9716, lng: 77.5946 }, // Bangalore
-  { lat: 17.385, lng: 78.4867 }, // Hyderabad
-  { lat: 26.9124, lng: 75.7873 }, // Jaipur
-  { lat: 21.1702, lng: 72.8311 }, // Surat
-  { lat: 23.0225, lng: 72.5714 }, // Ahmedabad
-  { lat: 15.2993, lng: 74.124 }, // Goa
-  { lat: 25.3176, lng: 82.9739 }, // Varanasi
-  { lat: 30.7333, lng: 76.7794 }, // Chandigarh
-  { lat: 31.634, lng: 74.8723 }, // Amritsar
-  { lat: 11.0168, lng: 76.9558 }, // Coimbatore
-  { lat: 9.9312, lng: 76.2673 }, // Kochi
-  { lat: 18.5204, lng: 73.8567 }, // Pune
-  { lat: 34.0837, lng: 74.7973 }, // Srinagar
-  { lat: 22.7196, lng: 75.8577 }, // Indore
-  { lat: 24.5854, lng: 73.7125 }, // Udaipur
-  { lat: 28.8505, lng: 76.2711 }, // Haryana
-];
-
 // Function to calculate the average latitude and longitude of a group
 const getAverageLatLng = (locations) => {
   if (locations.length === 0) return null;
@@ -82,37 +58,64 @@ function SplashMap({ markerPosition }) {
     return clusters;
   };
 
-  const generateClusteredMarkers = useCallback((zoom) => {
-    if (!markerPosition || markerPosition.length === 0) return [];
+  const generateClusteredMarkers = useCallback(
+    (zoom) => {
+      if (!markerPosition || markerPosition.length === 0) return [];
+  
+      // If there are less than 10 markers, show them as individual markers
+      if (markerPosition.length < 10) {
+        return markerPosition.map((loc) => ({ ...loc, count: 1 }));
+      }
+  
+      if (zoom < 4) {
+        return [{ ...getAverageLatLng(markerPosition), count: markerPosition.length }];
+      } else if (zoom < 5) {
+        return clusterLocations(markerPosition, 3);
+      } else if (zoom < 6) {
+        return clusterLocations(markerPosition, 2.5);
+      } else if (zoom < 7) {
+        return clusterLocations(markerPosition, 2);
+      } else if (zoom < 8) {
+        return clusterLocations(markerPosition, 1.7);
+      } else if (zoom < 9) {
+        return clusterLocations(markerPosition, 1.4);
+      } else if (zoom < 10) {
+        return clusterLocations(markerPosition, 1.2);
+      } else if (zoom < 11) {
+        return clusterLocations(markerPosition, 1);
+      } else if (zoom < 12) {
+        return clusterLocations(markerPosition, 0.9);
+      } else if (zoom < 13) {
+        return clusterLocations(markerPosition, 0.8);
+      } else if (zoom < 14) {
+        return clusterLocations(markerPosition, 0.7);
+      } else if (zoom < 15) {
+        return clusterLocations(markerPosition, 0.6);
+      } else if (zoom < 16) {
+        return clusterLocations(markerPosition, 0.5);
+      } else if (zoom < 17) {
+        return clusterLocations(markerPosition, 0.32);
+      } else if (zoom < 18) {
+        return clusterLocations(markerPosition, 0.16);
+      } else if (zoom < 19) {
+        return clusterLocations(markerPosition, 0.08);
+      } else if (zoom < 20) {
+        return clusterLocations(markerPosition, 0.04);
+      } else if (zoom < 21) {
+        return clusterLocations(markerPosition, 0.02);
+      } else {
+        return clusterLocations(markerPosition, 0.01);
+      }
+    },
+    [markerPosition]
+  );
+  
 
-    if (zoom < 4) {
-      return [
-        { ...getAverageLatLng(markerPosition), count: markerPosition.length },
-      ];
-    } else if (zoom < 5) {
-      return clusterLocations(markerPosition, 20);
-    } else if (zoom < 6) {
-      return clusterLocations(markerPosition, 11);
-    } else if (zoom < 7) {
-      return clusterLocations(markerPosition, 8);
-    } else if (zoom < 8) {
-      return clusterLocations(markerPosition, 5);
-    } else if (zoom < 9) {
-      return clusterLocations(markerPosition, 4);
-    } else if (zoom < 10) {
-      return clusterLocations(markerPosition, 3);
-    } else if (zoom < 11) {
-      return clusterLocations(markerPosition, 2);
-    } else if (zoom < 12) {
-      return clusterLocations(markerPosition, 1);
-    } else {
-      return locations.map((loc) => ({ ...loc, count: 1 }));
-    }
-  }, []);
 
   useEffect(() => {
+    console.log("Updated markerPosition:", markerPosition);
     setVisibleMarkers(generateClusteredMarkers(zoomLevel));
-  }, [zoomLevel, generateClusteredMarkers]);
+  }, [zoomLevel, markerPosition, generateClusteredMarkers]);
 
   function handleZoomChange() {
     setZoomLevel(this.getZoom());
