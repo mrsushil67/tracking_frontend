@@ -6,8 +6,6 @@ import VehicleDetails from "./VehicleDetails";
 import { format } from "date-fns";
 import arrow from "./arrow.png";
 import config from "../../config/services";
-import TestingMap from "./SplashMap";
-import SplashMap from "./SplashMap";
 
 function Main() {
   const [vehiclelist, setVehiclelist] = useState([]);
@@ -21,8 +19,7 @@ function Main() {
   const [range, setRange] = useState(null);
   const [currentPosition, setCurrentPosition] = useState(null);
   const [index, setIndex] = useState(0);
-  const [markerPosition, setMarkerPosition] = useState([]);
-  const [showTesting, setShowTesting] = useState(true);
+  const [markerPosition, setMarkerPosition] = useState([])
   const [tempRange, setTempRange] = useState([
     {
       startDate: new Date(),
@@ -96,15 +93,18 @@ function Main() {
       const response = await axios.get(
         `${config.host}${config.getAllVehicles.url}`
       );
-      const ye = response.data.vehicles;
-      console.log("vehicles : ", ye.length);
-      // console.log("Total vehicles : ",response.data.vehicles)
       // const running = response.data?.vehicles.filter(
       //   (vehicle) => vehicle.speed > 0
       // );
       // console.log("vehicles : ", running.length);
 
       setVehiclelist(response.data.vehicles);
+
+      const markerpos = response.data.vehicles.map((position) => ({
+        lat: position.latitude,
+        lan: position.longitude,
+      }))
+      setMarkerPosition(markerpos)
     } catch (error) {
       console.log(error);
     }
@@ -138,7 +138,7 @@ function Main() {
         }
       );
 
-      // console.log("API Response:", response.data.data);
+      console.log("API Response:", response.data.data);
       setVehicleDetails(response.data.data);
 
       const location = response.data.data;
@@ -200,7 +200,6 @@ function Main() {
     setSelectedVehicleNo(vehicleNo);
     await vehicleCurrentLocation(vehicleNo);
     await getVehiclePath(vehicleNo);
-    setShowTesting(false);
   };
 
   const handleClick = () => {
@@ -227,23 +226,21 @@ function Main() {
   useEffect(() => {
     if (!selectedVehicleNo) return;
     getVehiclePath(selectedVehicleNo);
-    getAllVehicles();
     intervalIdRef.current = setInterval(() => {
-      getAllVehicles();
       getVehiclePath(selectedVehicleNo);
       vehicleCurrentLocation(selectedVehicleNo);
     }, 10000);
     return () => clearInterval(intervalIdRef.current);
   }, [selectedVehicleNo]);
 
-  // useEffect(() => {
-  //   getAllVehicles();
-  //   const interval = setInterval(() => {
-  //     getAllVehicles();
-  //     vehicleCurrentLocation(selectedVehicleNo);
-  //   }, 10000);
-  //   return () => clearInterval(interval);
-  // }, []);
+  useEffect(() => {
+    getAllVehicles();
+    const interval = setInterval(() => {
+      getAllVehicles();
+      vehicleCurrentLocation(selectedVehicleNo);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     getAllVehicles();
@@ -261,18 +258,25 @@ function Main() {
   //   }
   // }, [vehiclePath, index]);
 
-  useEffect(() => {
-    if (vehiclelist && vehiclelist.length > 0) {
-      const markers = vehiclelist.map((vehicle) => ({
-        lat: vehicle.latitude,
-        lng: vehicle.longitude,
-      }));
-      console.log(markers);
-      setMarkerPosition(markers);
-    }
-  }, [vehiclelist]);
+  const safeCurrentPosition =
+    currentPosition &&
+    currentPosition.lat != null &&
+    currentPosition.lng != null
+      ? { lat: Number(currentPosition.lat), lng: Number(currentPosition.lng) }
+      : { lat: 27.7172, lng: 85.324 };
 
-  // console.log("markerPosition : ",markerPosition)
+  const safeVehicleCurrentLoc =
+    vehicleCurrentloc?.lat != null && vehicleCurrentloc?.lng != null
+      ? {
+          lat: Number(vehicleCurrentloc.lat),
+          lng: Number(vehicleCurrentloc.lng),
+        }
+      : { lat: 27.7172, lng: 85.324 }; // Default
+
+  const safeLastLoc =
+    lastLoc?.lat != null && lastLoc?.lng != null
+      ? { lat: Number(lastLoc.lat), lng: Number(lastLoc.lng) }
+      : { lat: 27.7172, lng: 85.324 };
 
   return (
     <div className={`main-container ${showDetails ? "details-open" : ""}`}>
@@ -306,21 +310,12 @@ function Main() {
 
       {/* Google Map Section */}
       <div className="map-container">
-        {showTesting ? (
-          <SplashMap markerPosition={markerPosition}/>
-        ) : (
-          <Map
-            icon1={icon1}
-            vehiclePath={vehiclePath}
-            filteredPath={filteredPath}
-            vehicleCurrentloc={vehicleCurrentloc}
-            lastLoc={lastLoc}
-            currentPosition={currentPosition}
-            getVehiclePath={getVehiclePath}
-            vehicleDetails={vehicleDetails}
-            markerPosition={markerPosition}
-          />
-        )}
+        <Map
+         icon1={icon1}
+         vehiclePath={vehiclePath}
+         vehicleDetails={vehicleDetails}
+         markerPosition={markerPosition}
+        />
       </div>
     </div>
   );

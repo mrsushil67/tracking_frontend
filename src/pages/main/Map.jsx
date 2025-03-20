@@ -7,31 +7,34 @@ import {
   InfoWindow,
   Circle,
   InfoBox,
+  useJsApiLoader,
 } from "@react-google-maps/api";
 import { GrDirections } from "react-icons/gr";
 import { Link } from "react-router-dom";
+import { Commet } from "react-loading-indicators";
 
 const containerStyle = {
   width: "100%",
   height: "100%",
 };
 
+const libraries = ["marker"];
+
 const Map = ({
   icon1,
   vehiclePath,
-  filteredPath,
   vehicleDetails,
-  vehicleCurrentloc,
-  lastLoc,
-  getVehiclePath,
-  currentPosition,
   markerPosition,
 }) => {
   const mapRef = useRef(null);
-  const [marker, setMarker] = React.useState(null);
-  const [open, setOpen] = React.useState(false);
+  const [marker, setMarker] = useState(null);
+  const [open, setOpen] = useState(false);
   const [zoom, setZoom] = useState(4);
   const [visibleMarkers, setVisibleMarkers] = useState(markerPosition);
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
+    libraries: libraries,
+  });
 
   const handleMarkerClick = (event) => {
     setOpen(true);
@@ -51,12 +54,10 @@ const Map = ({
     });
   }
 
-  // Set the last coordinate as the center
   const center =
     updatedCoordinates.length > 0
       ? updatedCoordinates[updatedCoordinates.length - 1]
-      || vehicleCurrentloc
-  : { lat: 28.7041, lng: 77.1025 };
+      : { lat: 28.7041, lng: 77.1025 };
 
   const address = vehicleDetails.currentAddress || "";
   const parts = address.split(",");
@@ -78,111 +79,107 @@ const Map = ({
     setVisibleMarkers(filtered);
   };
 
-  console.log("Zoom Level : ", zoom);
+  if (!isLoaded)
+    return (
+      <div className="grid min-h-full place-items-center">
+        <div className="text-center">
+          <Commet color="#fc7d32" size="medium" text="" textColor="" />
+          <h1 className="text-[#fc7d32]">Loading...</h1>
+        </div>
+      </div>
+    );
   return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_MAP_KEY}>
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        ref={mapRef}
-        center={center}
-        zoom={zoom}
-        // onZoomChanged={zoomLevel}
-        options={{
-          clickableIcons: false,
-          fullscreenControl: true, // for full screen
-          scaleControl: false,
-          streetViewControl: false, // a boy icon in map
-          zoomControl: false, // plus minus icon
-          mapTypeControl: true, // map/setlite options
-          mapTypeControlOptions: {
-            style:
-              typeof google != "undefined"
-                ? window.google.maps.MapTypeControlStyle.HORIZONTAL_BAR
-                : null,
-            position:
-              typeof google != "undefined"
-                ? window.google.maps.ControlPosition.TOP_RIGHT
-                : null,
-          },
-        }}
-      >
-        {vehicleDetails.currentAddress && (
-          <div className="addressCard-onMap">
-            <div className="flex justify-between">
-              <div className="p-3">
-                <div className="font-bold">{parts[parts.length - 4]}</div>
-                <span className="text-gray-700 font-bold text-xs">
-                  {parts[parts.length - 3]}
-                </span>
-                <span className="text-gray-700 font-bold text-xs">, </span>
-                <span className="text-gray-700 font-bold text-xs">
-                  {parts[parts.length - 2]}
-                </span>
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      ref={mapRef}
+      center={center}
+      zoom={zoom}
+      // onZoomChanged={zoomLevel}
+      options={{
+        clickableIcons: false,
+        fullscreenControl: true,
+        scaleControl: false,
+        streetViewControl: false,
+        zoomControl: false,
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+          style:
+            typeof google != "undefined"
+              ? window.google.maps.MapTypeControlStyle.HORIZONTAL_BAR
+              : null,
+          position:
+            typeof google != "undefined"
+              ? window.google.maps.ControlPosition.TOP_RIGHT
+              : null,
+        },
+      }}
+    >
+      {vehicleDetails.currentAddress && (
+        <div className="addressCard-onMap">
+          <div className="flex justify-between">
+            <div className="p-3">
+              <div className="font-bold">{parts[parts.length - 4]}</div>
+              <span className="text-gray-700 font-bold text-xs">
+                {parts[parts.length - 3]}
+              </span>
+              <span className="text-gray-700 font-bold text-xs">, </span>
+              <span className="text-gray-700 font-bold text-xs">
+                {parts[parts.length - 2]}
+              </span>
+            </div>
+            <div className="p-3 items-center cursor-pointer">
+              <div className="flex items-center justify-center font-bold">
+                <div>
+                  <GrDirections
+                    onClick={handleRedirect}
+                    className="text-blue-400 text-2xl font-bold transition-transform transform hover:scale-110"
+                  />
+                </div>
               </div>
-              <div className="p-3 items-center cursor-pointer">
-                <div className="flex items-center justify-center font-bold">
-                  <div>
-                    <GrDirections
-                      onClick={handleRedirect}
-                      className="text-blue-400 text-2xl font-bold transition-transform transform hover:scale-110"
-                    />
-                  </div>
-                </div>
-                <div className="text-blue-400 font-bold text-xs hover:underline">
-                  Direction
-                </div>
+              <div className="text-blue-400 font-bold text-xs hover:underline">
+                Direction
               </div>
             </div>
           </div>
-        )}
-        {window.google && window.google.maps ? (
-          <Polyline
-            path={updatedCoordinates}
-            options={{
-              strokeColor: "blue",
-              strokeWeight: 3,
-              icons: [
-                {
-                  icon: {
-                    path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW, // Ensure google is available
-                    scale: 1.5,
-                    strokeColor: "#027699",
-                  },
-                  offset: "100%",
-                  repeat: "40px",
+        </div>
+      )}
+      {window.google && window.google.maps ? (
+        <Polyline
+          path={updatedCoordinates}
+          options={{
+            strokeColor: "blue",
+            strokeWeight: 3,
+            icons: [
+              {
+                icon: {
+                  path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW, // Ensure google is available
+                  scale: 1.5,
+                  strokeColor: "#027699",
                 },
-              ],
-            }}
-          />
-        ) : null}
+                offset: "100%",
+                repeat: "40px",
+              },
+            ],
+          }}
+        />
+      ) : null}
 
-        {updatedCoordinates.length > 0 ? (
-          <Marker
-            icon={icon1}
-            position={updatedCoordinates[updatedCoordinates.length - 1]}
-          />
-        ) : vehicleCurrentloc ? (
-          <Marker icon={icon1} position={vehicleCurrentloc} />
-        ) : null}
-        {updatedCoordinates.length > 0 ? (
-          <Marker
-            position={updatedCoordinates[0]}
-            title="start"
-            label="S"
-            onClick={handleMarkerClick}
-          >
-            {/* {open && (
-              <InfoWindow position={marker} onCloseClick={() => setOpen(false)}>
-                <div style={{ width: "200px", height: "100px", paddingLeft: "10px", paddingRight:"10px"}}>
-                  <p  className="">Start timeline</p>
-                </div>
-              </InfoWindow>
-            )} */}
-          </Marker>
-        ) : null}
-        {/* {currentPosition && <Marker position={currentPosition} label="🚗" />} */}
+      {updatedCoordinates.length > 0 ? (
+        <Marker
+          icon={icon1}
+          position={updatedCoordinates[updatedCoordinates.length - 1]}
+        />
+      ) : null}
+      {updatedCoordinates.length > 0 ? (
+        <Marker
+          position={updatedCoordinates[0]}
+          title="start"
+          label="S"
+          onClick={handleMarkerClick}
+        />
+      ) : null}
 
-        {/* {visibleMarkers.map((marker) => (
+      {/* {visibleMarkers.map((marker) => (
           <Marker icon={icon2} key={marker.id} position={marker.position}>
             <InfoBox
               position={markerPosition}
@@ -204,8 +201,7 @@ const Map = ({
             </InfoBox> 
           </Marker>
         ))} */}
-      </GoogleMap>
-    </LoadScript>
+    </GoogleMap>
   );
 };
 
