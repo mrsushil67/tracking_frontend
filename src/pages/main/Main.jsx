@@ -6,6 +6,11 @@ import VehicleDetails from "./VehicleDetails";
 import { format } from "date-fns";
 import arrow from "./arrow.png";
 import config from "../../config/services";
+import SplashMap from "./SplashMap";
+import { useJsApiLoader } from "@react-google-maps/api";
+import { Commet } from "react-loading-indicators";
+
+const googleMapsLibraries = ["places", "geometry", "marker"];
 
 function Main() {
   const [vehiclelist, setVehiclelist] = useState([]);
@@ -19,7 +24,8 @@ function Main() {
   const [range, setRange] = useState(null);
   const [currentPosition, setCurrentPosition] = useState(null);
   const [index, setIndex] = useState(0);
-  const [markerPosition, setMarkerPosition] = useState([])
+  const [markerPosition, setMarkerPosition] = useState([]);
+  const [showSplashMap, setShowSplashMap] = useState(true);
   const [tempRange, setTempRange] = useState([
     {
       startDate: new Date(),
@@ -28,11 +34,15 @@ function Main() {
     },
   ]);
 
-  // console.log("CurrentPos : ", currentPosition);
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
+    libraries: googleMapsLibraries,
+  });
 
   const icon1 = window.google?.maps
     ? {
-        url: "images/truck1.png", //arrow,
+        url: "images/truck1.png",
         scaledSize: new window.google.maps.Size(60, 60),
         anchor: new window.google.maps.Point(30, 30),
         scale: 1.5,
@@ -40,18 +50,16 @@ function Main() {
     : null;
 
   const intervalIdRef = useRef(null);
-  let lastKnownAngle = null; // Store last computed angle
+  let lastKnownAngle = null;
 
   const rotateIconBasedOnPath = (vehicleLocation) => {
     if (vehicleLocation.length > 1) {
-      // Get the last two unique points
       let point1 = vehicleLocation[vehicleLocation.length - 2];
       let point2 = vehicleLocation[vehicleLocation.length - 1];
 
-      // If the last two points are identical, find the last different one
       for (let i = vehicleLocation.length - 3; i >= 0; i--) {
         if (point1.lat !== point2.lat || point1.lng !== point2.lng) break;
-        point1 = vehicleLocation[i]; // Shift to an older valid position
+        point1 = vehicleLocation[i];
       }
 
       const point1LatLng = new window.google.maps.LatLng(
@@ -64,7 +72,6 @@ function Main() {
         Number(point2.lng)
       );
       if (point1.lat === point2.lat && point1.lng === point2.lng) {
-        // console.log("No movement detected, keeping last angle:", lastKnownAngle);
       } else {
         const angle = window.google.maps.geometry.spherical.computeHeading(
           point1LatLng,
@@ -93,18 +100,14 @@ function Main() {
       const response = await axios.get(
         `${config.host}${config.getAllVehicles.url}`
       );
-      // const running = response.data?.vehicles.filter(
-      //   (vehicle) => vehicle.speed > 0
-      // );
-      // console.log("vehicles : ", running.length);
-
       setVehiclelist(response.data.vehicles);
 
       const markerpos = response.data.vehicles.map((position) => ({
+        vehicleid: position._id,
         lat: position.latitude,
-        lan: position.longitude,
-      }))
-      setMarkerPosition(markerpos)
+        lng: position.longitude,
+      }));
+      setMarkerPosition(markerpos);
     } catch (error) {
       console.log(error);
     }
@@ -198,8 +201,9 @@ function Main() {
 
   const handleShowDetails = async (vehicleNo) => {
     setSelectedVehicleNo(vehicleNo);
-    await vehicleCurrentLocation(vehicleNo);
-    await getVehiclePath(vehicleNo);
+    vehicleCurrentLocation(vehicleNo);
+    getVehiclePath(vehicleNo);
+    setShowSplashMap();
   };
 
   const handleClick = () => {
@@ -208,7 +212,7 @@ function Main() {
 
   const restartInterval = () => {
     if (selectedVehicleNo) {
-      clearVehiclePathInterval(); // Clear previous interval
+      clearVehiclePathInterval();
       intervalIdRef.current = setInterval(() => {
         getVehiclePath(selectedVehicleNo);
         vehicleCurrentLocation(selectedVehicleNo);
@@ -307,15 +311,41 @@ function Main() {
           />
         )}
       </div>
-
-      {/* Google Map Section */}
       <div className="map-container">
-        <Map
-         icon1={icon1}
-         vehiclePath={vehiclePath}
-         vehicleDetails={vehicleDetails}
-         markerPosition={markerPosition}
-        />
+        {isLoaded ? (
+          showSplashMap ? (
+            <SplashMap markerPosition={markerPosition} icon1={icon1} />
+          ) : (
+            <Map
+              icon1={icon1}
+              vehiclePath={vehiclePath}
+              vehicleDetails={vehicleDetails}
+              markerPosition={markerPosition}
+            />
+          )
+        ) : (
+          <div className="grid min-h-full place-items-center">
+            <div className="text-center">
+              <Commet color="#fc7d32" size="medium" text="" textColor="" />
+              <h1 className="text-[#fc7d32]">Loading...</h1>
+            </div>
+          </div>
+        )}
+        {/* {isLoaded ? (
+          <Map
+            icon1={icon1}
+            vehiclePath={vehiclePath}
+            vehicleDetails={vehicleDetails}
+            markerPosition={markerPosition}
+          />
+        ) : (
+          <div className="grid min-h-full place-items-center">
+            <div className="text-center">
+              <Commet color="#fc7d32" size="medium" text="" textColor="" />
+              <h1 className="text-[#fc7d32]">Loading...</h1>
+            </div>
+          </div>
+        )} */}
       </div>
     </div>
   );

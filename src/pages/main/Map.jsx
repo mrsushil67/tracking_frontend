@@ -18,23 +18,15 @@ const containerStyle = {
   height: "100%",
 };
 
-const libraries = ["marker"];
-
 const Map = ({
   icon1,
   vehiclePath,
   vehicleDetails,
-  markerPosition,
 }) => {
   const mapRef = useRef(null);
   const [marker, setMarker] = useState(null);
   const [open, setOpen] = useState(false);
   const [zoom, setZoom] = useState(4);
-  const [visibleMarkers, setVisibleMarkers] = useState(markerPosition);
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
-    libraries: libraries,
-  });
 
   const handleMarkerClick = (event) => {
     setOpen(true);
@@ -66,35 +58,12 @@ const Map = ({
     window.open("https://www.google.com/maps/");
   };
 
-  function zoomLevel() {
-    setZoom(this.getZoom());
-    filterMarkers(this.getZoom());
-  }
-
-  const filterMarkers = (currentZoom) => {
-    const filtered = markerPosition.filter(
-      (marker) => currentZoom >= marker.minZoom && currentZoom <= marker.maxZoom
-    );
-    // console.log("filtered : ", filtered);
-    setVisibleMarkers(filtered);
-  };
-
-  if (!isLoaded)
-    return (
-      <div className="grid min-h-full place-items-center">
-        <div className="text-center">
-          <Commet color="#fc7d32" size="medium" text="" textColor="" />
-          <h1 className="text-[#fc7d32]">Loading...</h1>
-        </div>
-      </div>
-    );
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
       ref={mapRef}
       center={center}
       zoom={zoom}
-      // onZoomChanged={zoomLevel}
       options={{
         clickableIcons: false,
         fullscreenControl: true,
@@ -152,7 +121,7 @@ const Map = ({
             icons: [
               {
                 icon: {
-                  path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW, // Ensure google is available
+                  path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
                   scale: 1.5,
                   strokeColor: "#027699",
                 },

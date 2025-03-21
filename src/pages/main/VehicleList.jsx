@@ -35,8 +35,8 @@ const VehicleList = ({
               <MdOutlineFullscreen onClick={() => handleClick()} />
             </div>
 
-            <div className="flex flex-row">
-              <div className="pr-2 flex flex-row items-center text-[12px]">
+            <div className="flex flex-row ">
+              <div className="pr-2 flex flex-row items-center text-[12px] truncate">
                 <span className="pr-1 font-bold text-sm">
                 📅
                 </span>
