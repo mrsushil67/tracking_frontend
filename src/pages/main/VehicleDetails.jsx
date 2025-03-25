@@ -8,7 +8,7 @@ import "react-date-range/dist/theme/default.css";
 import { format } from "date-fns";
 import axios from "axios";
 import * as XLSX from "xlsx";
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
 
 const VehicleDetails = ({
   setShowDetails,
@@ -39,28 +39,30 @@ const VehicleDetails = ({
     }
   }, [range]);
 
-  console.log("Data : ",vehicleData)
 
   const downloadExcel = async () => {
-
     const Data = vehicleData.map((vehicle) => {
       const data = {
         speed: vehicle.speed,
-        address : vehicle.address,
-        latitude : vehicle.lat,
-        longitude : vehicle.lng,
-        Datatime : vehicle.time
-      }
+        address: vehicle.address,
+        latitude: vehicle.lat,
+        longitude: vehicle.lng,
+        Datatime: vehicle.time,
+      };
       return data;
-    })
+    });
 
-     const worksheet = XLSX.utils.json_to_sheet(Data);
-     const workbook = XLSX.utils.book_new();
-     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-     const blob = new Blob([excelBuffer], {type: 'application/octet-stream'});
-     saveAs(blob, `example.xlsx`);
-  }
+    
+    const worksheet = XLSX.utils.json_to_sheet(Data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, `example.xlsx`);
+  };
 
   return (
     <div className="h-screen bg-gray-100">
@@ -190,8 +192,9 @@ const VehicleDetails = ({
                 : "N/A"}
             </span>
             <div>
-              <button className="btn" onClick={downloadExcel}>Download Roport</button>
-              
+              <button className="btn" onClick={downloadExcel}>
+                Download Roport
+              </button>
             </div>
           </div>
         </div>
@@ -233,7 +236,6 @@ export default VehicleDetails;
 //   const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
 //   saveAs(blob, `example.xlsx`);
 // };
-
 
 // const downloadExcel = async () => {
 //   let stopStartTime = null;

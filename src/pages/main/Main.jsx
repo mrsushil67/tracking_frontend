@@ -337,21 +337,6 @@ function Main() {
             </div>
           </div>
         )}
-        {/* {isLoaded ? (
-          <Map
-            icon1={icon1}
-            vehiclePath={vehiclePath}
-            vehicleDetails={vehicleDetails}
-            markerPosition={markerPosition}
-          />
-        ) : (
-          <div className="grid min-h-full place-items-center">
-            <div className="text-center">
-              <Commet color="#fc7d32" size="medium" text="" textColor="" />
-              <h1 className="text-[#fc7d32]">Loading...</h1>
-            </div>
-          </div>
-        )} */}
       </div>
     </div>
   );

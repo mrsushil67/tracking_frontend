@@ -147,29 +147,6 @@ const Map = ({
           onClick={handleMarkerClick}
         />
       ) : null}
-
-      {/* {visibleMarkers.map((marker) => (
-          <Marker icon={icon2} key={marker.id} position={marker.position}>
-            <InfoBox
-              position={markerPosition}
-              options={{
-                closeBoxURL: "",
-                enableEventPropagation: true,
-              }}
-            >
-              <div
-                style={{
-                  background: "#565657",
-                  padding: "5px",
-                  borderRadius: "5px",
-                  boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
-                }}
-              >
-                <p className="text-white">{marker.vehicleNo}</p>
-              </div>
-            </InfoBox> 
-          </Marker>
-        ))} */}
     </GoogleMap>
   );
 };
