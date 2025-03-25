@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { IoMdSpeedometer } from "react-icons/io";
 import { BsCalendar2WeekFill } from "react-icons/bs"; // Calendar Icon
@@ -7,6 +7,8 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { format } from "date-fns";
 import axios from "axios";
+import * as XLSX from "xlsx";
+import { saveAs } from 'file-saver';
 
 const VehicleDetails = ({
   setShowDetails,
@@ -20,6 +22,7 @@ const VehicleDetails = ({
   FilterPathsByDate,
   restartInterval,
   getVehiclePath,
+  vehicleData,
 }) => {
   const [showCalendar, setShowCalendar] = useState(false);
 
@@ -35,6 +38,29 @@ const VehicleDetails = ({
       FilterPathsByDate();
     }
   }, [range]);
+
+  console.log("Data : ",vehicleData)
+
+  const downloadExcel = async () => {
+
+    const Data = vehicleData.map((vehicle) => {
+      const data = {
+        speed: vehicle.speed,
+        address : vehicle.address,
+        latitude : vehicle.lat,
+        longitude : vehicle.lng,
+        Datatime : vehicle.time
+      }
+      return data;
+    })
+
+     const worksheet = XLSX.utils.json_to_sheet(Data);
+     const workbook = XLSX.utils.book_new();
+     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+     const blob = new Blob([excelBuffer], {type: 'application/octet-stream'});
+     saveAs(blob, `example.xlsx`);
+  }
 
   return (
     <div className="h-screen bg-gray-100">
@@ -163,6 +189,10 @@ const VehicleDetails = ({
                 ? vehicleDetails.currentAddress
                 : "N/A"}
             </span>
+            <div>
+              <button className="btn" onClick={downloadExcel}>Download Roport</button>
+              
+            </div>
           </div>
         </div>
       </div>
@@ -171,3 +201,115 @@ const VehicleDetails = ({
 };
 
 export default VehicleDetails;
+
+// const downloadExcel = async () => {
+//   let stopStartTime = null;
+//   const Data = vehicleData.map((vehicle, index) => {
+//     let status = "Running"; // Default status
+
+//     if (vehicle.speed === 0) {
+//       if (!stopStartTime) {
+//         stopStartTime = vehicle.time; // Mark start of stop
+//       }
+//       status = `Stopped from ${stopStartTime} to ${vehicle.time}`;
+//     } else {
+//       stopStartTime = null; // Reset when vehicle starts moving
+//     }
+
+//     return {
+//       speed: vehicle.speed,
+//       address: vehicle.address,
+//       latitude: vehicle.lat,
+//       longitude: vehicle.lng,
+//       Datetime: vehicle.time,
+//       status: status,
+//     };
+//   });
+
+//   const worksheet = XLSX.utils.json_to_sheet(Data);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+//   const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+//   const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+//   saveAs(blob, `example.xlsx`);
+// };
+
+
+// const downloadExcel = async () => {
+//   let stopStartTime = null;
+//   let stopEndTime = null;
+//   let stopLatLng = null;
+//   let stopCount = 0;
+//   const Data = [];
+
+//   vehicleData.forEach((vehicle, index) => {
+//     const { lat, lng, speed, address, time } = vehicle;
+//     const currentLatLng = `${lat},${lng}`;
+
+//     if (stopLatLng === currentLatLng) {
+//       stopCount++; // Increase stop count if same location repeats
+//       stopEndTime = time; // Update stop end time
+//     } else {
+//       // If new location detected, check if previous location was a stop
+//       if (stopCount >= 4) {
+//         // Calculate stop duration
+//         const start = new Date(stopStartTime);
+//         const end = new Date(stopEndTime);
+//         const stopDuration = Math.round((end - start) / 60000); // Convert to minutes
+
+//         Data.push({
+//           speed: 0,
+//           address: vehicleData[index - 1].address,
+//           latitude: stopLatLng.split(",")[0],
+//           longitude: stopLatLng.split(",")[1],
+//           Datetime: `${stopStartTime} to ${stopEndTime}`,
+//           status: `Stopped for ${stopDuration} min from ${stopStartTime} to ${stopEndTime}`,
+//         });
+//       }
+
+//       // Reset tracking variables
+//       stopLatLng = currentLatLng;
+//       stopStartTime = time;
+//       stopEndTime = time;
+//       stopCount = 1;
+//     }
+
+//     // If moving, mark as Running
+//     if (stopCount < 4) {
+//       Data.push({
+//         speed,
+//         address,
+//         latitude: lat,
+//         longitude: lng,
+//         Datetime: time,
+//         status: "Running",
+//       });
+//     }
+//   });
+
+//   // Final check in case the last entries were a stop
+//   if (stopCount >= 4) {
+//     const start = new Date(stopStartTime);
+//     const end = new Date(stopEndTime);
+//     const stopDuration = Math.round((end - start) / 60000);
+
+//     Data.push({
+//       speed: 0,
+//       address: vehicleData[vehicleData.length - 1].address,
+//       latitude: stopLatLng.split(",")[0],
+//       longitude: stopLatLng.split(",")[1],
+//       Datetime: `${stopStartTime} to ${stopEndTime}`,
+//       status: `Stopped for ${stopDuration} min from ${stopStartTime} to ${stopEndTime}`,
+//     });
+//   }
+
+//   const worksheet = XLSX.utils.json_to_sheet(Data);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+//   const excelBuffer = XLSX.write(workbook, {
+//     bookType: "xlsx",
+//     type: "array",
+//   });
+//   const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+//   saveAs(blob, `example.xlsx`);
+// };

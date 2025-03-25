@@ -208,3 +208,11 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   width: "250px";
 }
+
+.btn{
+  padding: 2px;
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 5px;
+  color: black;
+  /* background: linear-gradient(90deg, #fc6a2a 0%,#fc7c2d 20%,#fd8e2f 40%,#fd9e32 60%,#ffae35 80%,#ffb937 100%); */
+}

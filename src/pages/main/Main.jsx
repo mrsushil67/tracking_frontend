@@ -26,6 +26,8 @@ function Main() {
   const [index, setIndex] = useState(0);
   const [markerPosition, setMarkerPosition] = useState([]);
   const [showSplashMap, setShowSplashMap] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [vehicleData, setVehicleData] = useState([])
   const [tempRange, setTempRange] = useState([
     {
       startDate: new Date(),
@@ -40,7 +42,7 @@ function Main() {
     libraries: googleMapsLibraries,
   });
 
-  const icon1 = window.google?.maps
+  const icon1 = isLoaded
     ? {
         url: "images/truck1.png",
         scaledSize: new window.google.maps.Size(60, 60),
@@ -122,6 +124,7 @@ function Main() {
         }
       );
       console.log("response : ", response);
+      setVehicleData(response.data)
       const formattedPath = response.data.map(({ lat, lng }) => ({ lat, lng }));
       setVehiclePath(formattedPath);
       setCurrentPosition(formattedPath[0]);
@@ -169,6 +172,7 @@ function Main() {
     if (!range) return;
 
     try {
+      setLoading(true);
       const response = await axios.get(
         `${config.host}${config.filterVehiclePath.url}`,
         {
@@ -181,7 +185,7 @@ function Main() {
       );
 
       console.log("Response:", response);
-
+      setVehicleData(response.data)
       const formattedPath = response.data.map(({ lat, lng }) => ({ lat, lng }));
       setVehiclePath(formattedPath);
       setCurrentPosition(formattedPath[0]);
@@ -194,6 +198,7 @@ function Main() {
       console.log("vehicleLocation : ", vehicleLocation);
 
       rotateIconBasedOnPath(vehicleLocation);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching filtered paths:", error);
     }
@@ -248,7 +253,7 @@ function Main() {
 
   useEffect(() => {
     getAllVehicles();
-    vehicleCurrentLocation();
+    // vehicleCurrentLocation();
   }, []);
 
   // useEffect(() => {
@@ -308,6 +313,7 @@ function Main() {
             FilterPathsByDate={FilterPathsByDate}
             restartInterval={restartInterval}
             getVehiclePath={getVehiclePath}
+            vehicleData={vehicleData}
           />
         )}
       </div>
