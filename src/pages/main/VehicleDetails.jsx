@@ -41,18 +41,86 @@ const VehicleDetails = ({
 
 
   const downloadExcel = async () => {
-    const Data = vehicleData.map((vehicle) => {
-      const data = {
-        speed: vehicle.speed,
+    let stopStartTime = null;
+    let previousLocation = null;
+    let isCurrentlyStopped = false;
+    let Data = [];
+  
+    vehicleData.forEach((vehicle, index, arr) => {
+      let isStopped = "No";
+      let stopDuration = "";
+  
+      if (vehicle.speed === 0) {
+        if (
+          previousLocation &&
+          vehicle.lat === previousLocation.lat &&
+          vehicle.lng === previousLocation.lng
+        ) {
+          // Already stopped, update the stop duration
+          if (!isCurrentlyStopped) {
+            stopStartTime = new Date(vehicle.time);
+            isCurrentlyStopped = true;
+          }
+        } else {
+          // New stop detected
+          stopStartTime = new Date(vehicle.time);
+          isCurrentlyStopped = true;
+        }
+      } else {
+        // Vehicle starts moving, log the stop entry if there was a stop
+        if (isCurrentlyStopped && stopStartTime) {
+          let stopEndTime = new Date(vehicle.time);
+          let durationInMs = stopEndTime - stopStartTime;
+          let durationInMinutes = Math.floor(durationInMs / (1000 * 60));
+  
+          Data.push({
+            speed: 0,
+            address: previousLocation?.address || "Unknown",
+            latitude: previousLocation?.lat || "",
+            longitude: previousLocation?.lng || "",
+            Datatime: stopStartTime.toISOString(), // Log stop start time
+            stop: "Yes",
+            "stop duration": `${durationInMinutes} min`,
+          });
+  
+          // Reset stop tracking
+          isCurrentlyStopped = false;
+          stopStartTime = null;
+        }
+  
+        // Add moving vehicle entry
+        Data.push({
+          speed: vehicle.speed,
+          address: vehicle.address,
+          latitude: vehicle.lat,
+          longitude: vehicle.lng,
+          Datatime: vehicle.time,
+          stop: "No",
+          "stop duration": "",
+        });
+      }
+  
+      previousLocation = {
+        lat: vehicle.lat,
+        lng: vehicle.lng,
         address: vehicle.address,
-        latitude: vehicle.lat,
-        longitude: vehicle.lng,
-        Datatime: vehicle.time,
       };
-      return data;
     });
-
-    
+  
+    // **Fix for Vehicles that Never Moved**
+    if (Data.length === 0 && vehicleData.length > 0) {
+      let firstVehicle = vehicleData[0];
+      Data.push({
+        speed: 0,
+        address: firstVehicle.address || "Unknown",
+        latitude: firstVehicle.lat || "",
+        longitude: firstVehicle.lng || "",
+        Datatime: firstVehicle.time,
+        stop: "Yes",
+        "stop duration": "Ongoing",
+      });
+    }
+  
     const worksheet = XLSX.utils.json_to_sheet(Data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
@@ -60,10 +128,11 @@ const VehicleDetails = ({
       bookType: "xlsx",
       type: "array",
     });
+  
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, `example.xlsx`);
+    saveAs(blob, `vehicle_activity.xlsx`);
   };
-
+  
   return (
     <div className="h-screen bg-gray-100">
       <div className="flex flex-col">
