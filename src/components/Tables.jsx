@@ -1,87 +1,171 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import DataTable from "react-data-table-component";
-import { Box, Checkbox, FormControl, FormControlLabel, FormGroup } from "@mui/material";
-import CreateIcon from "@mui/icons-material/Create";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
-
+import {
+  Box,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+} from "@mui/material";
 const Tables = () => {
   const [users, setUsers] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingRow, setEditingRow] = useState(null);
 
-  // Dummy data
   useEffect(() => {
     setUsers([
-      { id: 1, first_name: "John", last_name: "Doe", role: "student", contact_info: "john.doe@example.com" },
-      { id: 2, first_name: "Jane", last_name: "Smith", role: "teacher", contact_info: "jane.smith@example.com" },
-      { id: 3, first_name: "Alice", last_name: "Brown", role: "professional", contact_info: "alice.brown@example.com" },
+      {
+        sl: 1,
+        job_description: "enkasi-Chennai 08:35PM-07:09AM-109968",
+        vehicleNo: "TN05CB8506",
+        job_start: "2024-10-15T20:35:00.000Z",
+        createAt: "2024-10-15 13:50:36",
+        updateAt: "2024-10-15 13:50:36",
+      },
+      {
+        sl: 2,
+        job_description: "Madurai-Coimbatore 06:00AM-11:45AM-209865",
+        vehicleNo: "TN12DE3456",
+        job_start: "2024-10-16T06:00:00.000Z",
+        createAt: "2024-10-15 14:10:12",
+        updateAt: "2024-10-15 14:10:12",
+      },
+      {
+        sl: 3,
+        job_description: "Trichy-Erode 09:15AM-02:30PM-305678",
+        vehicleNo: "TN09AB7654",
+        job_start: "2024-10-17T09:15:00.000Z",
+        createAt: "2024-10-15 14:25:20",
+        updateAt: "2024-10-15 14:25:20",
+      },
+      {
+        sl: 4,
+        job_description: "Salem-Thanjavur 07:45PM-01:10AM-407345",
+        vehicleNo: "TN06GH4321",
+        job_start: "2024-10-18T19:45:00.000Z",
+        createAt: "2024-10-15 14:40:45",
+        updateAt: "2024-10-15 14:40:45",
+      },
+      {
+        sl: 5,
+        job_description: "Vellore-Kanyakumari 05:30AM-03:55PM-508432",
+        vehicleNo: "TN02JK8765",
+        job_start: "2024-10-19T05:30:00.000Z",
+        createAt: "2024-10-15 15:05:36",
+        updateAt: "2024-10-15 15:05:36",
+      },
+      {
+        sl: 6,
+        job_description: "Chennai-Madurai 10:15PM-06:30AM-609123",
+        vehicleNo: "TN04LM5432",
+        job_start: "2024-10-20T22:15:00.000Z",
+        createAt: "2024-10-15 15:20:50",
+        updateAt: "2024-10-15 15:20:50",
+      },
+      {
+        sl: 7,
+        job_description: "Erode-Namakkal 01:00PM-03:15PM-701234",
+        vehicleNo: "TN10NO9876",
+        job_start: "2024-10-21T13:00:00.000Z",
+        createAt: "2024-10-15 15:35:10",
+        updateAt: "2024-10-15 15:35:10",
+      },
+      {
+        sl: 8,
+        job_description: "Coimbatore-Trichy 04:45AM-09:20AM-809876",
+        vehicleNo: "TN11PQ6543",
+        job_start: "2024-10-22T04:45:00.000Z",
+        createAt: "2024-10-15 15:50:22",
+        updateAt: "2024-10-15 15:50:22",
+      },
+      {
+        sl: 9,
+        job_description: "Thanjavur-Vellore 07:10AM-02:45PM-908543",
+        vehicleNo: "TN08RS3210",
+        job_start: "2024-10-23T07:10:00.000Z",
+        createAt: "2024-10-15 16:05:15",
+        updateAt: "2024-10-15 16:05:15",
+      },
+      {
+        sl: 10,
+        job_description: "Kanyakumari-Salem 09:20PM-06:30AM-100765",
+        vehicleNo: "TN07TU7654",
+        job_start: "2024-10-24T21:20:00.000Z",
+        createAt: "2024-10-15 16:20:48",
+        updateAt: "2024-10-15 16:20:48",
+      },
+      {
+        sl: 11,
+        job_description: "Chennai-Pondicherry 06:00AM-08:30AM-110234",
+        vehicleNo: "TN03VW5432",
+        job_start: "2024-10-25T06:00:00.000Z",
+        createAt: "2024-10-15 16:35:29",
+        updateAt: "2024-10-15 16:35:29",
+      },
+      {
+        sl: 12,
+        job_description: "Pondicherry-Madurai 02:30PM-08:15PM-120654",
+        vehicleNo: "TN14XY7890",
+        job_start: "2024-10-26T14:30:00.000Z",
+        createAt: "2024-10-15 16:50:42",
+        updateAt: "2024-10-15 16:50:42",
+      },
+      {
+        sl: 13,
+        job_description: "Salem-Coimbatore 07:45AM-10:30AM-130897",
+        vehicleNo: "TN13ZA5678",
+        job_start: "2024-10-27T07:45:00.000Z",
+        createAt: "2024-10-15 17:05:33",
+        updateAt: "2024-10-15 17:05:33",
+      },
+      {
+        sl: 14,
+        job_description: "Namakkal-Trichy 03:00PM-06:00PM-140432",
+        vehicleNo: "TN15BC8765",
+        job_start: "2024-10-28T15:00:00.000Z",
+        createAt: "2024-10-15 17:20:21",
+        updateAt: "2024-10-15 17:20:21",
+      },
+      {
+        sl: 15,
+        job_description: "Vellore-Chennai 05:15AM-07:30AM-150210",
+        vehicleNo: "TN16DE5432",
+        job_start: "2024-10-29T05:15:00.000Z",
+        createAt: "2024-10-15 17:35:57",
+        updateAt: "2024-10-15 17:35:57",
+      },
     ]);
   }, []);
 
   const columns = useMemo(() => {
     return [
-      { name: "First Name", selector: (row) => row.first_name, sortable: true },
-      { name: "Last Name", selector: (row) => row.last_name, sortable: true },
-      { name: "Role", selector: (row) => row.role, sortable: true },
-      { name: "Contact Info", selector: (row) => row.contact_info, sortable: true },
+      { name: "SL#", selector: (row) => row.sl, sortable: true, grow: -2 },
       {
-        name: "Actions",
-        cell: (row) => (
-          <div style={{ display: "flex", gap: "5px" }}>
-            {isEditing && editingRow?.id === row.id ? (
-              <>
-                <CheckIcon fontSize="small" color="primary" onClick={saveUpdatedRow} />
-                <CloseIcon fontSize="small" color="secondary" onClick={cancelEdit} />
-              </>
-            ) : (
-              <>
-                <CreateIcon fontSize="small" color="primary" onClick={() => editRow(row)} />
-                <DeleteForeverIcon fontSize="small" color="secondary" onClick={() => deleteRow(row)} />
-              </>
-            )}
-          </div>
-        ),
+        name: "JOB DESCRIPTION",
+        selector: (row) => row.job_description,
         sortable: false,
+        grow: 2,
       },
+      {
+        name: "VEHICLE NUMBER",
+        selector: (row) => row.vehicleNo,
+        sortable: true,
+      },
+      { name: "JOB START", selector: (row) => row.job_start, sortable: true },
+      { name: "CREATE AT", selector: (row) => row.createAt, sortable: true },
+      { name: "UPDATE AT", selector: (row) => row.updateAt, sortable: true },
     ];
-  }, [isEditing, editingRow]);
-
-  const editRow = (row) => {
-    setIsEditing(true);
-    setEditingRow({ ...row });
-  };
-
-  const saveUpdatedRow = () => {
-    setIsEditing(false);
-    setEditingRow(null);
-  };
-
-  const cancelEdit = () => {
-    setIsEditing(false);
-    setEditingRow(null);
-  };
-
-  const deleteRow = (row) => {
-    setUsers(users.filter((user) => user.id !== row.id));
-  };
+  }, []);
 
   return (
-    <Box sx={{ backgroundColor: "#fff", p: 2, borderRadius: 1.5, border: "black" }}>
-      <FormControl component="fieldset" sx={{ mb: 2 }}>
-        {/* <FormGroup row>
-          {["students", "teachers", "professionals"].map((role) => (
-            <FormControlLabel
-              key={role}
-              control={<Checkbox checked={roleFilters[role]} onChange={() => {}} name={role} />}
-              label={role.charAt(0).toUpperCase() + role.slice(1)}
-            />
-          ))}
-        </FormGroup> */}
-      </FormControl>
-      <DataTable columns={columns} data={users} pagination dense />
-    </Box>
+    <div className="border h-[100%]">
+      <div className="m-10 bg-gray-200">
+        <Box sx={{ borderRadius: 1.5, border: "1px solid black" }}>
+          <FormControl component="fieldset" sx={{}}>
+            <FormGroup></FormGroup>
+          </FormControl>
+          <DataTable columns={columns} data={users} pagination dense />
+        </Box>
+      </div>
+    </div>
   );
 };
 

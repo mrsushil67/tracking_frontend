@@ -71,7 +71,7 @@ const VehicleDetails = ({
         if (isCurrentlyStopped && stopStartTime) {
           let stopEndTime = new Date(vehicle.time);
           let durationInMs = stopEndTime - stopStartTime;
-          let durationInMinutes = Math.floor(durationInMs / (1000 * 60));
+          let durationInMinutes = Math.ceil(durationInMs / (1000 * 60));
   
           Data.push({
             speed: 0,
@@ -132,9 +132,9 @@ const VehicleDetails = ({
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(blob, `vehicle_activity.xlsx`);
   };
-  
+
   return (
-    <div className="h-screen bg-gray-100">
+    <div className="bg-gray-100">
       <div className="flex flex-col">
         <div className="p-2 flex items-center justify-between">
           <div className="relative px-2 pt-1">
@@ -260,9 +260,9 @@ const VehicleDetails = ({
                 ? vehicleDetails.currentAddress
                 : "N/A"}
             </span>
-            <div>
-              <button className="btn" onClick={downloadExcel}>
-                Download Roport
+            <div className="flex justify-end">
+              <button className="border p-[3px] rounded text-xs font-semibold mt-2 bg-amber-500 border-amber-600  hover:bg-amber-500 cursor-pointer transition-transform transform hover:scale-104" onClick={downloadExcel}>
+              ⬇️Report
               </button>
             </div>
           </div>

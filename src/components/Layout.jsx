@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Outlet, Link } from "react-router-dom";
 import { IoMenu, IoClose } from "react-icons/io5";
-import { FaHome, FaUser, FaMapMarkerAlt, FaCog, FaChevronDown } from "react-icons/fa";
+import { FaHome, FaUser, FaMapMarkerAlt, FaCog, FaChevronDown, FaList } from "react-icons/fa";
 import "./layout.css";
 
 const Layout = () => {
@@ -18,8 +18,8 @@ const Layout = () => {
           <img src="https://snaptrak.tech/assets/images/snap1.png" alt="logo" className="w-30"/>
         </div>
         <div className="space-x-4">
-          <Link to="/" className="hover:text-gray-300">Home</Link>
-          <Link to="/about" className="hover:text-gray-300">About</Link>
+          {/* <Link to="/" className="hover:text-gray-300">Home</Link>
+          <Link to="/about" className="hover:text-gray-300">About</Link> */}
         </div>
       </div>
 
@@ -34,11 +34,11 @@ const Layout = () => {
             {isSidebarOpen && <span>Profile</span>}
           </Link>
           <Link to="/location" className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3">
-            <FaMapMarkerAlt size={18} />
-            {isSidebarOpen && <span>Location</span>}
+            <FaList size={18} />
+            {isSidebarOpen && <span>Jobs</span>}
           </Link>
           
-          <div className="relative">
+          {/* <div className="relative">
             <button onClick={() => setDropdownOpen(!isDropdownOpen)} className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center items-center gap-3 w-full">
               <FaCog size={18} />
               {isSidebarOpen && <span>Settings</span>}
@@ -50,7 +50,7 @@ const Layout = () => {
                 <Link to="/settings/account" className="block hover:bg-gray-700 p-2 rounded">Account Settings</Link>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
 
         <div className="main-content flex-grow p-[1px] overflow-auto">
