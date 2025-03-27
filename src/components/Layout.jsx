@@ -1,25 +1,35 @@
 import React, { useState } from "react";
-import { Outlet, Link } from "react-router-dom";
-import { IoMenu, IoClose } from "react-icons/io5";
+import { Outlet, Link, useNavigate } from "react-router-dom";
+import { IoMenu, IoClose, IoSearch } from "react-icons/io5";
 import { FaHome, FaUser, FaMapMarkerAlt, FaCog, FaChevronDown, FaList } from "react-icons/fa";
 import "./layout.css";
 
 const Layout = () => {
+  const navigate = useNavigate()
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <div className="layout-container h-screen w-screen flex flex-col">
+    <div className="layout-container flex flex-col">
       <div className="navbar bg-gray-100 text-black flex justify-between items-center p-4 fixed top-0 z-50 border-b-1">
         <div className="flex text-gray-700 items-center gap-4">
           <button onClick={() => setSidebarOpen(!isSidebarOpen)}>
             {isSidebarOpen ? <IoClose size={25} /> : <IoMenu size={25} />}
           </button>
-          <img src="https://snaptrak.tech/assets/images/snap1.png" alt="logo" className="w-30"/>
+          <img src="https://snaptrak.tech/assets/images/snap1.png" onClick={() => navigate('/')} alt="logo" className="w-30" />
         </div>
-        <div className="space-x-4">
-          {/* <Link to="/" className="hover:text-gray-300">Home</Link>
-          <Link to="/about" className="hover:text-gray-300">About</Link> */}
+        {/* Right Side: Search Box */}
+        <div className="flex items-center space-x-3">
+          <div className="relative flex items-center bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+            <input
+              type="text"
+              placeholder="Search vehicle by number..."
+              className="outline-none w-56 text-sm text-gray-700 placeholder-gray-400 bg-transparent"
+            />
+            <button className="ml-2 text-blue-600 hover:text-blue-800 transition">
+              <IoSearch size={22} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -29,15 +39,15 @@ const Layout = () => {
             <FaHome size={18} />
             {isSidebarOpen && <span>Home</span>}
           </Link>
-          <Link to="/test" className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3">
+          <Link to="/profile" className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3">
             <FaUser size={18} />
             {isSidebarOpen && <span>Profile</span>}
           </Link>
-          <Link to="/location" className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3">
+          <Link to="/jobs" className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3">
             <FaList size={18} />
             {isSidebarOpen && <span>Jobs</span>}
           </Link>
-          
+
           {/* <div className="relative">
             <button onClick={() => setDropdownOpen(!isDropdownOpen)} className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center items-center gap-3 w-full">
               <FaCog size={18} />
@@ -53,7 +63,7 @@ const Layout = () => {
           </div> */}
         </div>
 
-        <div className="main-content flex-grow p-[1px] overflow-auto">
+        <div className="main-content flex-grow overflow-auto">
           <Outlet />
         </div>
       </div>
