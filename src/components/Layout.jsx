@@ -8,6 +8,11 @@ const Layout = () => {
   const navigate = useNavigate()
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [vehicleno, setVehicleno] = useState('')
+
+  const handleChange = (e) => {
+    setVehicleno(e.target.value)
+  }
 
   return (
     <div className="layout-container flex flex-col">
@@ -23,6 +28,8 @@ const Layout = () => {
           <div className="relative flex items-center bg-white border border-gray-300 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
             <input
               type="text"
+              value={vehicleno}
+              onChange={handleChange}
               placeholder="Search vehicle by number..."
               className="outline-none w-56 text-sm text-gray-700 placeholder-gray-400 bg-transparent"
             />
@@ -64,7 +71,7 @@ const Layout = () => {
         </div>
 
         <div className="main-content flex-grow overflow-auto">
-          <Outlet />
+          <Outlet context={[vehicleno]}/>
         </div>
       </div>
     </div>

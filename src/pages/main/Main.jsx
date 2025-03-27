@@ -9,10 +9,12 @@ import config from "../../config/services";
 import SplashMap from "./SplashMap";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Commet } from "react-loading-indicators";
+import { useOutletContext } from "react-router-dom";
 
 const googleMapsLibraries = ["places", "geometry", "marker"];
 
 function Main() {
+  const [vehicleno] = useOutletContext();
   const [vehiclelist, setVehiclelist] = useState([]);
   const [vehiclePath, setVehiclePath] = useState([]);
   const [filteredPath, setFilteredPath] = useState([]);
@@ -27,7 +29,8 @@ function Main() {
   const [markerPosition, setMarkerPosition] = useState([]);
   const [showSplashMap, setShowSplashMap] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [vehicleData, setVehicleData] = useState([])
+  const [vehicleData, setVehicleData] = useState([]);
+  const [filterVehicles, setFilterVehicles] = useState([]);
   const [tempRange, setTempRange] = useState([
     {
       startDate: new Date(),
@@ -36,6 +39,16 @@ function Main() {
     },
   ]);
 
+ useEffect(()=>{
+  if (vehiclelist && vehiclelist.length > 0 && vehicleno !== "" ) {
+    const filtered = vehiclelist.filter((vehicle) =>
+      vehicle.vehicleNo.toLowerCase().includes(vehicleno.toLowerCase())
+    );
+    setFilterVehicles(filtered);
+    console.log("ab : ",filtered)
+  }
+ },[vehicleno])
+ 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
@@ -124,7 +137,7 @@ function Main() {
         }
       );
       console.log("response : ", response);
-      setVehicleData(response.data)
+      setVehicleData(response.data);
       const formattedPath = response.data.map(({ lat, lng }) => ({ lat, lng }));
       setVehiclePath(formattedPath);
       setCurrentPosition(formattedPath[0]);
@@ -185,7 +198,7 @@ function Main() {
       );
 
       console.log("Response:", response);
-      setVehicleData(response.data)
+      setVehicleData(response.data);
       const formattedPath = response.data.map(({ lat, lng }) => ({ lat, lng }));
       setVehiclePath(formattedPath);
       setCurrentPosition(formattedPath[0]);
@@ -293,6 +306,7 @@ function Main() {
       <div className="vehicle-list">
         <VehicleList
           vehiclelist={vehiclelist}
+          filterVehicles={filterVehicles}
           handleShowDetails={handleShowDetails}
           handleClick={handleClick}
           vehicleDetails={vehicleDetails}
