@@ -1,9 +1,16 @@
 import React, { useState, useEffect, useMemo } from "react";
 import DataTable from "react-data-table-component";
-import { Box, TextField, Typography, Grid, InputAdornment } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  Grid,
+  InputAdornment,
+} from "@mui/material";
 import axios from "axios";
 import Moment from "moment";
 import { IoSearch } from "react-icons/io5";
+import JobModal from "./JobModal";
 
 const Tables = () => {
   const [jobs, setJobs] = useState([]);
@@ -13,6 +20,8 @@ const Tables = () => {
   const [totaljobs, setTotaljobs] = useState(null);
   const [page, setPage] = useState(1);
   const [rowPerPage, setRowPerPage] = useState(10);
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null)
 
   const start = fromDate ? Moment(fromDate).format("DD-MM-YYYY") : "";
   const end = toDate ? Moment(toDate).format("DD-MM-YYYY") : "";
@@ -63,34 +72,40 @@ const Tables = () => {
   const getalljobs = async () => {
     try {
       const skip = (page - 1) * rowPerPage; // Calculate offset
-  
+
       // Constructing query parameters dynamically
       let queryParams = `skip=${skip}&take=${rowPerPage}`;
-      
+
       if (start && end) {
         queryParams += `&formdate=${start}&Todate=${end}`;
       }
       if (searchByVehicle) {
         queryParams += `&vehicle=${searchByVehicle}`;
       }
-  
+
       // console.log("Query Params:", queryParams);
-  
+
       const response = await axios.get(
         `http://103.239.89.132/RCM/VehicleJobList?${queryParams}`
       );
-  
+
       setJobs(response.data.data);
       setTotaljobs(response.data.total);
     } catch (error) {
       console.error("Error fetching jobs:", error);
     }
   };
-  
+
+  const handleRowClicked = (jobData) => {
+    console.log("JobData : ",jobData)
+    setSelectedJob(jobData)
+    setIsOpen(true)
+  };
+
   // Run `getalljobs` when any filter changes
   useEffect(() => {
     getalljobs();
-  }, [start, end, page, rowPerPage, searchByVehicle]); 
+  }, [start, end, page, rowPerPage, searchByVehicle]);
 
   return (
     <div className="border h-[100%] p-5 bg-gray-100">
@@ -155,6 +170,7 @@ const Tables = () => {
         <DataTable
           columns={columns}
           data={jobs}
+          noDataComponent="Loading..."
           pagination
           dense
           paginationPerPage={rowPerPage}
@@ -162,6 +178,7 @@ const Tables = () => {
           paginationServer
           onChangePage={handlePage}
           onChangeRowsPerPage={handlerowPerPageChange}
+          onRowClicked={handleRowClicked}
           customStyles={{
             headRow: {
               style: {
@@ -177,6 +194,7 @@ const Tables = () => {
           }}
         />
       </Box>
+      <JobModal modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} selectedJob={selectedJob}/>
     </div>
   );
 };

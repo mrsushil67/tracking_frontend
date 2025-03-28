@@ -1,5 +1,5 @@
-import { GoogleMap, useLoadScript } from "@react-google-maps/api";
-import React, { useRef, useState } from "react";
+import { DirectionsRenderer, GoogleMap, useLoadScript } from "@react-google-maps/api";
+import React, { useRef, useState, useEffect } from "react";
 
 const containerStyle = {
   width: "100%",
@@ -8,13 +8,47 @@ const containerStyle = {
 
 const center = { lat: 28.7041, lng: 77.1025 };
 
-const MapModal = () => {
+const MapModal = ({ sourceCoords, destinationCoords }) => {
   const mapRef = useRef(null);
-  const [zoom, setZoom] = useState(10);
+  const [zoom, setZoom] = useState(4);
+  const [directions, setDirections] = useState(null);
 
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY
+    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
   });
+
+  console.log("LatLong: ", sourceCoords, destinationCoords);
+
+  useEffect(() => {
+    if (isLoaded && sourceCoords && destinationCoords) {
+      const directionsService = new google.maps.DirectionsService();
+
+      // Convert latitude and longitude to numbers
+      const origin = {
+        lat: parseFloat(sourceCoords.lat),
+        lng: parseFloat(sourceCoords.long),
+      };
+      const destination = {
+        lat: parseFloat(destinationCoords.lat),
+        lng: parseFloat(destinationCoords.long),
+      };
+
+      directionsService.route(
+        {
+          origin: origin,
+          destination: destination,
+          travelMode: google.maps.TravelMode.DRIVING,
+        },
+        (result, status) => {
+          if (status === google.maps.DirectionsStatus.OK) {
+            setDirections(result);
+          } else {
+            console.error(`Error fetching directions: ${status} ${result}`);
+          }
+        }
+      );
+    }
+  }, [isLoaded, sourceCoords, destinationCoords]);
 
   const onLoad = (map) => {
     mapRef.current = map;
@@ -23,13 +57,28 @@ const MapModal = () => {
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
-    <div style={{ width: "300px", height: "400px" }}>
+    <div style={{ width: "400px", height: "420px" }}>
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
         zoom={zoom}
-        onLoad={onLoad} // Correct way to get the map instance
-      />
+        onLoad={onLoad}
+      >
+        {directions && (
+          <DirectionsRenderer
+            directions={directions}
+            options={{
+              polylineOptions: {
+                strokeOpacity: 0.6,
+                strokeWeight: 5,
+                strokeColor: "#033dfc",
+              },
+              preserveViewport: true,
+              suppressMarkers: false,
+            }}
+          />
+        )}
+      </GoogleMap>
     </div>
   );
 };
