@@ -33,6 +33,7 @@ const JobModal = ({ modalIsOpen, setIsOpen, selectedJob }) => {
 
   function closeModal() {
     setIsOpen(false);
+    setLatlongData({})
   }
 
   return (
