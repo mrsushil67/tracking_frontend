@@ -22,7 +22,8 @@ const Tables = () => {
   const [rowPerPage, setRowPerPage] = useState(10);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null)
-
+  const [loading, setLoading] = useState(false)
+  const [defaulString, setDefaultString] = useState("Loading...")
   const start = fromDate ? Moment(fromDate).format("DD-MM-YYYY") : "";
   const end = toDate ? Moment(toDate).format("DD-MM-YYYY") : "";
   const handlePage = (pageNumber) => {
@@ -71,6 +72,7 @@ const Tables = () => {
 
   const getalljobs = async () => {
     try {
+      setLoading(true)
       const skip = (page - 1) * rowPerPage; // Calculate offset
 
       // Constructing query parameters dynamically
@@ -91,6 +93,7 @@ const Tables = () => {
 
       setJobs(response.data.data);
       setTotaljobs(response.data.total);
+      setLoading(false)
     } catch (error) {
       console.error("Error fetching jobs:", error);
     }
@@ -107,6 +110,15 @@ const Tables = () => {
     getalljobs();
   }, [start, end, page, rowPerPage, searchByVehicle]);
 
+  useEffect(() => {
+  if(loading === true){
+    setDefaultString("Loading...")
+  }else{
+    setDefaultString('There is no data to display')
+  }
+},[loading])
+
+  console.log("defatilt: ",defaulString)
   return (
     <div className="border h-[100%] p-5 bg-gray-100">
       <Box
@@ -171,7 +183,7 @@ const Tables = () => {
         <DataTable
           columns={columns}
           data={jobs}
-          noDataComponent="Loading..."
+          noDataComponent={defaulString}
           pagination
           dense
           paginationPerPage={rowPerPage}
