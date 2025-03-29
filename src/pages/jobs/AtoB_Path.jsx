@@ -27,8 +27,6 @@ const AtoB_Path = ({ selectedJob, setLatlongData }) => {
     }
   }, [jobTouchPoint]);
 
-  console.log("jobTouchPoint : ", jobTouchPoint);
-
   return (
     <div className="w-[400px] h-[420px] overflow-y-auto rounded-lg shadow-lg relative">
       {jobDetails !== null || undefined ? (
