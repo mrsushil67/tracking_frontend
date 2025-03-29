@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Main from "./pages/main/Main";
 import TestingMap from "./pages/main/SplashMap";
-import Tables from "./components/Tables";
-import JobModal from "./components/JobModal";
+import Tables from "./pages/jobs/Tables";
+import JobModal from "./pages/jobs/JobModal";
 
 const App = () => {
   return (

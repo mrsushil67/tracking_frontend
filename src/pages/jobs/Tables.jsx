@@ -118,7 +118,7 @@ const Tables = () => {
   }
 },[loading])
 
-  console.log("defatilt: ",defaulString)
+
   return (
     <div className="border h-[100%] p-5 bg-gray-100">
       <Box

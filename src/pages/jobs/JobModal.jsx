@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import Modal from "react-modal";
-import Map from "../pages/main/Map";
+import Map from "../main/Map";
 import MapModal from "./MapModal";
 import AtoB_Path from "./AtoB_Path";
 import { IoClose } from "react-icons/io5";
