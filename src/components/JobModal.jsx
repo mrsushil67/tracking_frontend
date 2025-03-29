@@ -43,6 +43,8 @@ const JobModal = ({ modalIsOpen, setIsOpen, selectedJob }) => {
         onRequestClose={closeModal}
         style={customStyles}
         contentLabel="Example Modal"
+        transparent={false}
+        
       >
         <div className="">
           <div className="flex justify-between px-3 py-1 bg-amber-600">

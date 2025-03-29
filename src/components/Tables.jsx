@@ -36,7 +36,7 @@ const Tables = () => {
 
   const columns = useMemo(() => {
     return [
-      { name: "SL#", selector: (row) => row.id, sortable: true, width: "5rem" },
+      { name: "SL#", selector: (row) => row.id, sortable: false, width: "5rem" },
       {
         name: "JOB DESCRIPTION",
         selector: (row) => `${row.SourceCity}-${row.DestCity}-${row.TripSheet}`,
@@ -45,25 +45,25 @@ const Tables = () => {
       {
         name: "VEHICLE No.",
         selector: (row) => row.Vehicle_no,
-        sortable: true,
+        sortable: false,
         width: "11rem",
       },
       {
         name: "JOB START",
         selector: (row) => row.Job_Start,
-        sortable: true,
+        sortable: false,
         width: "11rem",
       },
       {
         name: "CREATE AT",
         selector: (row) => row.createdAt,
-        sortable: true,
+        sortable: false,
         width: "11rem",
       },
       {
         name: "UPDATE AT",
         selector: (row) => row.updatedAt,
-        sortable: true,
+        sortable: false,
         width: "11rem",
       },
     ];
@@ -134,7 +134,7 @@ const Tables = () => {
               <Grid item>
                 <TextField
                   size="small"
-                  label="Search by Vehicle No"
+                  placeholder="Search by vehicle"
                   variant="outlined"
                   value={searchByVehicle}
                   onChange={(e) => setSearchByVehicle(e.target.value)}
@@ -143,7 +143,7 @@ const Tables = () => {
               <Grid item>
                 <TextField
                   size="small"
-                  label="from"
+                  // label="from"
                   type="date"
                   InputLabelProps={{ shrink: true }}
                   variant="outlined"
@@ -151,10 +151,11 @@ const Tables = () => {
                   onChange={(e) => setFromDate(e.target.value)}
                 />
               </Grid>
+
               <Grid item>
                 <TextField
                   size="small"
-                  label="To"
+                  // label="To"
                   type="date"
                   InputLabelProps={{ shrink: true }}
                   variant="outlined"
