@@ -17,6 +17,8 @@ const MapModal = ({ sourceCoords, destinationCoords }) => {
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
   });
 
+  console.log("LatLong: ", sourceCoords, destinationCoords);
+
   useEffect(() => {
     if (isLoaded && sourceCoords && destinationCoords) {
       const directionsService = new google.maps.DirectionsService();
@@ -61,6 +63,14 @@ const MapModal = ({ sourceCoords, destinationCoords }) => {
         center={center}
         zoom={zoom}
         onLoad={onLoad}
+        options={{
+          zoomControl: false,
+          mapTypeControl: true,
+          scaleControl: false,
+          streetViewControl: false,
+          overviewMapControl: false,
+          rotateControl: false,
+        }}
       >
         {directions && (
           <DirectionsRenderer

@@ -50,7 +50,7 @@ const Layout = () => {
             <FaUser size={18} />
             {isSidebarOpen && <span>Profile</span>}
           </Link> */}
-          <Link to="/jobs" className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3">
+          <Link to="/alljobs" className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3">
             <FaList size={18} />
             {isSidebarOpen && <span>Jobs</span>}
           </Link>

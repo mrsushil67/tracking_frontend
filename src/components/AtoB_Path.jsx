@@ -27,10 +27,12 @@ const AtoB_Path = ({ selectedJob, setLatlongData }) => {
     }
   }, [jobTouchPoint]);
 
+  console.log("jobTouchPoint : ", jobTouchPoint);
+
   return (
     <div className="w-[400px] h-[420px] overflow-y-auto rounded-lg shadow-lg relative">
       {jobDetails !== null || undefined ? (
-        jobTouchPoint.length > 0 ? (
+        jobTouchPoint[0].Id !== null ? (
           <div>
             <div className="flex justify-center font-bold">
               {jobDetails ? jobDetails.SourceCity : ""}
@@ -47,47 +49,71 @@ const AtoB_Path = ({ selectedJob, setLatlongData }) => {
                   className="flex w-full items-center justify-center my-6 relative"
                 >
                   {index % 2 === 0 ? (
-                    <div className="w-1/2 text-right pr-3">
-                      <h3 className="text-sm font-bold text-green-700">
-                        {stop.TouchPoint}
-                      </h3>
-                      <p className="text-xs text-gray-500">
-                        <span className="font-semibold">Lat:</span>{" "}
-                        {stop.TouchLat}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        <span className="font-semibold">Long:</span>{" "}
-                        {stop.TouchLong}
-                      </p>
-                    </div>
+                    <>
+                      <div className="w-1/2 text-right pr-3">
+                        <h3 className="text-sm font-bold text-green-700">
+                          {stop.TouchPoint}
+                        </h3>
+                        <p className="text-xs text-gray-500">
+                          <span className="font-semibold">Sch Arr:</span>{" "}
+                          {stop.ShuArr}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          <span className="font-semibold">Sch Dept:</span>{" "}
+                          {stop.ShuDept}
+                        </p>
+                      </div>
+                      <div
+                        className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-green-500"
+                        style={{ height: `100px` }}
+                      ></div>
+                      <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+                        <div className="w-4 h-4 bg-white border-2 border-green-500 rounded-full"></div>
+                      </div>
+                      <div className="w-1/2 text-left pl-3">
+                        <p className="text-xs text-gray-500">
+                          <span className="font-semibold">Act Arr:</span>{" "}
+                          {stop.Indate} {stop.Intime}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          <span className="font-semibold">Act Dept:</span>{" "}
+                          {stop.OutDate} {stop.OutTime}
+                        </p>
+                      </div>
+                    </>
                   ) : (
-                    <div className="w-1/2"></div>
-                  )}
-
-                  <div
-                    className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-green-500"
-                    style={{ height: `100px` }}
-                  ></div>
-                  <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-                    <div className="w-4 h-4 bg-white border-2 border-green-500 rounded-full"></div>
-                  </div>
-
-                  {index % 2 !== 0 ? (
-                    <div className="w-1/2 text-left pl-3">
-                      <h3 className="text-sm font-bold text-green-700">
-                        {stop.TouchPoint}
-                      </h3>
-                      <p className="text-xs text-gray-500">
-                        <span className="font-semibold">Lat:</span>{" "}
-                        {stop.TouchLat}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        <span className="font-semibold">Long:</span>{" "}
-                        {stop.TouchLong}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="w-1/2"></div>
+                    <>
+                      <div className="w-1/2 text-right pr-3">
+                        <p className="text-xs text-gray-500">
+                          <span className="font-semibold">Act Arr:</span>{" "}
+                          {stop.Indate} {stop.Intime}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          <span className="font-semibold">Act Dept:</span>{" "}
+                          {stop.OutDate} {stop.OutTime}
+                        </p>
+                      </div>
+                      <div
+                        className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-green-500"
+                        style={{ height: `100px` }}
+                      ></div>
+                      <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+                        <div className="w-4 h-4 bg-white border-2 border-green-500 rounded-full"></div>
+                      </div>
+                      <div className="w-1/2 text-left pl-3">
+                        <h3 className="text-sm font-bold text-green-700">
+                          {stop.TouchPoint}
+                        </h3>
+                        <p className="text-xs text-gray-500">
+                          <span className="font-semibold">Sch Arr:</span>{" "}
+                          {stop.ShuArr}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          <span className="font-semibold">Sch Dept:</span>{" "}
+                          {stop.ShuDept}
+                        </p>
+                      </div>
+                    </>
                   )}
                 </div>
               ))}
