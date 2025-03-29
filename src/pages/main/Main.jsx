@@ -31,6 +31,7 @@ function Main() {
   const [loading, setLoading] = useState(false);
   const [vehicleData, setVehicleData] = useState([]);
   const [filterVehicles, setFilterVehicles] = useState([]);
+  const [pathloading, setPathLoading] = useState(false)
   const [tempRange, setTempRange] = useState([
     {
       startDate: new Date(),
@@ -130,6 +131,7 @@ function Main() {
 
   const getVehiclePath = async (vehicleNo) => {
     try {
+      setPathLoading(true)
       const response = await axios.get(
         `${config.host}${config.getVehiclePath.url}`,
         {
@@ -143,6 +145,7 @@ function Main() {
       setCurrentPosition(formattedPath[0]);
       const lastLatLong = formattedPath.slice(-1)[0];
       setLastLoc(lastLatLong);
+      setPathLoading(false)
     } catch (error) {
       console.log(error);
     }
@@ -247,7 +250,7 @@ function Main() {
 
   useEffect(() => {
     if (!selectedVehicleNo) return;
-    getVehiclePath(selectedVehicleNo);
+    // getVehiclePath(selectedVehicleNo);
     intervalIdRef.current = setInterval(() => {
       getVehiclePath(selectedVehicleNo);
       vehicleCurrentLocation(selectedVehicleNo);
@@ -264,10 +267,10 @@ function Main() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    getAllVehicles();
-    // vehicleCurrentLocation();
-  }, []);
+  // useEffect(() => {
+  //   getAllVehicles();
+  //   // vehicleCurrentLocation();
+  // }, []);
 
   // useEffect(() => {
   //   if (vehiclePath.length > 0 && index < vehiclePath.length - 1) {
@@ -341,6 +344,7 @@ function Main() {
               vehiclePath={vehiclePath}
               vehicleDetails={vehicleDetails}
               markerPosition={markerPosition}
+              pathloading={pathloading}
             />
           )
         ) : (

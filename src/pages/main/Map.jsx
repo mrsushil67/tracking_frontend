@@ -22,11 +22,12 @@ const Map = ({
   icon1,
   vehiclePath,
   vehicleDetails,
+  pathloading,
 }) => {
   const mapRef = useRef(null);
   const [marker, setMarker] = useState(null);
   const [open, setOpen] = useState(false);
-  const [zoom, setZoom] = useState(4);
+  // const [zoom, setZoom] = useState(6);
 
   const handleMarkerClick = (event) => {
     setOpen(true);
@@ -63,7 +64,7 @@ const Map = ({
       mapContainerStyle={containerStyle}
       ref={mapRef}
       center={center}
-      zoom={zoom}
+      zoom={6}
       options={{
         clickableIcons: false,
         fullscreenControl: true,

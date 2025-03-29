@@ -17,7 +17,7 @@ const libraries = ["places"];
 
 function SplashMap({ markerPosition, icon1 }) {
   const [center, setCenter] = useState({ lat: 22.015137, lng: 77.97953 });
-  const [zoom, setZoom] = useState(4);
+  const [zoom, setZoom] = useState(5);
   const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
