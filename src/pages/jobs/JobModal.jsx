@@ -47,7 +47,7 @@ const JobModal = ({ modalIsOpen, setIsOpen, selectedJob }) => {
         
       >
         <div className="">
-          <div className="flex justify-between px-3 py-1 bg-amber-600">
+          <div className="flex justify-between px-3 py-1 bg-[#fc6a2a]">
             <div className="text-sm font-bold text-white">
               {selectedJob ? (
                 <>

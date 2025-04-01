@@ -33,6 +33,8 @@ const VehicleDetails = ({
     getVehiclePath(vehicleNo);
   };
 
+  console.log("range : ",range)
+
   useEffect(() => {
     if (range) {
       FilterPathsByDate();

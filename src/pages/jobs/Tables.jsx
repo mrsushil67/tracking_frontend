@@ -10,20 +10,21 @@ import {
 import axios from "axios";
 import Moment from "moment";
 import { IoSearch } from "react-icons/io5";
+import { BiRefresh } from "react-icons/bi";
 import JobModal from "./JobModal";
 
 const Tables = () => {
   const [jobs, setJobs] = useState([]);
   const [searchByVehicle, setSearchByVehicle] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setTodate] = useState("");
+  const [fromDate, setFromDate] = useState("01-04-2025");
+  const [toDate, setTodate] = useState("02-04-2025");
   const [totaljobs, setTotaljobs] = useState(null);
   const [page, setPage] = useState(1);
   const [rowPerPage, setRowPerPage] = useState(10);
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [defaulString, setDefaultString] = useState("Loading...")
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [defaulString, setDefaultString] = useState("Loading...");
   const start = fromDate ? Moment(fromDate).format("DD-MM-YYYY") : "";
   const end = toDate ? Moment(toDate).format("DD-MM-YYYY") : "";
   const handlePage = (pageNumber) => {
@@ -37,7 +38,12 @@ const Tables = () => {
 
   const columns = useMemo(() => {
     return [
-      { name: "SL#", selector: (row) => row.id, sortable: false, width: "5rem" },
+      {
+        name: "SL#",
+        selector: (row) => row.id,
+        sortable: false,
+        width: "5rem",
+      },
       {
         name: "JOB DESCRIPTION",
         selector: (row) => `${row.SourceCity}-${row.DestCity}-${row.TripSheet}`,
@@ -72,7 +78,7 @@ const Tables = () => {
 
   const getalljobs = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const skip = (page - 1) * rowPerPage; // Calculate offset
 
       // Constructing query parameters dynamically
@@ -88,20 +94,20 @@ const Tables = () => {
       // console.log("Query Params:", queryParams);
 
       const response = await axios.get(
-        `http://103.239.89.132/RCM/VehicleJobList?${queryParams}`
+        `https://rcm.snaptrak.tech/VehicleJobList?${queryParams}`
       );
 
       setJobs(response.data.data);
       setTotaljobs(response.data.total);
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching jobs:", error);
     }
   };
 
   const handleRowClicked = (jobData) => {
-    setSelectedJob(jobData)
-    setIsOpen(true)
+    setSelectedJob(jobData);
+    setIsOpen(true);
   };
 
   // Run `getalljobs` when any filter changes
@@ -110,13 +116,19 @@ const Tables = () => {
   }, [start, end, page, rowPerPage, searchByVehicle]);
 
   useEffect(() => {
-  if(loading === true){
-    setDefaultString("Loading...")
-  }else{
-    setDefaultString('There is no data to display')
-  }
-},[loading])
+    if (loading === true) {
+      setDefaultString("Loading...");
+    } else {
+      setDefaultString("There is no data to display");
+    }
+  }, [loading]);
 
+  const handleRefresh = () => {
+    console.log("refresh")
+    setSearchByVehicle("")
+    setFromDate("01-04-2025");
+    setTodate("02-04-2025");
+  }
 
   return (
     <div className="border h-[100%] p-5 bg-gray-100">
@@ -137,7 +149,7 @@ const Tables = () => {
         >
           <Grid item>
             <Typography variant="h6">
-              Total Jobs: <span className="text-amber-600">{totaljobs}</span>
+              Total Jobs: <span className="text-[#fc6a2a]">{totaljobs}</span>
             </Typography>
           </Grid>
           <Grid item>
@@ -174,6 +186,12 @@ const Tables = () => {
                   onChange={(e) => setTodate(e.target.value)}
                 />
               </Grid>
+              <Grid item>
+                <BiRefresh
+                  className="text-4xl border border-gray-400 rounded cursor-pointer"
+                  onClick={handleRefresh}
+                />
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -194,7 +212,7 @@ const Tables = () => {
           customStyles={{
             headRow: {
               style: {
-                backgroundColor: "#fc8403",
+                backgroundColor: "#fc6a2a",
                 color: "#ffffff",
                 fontSize: "15px",
                 fontWeight: "bold",
@@ -206,7 +224,11 @@ const Tables = () => {
           }}
         />
       </Box>
-      <JobModal modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} selectedJob={selectedJob}/>
+      <JobModal
+        modalIsOpen={modalIsOpen}
+        setIsOpen={setIsOpen}
+        selectedJob={selectedJob}
+      />
     </div>
   );
 };

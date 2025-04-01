@@ -14,7 +14,7 @@ import { useOutletContext } from "react-router-dom";
 const googleMapsLibraries = ["places", "geometry", "marker"];
 
 function Main() {
-  const [vehicleno] = useOutletContext();
+  const [vehicleno,setTotalVehicles, setFilterdCounts ] = useOutletContext();
   const [vehiclelist, setVehiclelist] = useState([]);
   const [vehiclePath, setVehiclePath] = useState([]);
   const [filteredPath, setFilteredPath] = useState([]);
@@ -64,6 +64,8 @@ function Main() {
         scale: 1.5,
       }
     : null;
+
+    console.log("Loading : ",isLoaded)
 
   const intervalIdRef = useRef(null);
   let lastKnownAngle = null;
@@ -117,7 +119,8 @@ function Main() {
         `${config.host}${config.getAllVehicles.url}`
       );
       setVehiclelist(response.data.vehicles);
-
+      setTotalVehicles(response.data?.vehicles.length)
+      console.log("response.data : ",response.data.vehicles.length)
       const markerpos = response.data.vehicles.map((position) => ({
         vehicleid: position._id,
         lat: position.latitude,
@@ -131,13 +134,14 @@ function Main() {
 
   const getVehiclePath = async (vehicleNo) => {
     try {
-      setPathLoading(true)
+      // setPathLoading(true)
       const response = await axios.get(
         `${config.host}${config.getVehiclePath.url}`,
         {
           params: { vehicleNo },
         }
       );
+     
       console.log("response : ", response);
       setVehicleData(response.data);
       const formattedPath = response.data.map(({ lat, lng }) => ({ lat, lng }));
@@ -145,7 +149,7 @@ function Main() {
       setCurrentPosition(formattedPath[0]);
       const lastLatLong = formattedPath.slice(-1)[0];
       setLastLoc(lastLatLong);
-      setPathLoading(false)
+      // setPathLoading(false)
     } catch (error) {
       console.log(error);
     }
@@ -188,7 +192,7 @@ function Main() {
     if (!range) return;
 
     try {
-      setLoading(true);
+      setPathLoading(true);
       const response = await axios.get(
         `${config.host}${config.filterVehiclePath.url}`,
         {
@@ -214,7 +218,7 @@ function Main() {
       console.log("vehicleLocation : ", vehicleLocation);
 
       rotateIconBasedOnPath(vehicleLocation);
-      setLoading(false);
+      setPathLoading(false);
     } catch (error) {
       console.error("Error fetching filtered paths:", error);
     }
@@ -313,6 +317,7 @@ function Main() {
           handleShowDetails={handleShowDetails}
           handleClick={handleClick}
           vehicleDetails={vehicleDetails}
+          setFilterdCounts={setFilterdCounts}
         />
       </div>
 
