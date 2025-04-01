@@ -158,7 +158,7 @@ const Map = ({ icon1, vehiclePath, vehicleDetails, pathloading }) => {
                   }}
                   onCloseClick={() => setShowInfoWindow(false)}
                 >
-                  <div className="p-2 rounded-2xl shadow-md bg-white">
+                  <div className="p-2 rounded-2xl shadow-md bg-white w-[300px]">
                     <div className="mb-2">
                       <div className="flex justify-between">
                         <div className="font-bold">
@@ -177,7 +177,7 @@ const Map = ({ icon1, vehiclePath, vehicleDetails, pathloading }) => {
                             {vehicleDetails?.driverDetails?.driverName}{" "}
                           </span>
                           <div className="flex">
-                            <span>
+                            <span> {" "}
                               <IoCall />
                             </span>
                             <span className="text-xs font-bold text-gray-600">
@@ -192,13 +192,13 @@ const Map = ({ icon1, vehiclePath, vehicleDetails, pathloading }) => {
                           Last Updated: {vehicleDetails.lastUpdateAt}
                         </span>
                       </div>
-                      <div class="grid grid-cols-4 gap-4">
+                      <div class="grid grid-cols-3 gap-4">
                         <div class="...">
                           <div className="text-xs font-bold text-gray-700">
                             Speed:{" "}
                           </div>
                           <div className="text-xs font-bold text-green-700">
-                            {vehicleDetails.speed} km/h
+                            {vehicleDetails.speed?.toFixed(1)} km/h
                           </div>
                         </div>
                         <div class="...">

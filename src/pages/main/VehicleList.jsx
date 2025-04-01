@@ -29,7 +29,7 @@ const VehicleList = ({
           >
             <div className="flex justify-between">
               <div className="font-bold text-gray-700">{vehicle.vehicleNo}</div>
-              <MdOutlineFullscreen onClick={() => handleClick()} />
+              {/* <MdOutlineFullscreen onClick={() => handleClick()} /> */}
             </div>
 
             <div className="flex flex-row ">

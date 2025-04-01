@@ -142,11 +142,11 @@ const VehicleDetails = ({
           <div className="relative px-2 pt-1">
             <div
               className="flex items-center space-x-2 text-sm border rounded px-2 py-1 cursor-pointer bg-white shadow"
-              // onClick={() => setShowCalendar(!showCalendar)}
+              onClick={() => setShowCalendar(!showCalendar)}
             >
               <BsCalendar2WeekFill
                 className="text-gray-600"
-                onClick={() => setShowCalendar(!showCalendar)}
+                // onClick={() => setShowCalendar(!showCalendar)}
               />{" "}
               {/* Calendar Icon */}
               {range ? (

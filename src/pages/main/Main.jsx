@@ -229,10 +229,11 @@ function Main() {
     vehicleCurrentLocation(vehicleNo);
     getVehiclePath(vehicleNo);
     setShowSplashMap();
+    setShowDetails(true);
   };
 
   const handleClick = () => {
-    setShowDetails(true);
+    // setShowDetails(true);
   };
 
   const restartInterval = () => {
