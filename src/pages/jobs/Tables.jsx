@@ -17,7 +17,7 @@ const Tables = () => {
   const [jobs, setJobs] = useState([]);
   const [searchByVehicle, setSearchByVehicle] = useState("");
   const [fromDate, setFromDate] = useState("01-04-2025");
-  const [toDate, setTodate] = useState("02-04-2025");
+  const [toDate, setTodate] = useState("30-04-2025");
   const [totaljobs, setTotaljobs] = useState(null);
   const [page, setPage] = useState(1);
   const [rowPerPage, setRowPerPage] = useState(10);
@@ -127,7 +127,7 @@ const Tables = () => {
     console.log("refresh")
     setSearchByVehicle("")
     setFromDate("01-04-2025");
-    setTodate("02-04-2025");
+    setTodate("30-04-2025");
   }
 
   return (
