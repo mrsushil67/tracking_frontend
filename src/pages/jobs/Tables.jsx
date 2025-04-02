@@ -16,8 +16,8 @@ import JobModal from "./JobModal";
 const Tables = () => {
   const [jobs, setJobs] = useState([]);
   const [searchByVehicle, setSearchByVehicle] = useState("");
-  const [fromDate, setFromDate] = useState("01-04-2025");
-  const [toDate, setTodate] = useState("30-04-2025");
+  const [fromDate, setFromDate] = useState("04-01-2025");
+  const [toDate, setTodate] = useState("04-30-2025");
   const [totaljobs, setTotaljobs] = useState(null);
   const [page, setPage] = useState(1);
   const [rowPerPage, setRowPerPage] = useState(10);
@@ -91,7 +91,7 @@ const Tables = () => {
         queryParams += `&vehicle=${searchByVehicle}`;
       }
 
-      // console.log("Query Params:", queryParams);
+      console.log("Query Params:", queryParams);
 
       const response = await axios.get(
         `https://rcm.snaptrak.tech/VehicleJobList?${queryParams}`
@@ -126,8 +126,8 @@ const Tables = () => {
   const handleRefresh = () => {
     console.log("refresh")
     setSearchByVehicle("")
-    setFromDate("01-04-2025");
-    setTodate("30-04-2025");
+    setFromDate("04-01-2025");
+    setTodate("04-30-2025");
   }
 
   return (
