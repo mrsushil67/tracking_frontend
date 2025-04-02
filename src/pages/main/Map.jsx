@@ -99,7 +99,7 @@ const Map = ({ icon1, vehiclePath, vehicleDetails, pathloading }) => {
                 <div className="p-3">
                   <div className="font-bold">{parts[parts.length - 4]}</div>
                   <span className="text-gray-700 font-bold text-xs">
-                    {parts[parts.length - 3]}vehicleno
+                    {parts[parts.length - 3]}
                   </span>
                   <span className="text-gray-700 font-bold text-xs">, </span>
                   <span className="text-gray-700 font-bold text-xs">
