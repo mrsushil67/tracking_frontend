@@ -106,6 +106,8 @@ const Tables = () => {
   };
 
   const handleRowClicked = (jobData) => {
+
+    console.log("jobData : ",jobData)
     setSelectedJob(jobData);
     setIsOpen(true);
   };

@@ -1,4 +1,9 @@
-import { DirectionsRenderer, GoogleMap, useLoadScript } from "@react-google-maps/api";
+import {
+  DirectionsRenderer,
+  GoogleMap,
+  Marker,
+  useLoadScript,
+} from "@react-google-maps/api";
 import React, { useRef, useState, useEffect } from "react";
 
 const containerStyle = {
@@ -31,10 +36,21 @@ const MapModal = ({ sourceCoords, destinationCoords }) => {
         lng: parseFloat(destinationCoords.long),
       };
 
+      const TouchPoints = [
+        { location: { lat: 28.2576800811307, lng: 76.826758199115 } },
+        { location: { lat: 26.22973668607, lng: 91.6911107343093 } },
+        { location: { lat: 26.6639744850806, lng: 88.4751131569461 } },
+        { location: { lat: 26.6639744850806, lng: 88.4751131569461 } },
+        { location: { lat: 27.2315390388978, lng: 77.8795132204701 } },
+        { location: { lat: 28.4777260022206, lng: 76.8074957147551 } },
+        { location: { lat: 28.4777260022206, lng: 76.8074957147551 } },
+      ];
+
       directionsService.route(
         {
           origin: origin,
           destination: destination,
+          waypoints: TouchPoints,
           travelMode: google.maps.TravelMode.DRIVING,
         },
         (result, status) => {
@@ -71,18 +87,40 @@ const MapModal = ({ sourceCoords, destinationCoords }) => {
         }}
       >
         {directions && (
-          <DirectionsRenderer
-            directions={directions}
-            options={{
-              polylineOptions: {
-                strokeOpacity: 0.6,
-                strokeWeight: 5,
-                strokeColor: "#033dfc",
-              },
-              preserveViewport: true,
-              suppressMarkers: false,
-            }}
-          />
+          <>
+            {/* Render custom markers */}
+            <Marker
+              position={directions.request.origin.location}
+              icon={{
+                url: "images/location.png",
+                scaledSize: new google.maps.Size(45, 45),
+              }}
+            />
+
+            {directions.request.waypoints.map((wp, index) => (
+              <Marker
+                key={index}
+                position={wp.location}
+                icon={{
+                  url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                }}
+              />
+            ))}
+
+            <Marker
+              position={directions.request.destination.location}
+              icon={{
+                url: "images/placeholder.png",
+                scaledSize: new google.maps.Size(45, 45),
+              }}
+            />
+
+            {/* Render the route */}
+            <DirectionsRenderer
+              directions={directions}
+              options={{ suppressMarkers: false }}
+            />
+          </>
         )}
       </GoogleMap>
     </div>

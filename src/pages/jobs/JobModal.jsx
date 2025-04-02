@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import Modal from "react-modal";
 import Map from "../main/Map";
 import MapModal from "./MapModal";
 import AtoB_Path from "./AtoB_Path";
 import { IoClose } from "react-icons/io5";
+import axios from "axios";
 
 const customStyles = {
   content: {
@@ -21,19 +22,46 @@ const customStyles = {
 Modal.setAppElement("#root");
 
 const JobModal = ({ modalIsOpen, setIsOpen, selectedJob }) => {
-  const [latlongData, setLatlongData] = useState({})
+  const [latlongData, setLatlongData] = useState({});
+  const [jobTouchPoint, setJobTouchPoint] = useState([]);
+  const [jobDetails, setJobDetails] = useState(null);
 
-  const sourceCoords = latlongData ? 
-  {lat:latlongData.SourceLat, long:latlongData.SourceLong}
-  :{lat:"", long:""}
+  const sourceCoords = latlongData
+    ? { lat: latlongData.SourceLat, long: latlongData.SourceLong }
+    : { lat: "", long: "" };
 
-  const destinationCoords = latlongData ? 
-  {lat:latlongData.DestLat, long:latlongData.DestLong}
-  :{lat:"", long:""}
+  const destinationCoords = latlongData
+    ? { lat: latlongData.DestLat, long: latlongData.DestLong }
+    : { lat: "", long: "" };
+
+    const fetchJobRout = async () => {
+      try {
+        if (!selectedJob?.id) {
+          // console.warn("Selected job is not available.");
+          return;
+        }
+    
+        const response = await axios.get(
+          `https://rcm.snaptrak.tech/VehicleJobListDeatils?id=${selectedJob.id}`
+        );
+    
+        console.log(response.data);
+        setLatlongData(response.data.trip);
+        setJobDetails(response.data.trip);
+        setJobTouchPoint(response.data.touch);
+      } catch (error) {
+        console.error("Error fetching job route:", error);
+      }
+    };
+    
+    useEffect(() => {
+      fetchJobRout();
+    }, [selectedJob]);
+    
 
   function closeModal() {
     setIsOpen(false);
-    setLatlongData({})
+    setLatlongData({});
   }
 
   return (
@@ -68,10 +96,16 @@ const JobModal = ({ modalIsOpen, setIsOpen, selectedJob }) => {
           </div>
           <div className=" flex ">
             <div className="border border-gray-400">
-              <AtoB_Path selectedJob={selectedJob} setLatlongData={setLatlongData}/>
+              <AtoB_Path
+                jobTouchPoint={jobTouchPoint}
+                jobDetails={jobDetails}
+              />
             </div>
             <div className="border border-gray-400">
-              <MapModal sourceCoords={sourceCoords} destinationCoords={destinationCoords}/>
+              <MapModal
+                sourceCoords={sourceCoords}
+                destinationCoords={destinationCoords}
+              />
             </div>
           </div>
         </div>

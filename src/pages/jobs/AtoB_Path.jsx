@@ -2,24 +2,10 @@ import axios from "axios";
 import React, { useRef, useEffect, useState } from "react";
 import { Commet } from "react-loading-indicators";
 
-const AtoB_Path = ({ selectedJob, setLatlongData }) => {
+const AtoB_Path = ({ jobTouchPoint, jobDetails}) => {
   const stopsRef = useRef(null);
   const [lineHeight, setLineHeight] = useState(0);
-  const [jobDetails, setJobDetails] = useState(null);
-  const [jobTouchPoint, setJobTouchPoint] = useState([]);
 
-  const fetchJobRout = async () => {
-    const response = await axios.get(
-      `https://rcm.snaptrak.tech/VehicleJobListDeatils?id=${selectedJob.id}`
-    );
-    setLatlongData(response.data.trip);
-    setJobDetails(response.data.trip);
-    setJobTouchPoint(response.data.touch);
-  };
-
-  useEffect(() => {
-    fetchJobRout();
-  }, [selectedJob]);
 
   useEffect(() => {
     if (stopsRef.current) {
