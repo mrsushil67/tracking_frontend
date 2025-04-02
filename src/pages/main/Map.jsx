@@ -192,8 +192,8 @@ const Map = ({ icon1, vehiclePath, vehicleDetails, pathloading }) => {
                           Last Updated: {vehicleDetails.lastUpdateAt}
                         </span>
                       </div>
-                      <div class="grid grid-cols-3 gap-4">
-                        <div class="...">
+                      <div class="grid grid-cols-4 gap-4">
+                        <div className="">
                           <div className="text-xs font-bold text-gray-700">
                             Speed:{" "}
                           </div>
@@ -201,15 +201,7 @@ const Map = ({ icon1, vehiclePath, vehicleDetails, pathloading }) => {
                             {vehicleDetails.speed?.toFixed(1)} km/h
                           </div>
                         </div>
-                        <div class="...">
-                          <div className="text-xs font-bold text-gray-700">
-                            Status:{" "}
-                          </div>
-                          <div className="text-xs font-bold text-green-700">
-                            {vehicleDetails.currentStatus}
-                          </div>
-                        </div>
-                        <div class="...">
+                        <div className="">
                           <div className="text-xs font-bold text-gray-700">
                             Fuel :{" "}
                           </div>
@@ -217,6 +209,15 @@ const Map = ({ icon1, vehiclePath, vehicleDetails, pathloading }) => {
                             {vehicleDetails.fuelType}
                           </div>
                         </div>
+                        <div className="">
+                          <div className="text-xs font-bold text-gray-700">
+                            Status:{" "}
+                          </div>
+                          <div className="text-xs font-bold text-green-700">
+                            {vehicleDetails.currentStatus}
+                          </div>
+                        </div>
+                        
                         {/* <div class="...">
                           <div className="text-xs font-bold text-gray-700">
                           Speed:{" "} 

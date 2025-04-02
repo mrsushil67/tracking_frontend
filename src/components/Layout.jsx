@@ -23,7 +23,7 @@ const Layout = () => {
     setVehicleno(e.target.value);
   };
 
-  console.log("vehicleno : ",typeof(vehicleno))
+  console.log("vehicleno : ", typeof vehicleno);
   console.log("totalVehicles : ", totalVehicles);
   console.log("filter Counts : ", filterdCounts);
 
@@ -43,16 +43,12 @@ const Layout = () => {
         </div>
         {/* Right Side: Search Box */}
         <div className="flex items-center space-x-3">
-          {filterdCounts > 0 ? (
+          {totalVehicles > 0 ? (
             <div>
-              {filterdCounts === totalVehicles ? (
-                <span className="font-bold">Total : </span>
-              ):(
-                <span className="font-bold">Filtered : </span>
-              )}
-              
+              <span className="font-bold">Total : </span>
+
               <span className="font-bold  text-[#fc6a2a]">
-                {filterdCounts}{" "}
+                {totalVehicles}{" "}
               </span>
             </div>
           ) : null}
