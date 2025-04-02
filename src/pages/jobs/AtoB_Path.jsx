@@ -10,7 +10,7 @@ const AtoB_Path = ({ selectedJob, setLatlongData }) => {
 
   const fetchJobRout = async () => {
     const response = await axios.get(
-      `http://103.239.89.132/RCM/VehicleJobListDeatils?id=${selectedJob.id}`
+      `https://rcm.snaptrak.tech/VehicleJobListDeatils?id=${selectedJob.id}`
     );
     setLatlongData(response.data.trip);
     setJobDetails(response.data.trip);
