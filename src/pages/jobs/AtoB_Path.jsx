@@ -12,7 +12,7 @@ const AtoB_Path = ({ jobTouchPoint, jobDetails}) => {
     
     if (stopsRef.current) {
       if(jobTouchPoint.length < 5 ){
-        setLineHeight(320);
+        setLineHeight(370);
       }else{
         // setLineHeight((jobTouchPoint.length)*100)
         setLineHeight(stopsRef.current.scrollHeight);
