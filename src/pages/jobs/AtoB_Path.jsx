@@ -8,8 +8,20 @@ const AtoB_Path = ({ jobTouchPoint, jobDetails}) => {
 
 
   useEffect(() => {
+    console.log("jobTouchPoint",jobTouchPoint);
+    
     if (stopsRef.current) {
-      setLineHeight(stopsRef.current.scrollHeight);
+      if(jobTouchPoint.length < 5 ){
+        setLineHeight(320);
+      }else{
+        // setLineHeight((jobTouchPoint.length)*100)
+        setLineHeight(stopsRef.current.scrollHeight);
+      }
+     
+      console.log("stopsRef.current.scrollHeight",stopsRef.current.scrollHeight);
+      
+      console.log("lineHeight",lineHeight);
+      
     }
   }, [jobTouchPoint]);
 
@@ -30,7 +42,7 @@ const AtoB_Path = ({ jobTouchPoint, jobDetails}) => {
               {jobTouchPoint.map((stop, index) => (
                 <div
                   key={index}
-                  className="flex w-full items-center justify-center my-6 relative"
+                  className="flex w-full items-center justify-center relative"  style={jobTouchPoint.length <=4 ? { height: `${lineHeight/jobTouchPoint.length-1}px` }:{marginTop:"3rem", marginBottom:"3rem"}}
                 >
                   {index % 2 === 0 ? (
                     <>
