@@ -84,7 +84,7 @@ const MapModal = ({ sourceCoords, destinationCoords, touch }) => {
               <Marker
                 position={directions.request.origin.location}
                 icon={{
-                  url: "images/location-pin.png",
+                  url: "images/location.png",
                   scaledSize: new google.maps.Size(35, 35),
                 }}
               >
@@ -117,7 +117,7 @@ const MapModal = ({ sourceCoords, destinationCoords, touch }) => {
                 key={index}
                 position={wp.location.location}
                 icon={{
-                  url: "images/location-pin.png",
+                  url: "images/touch2.png",
                   scaledSize: new google.maps.Size(30, 30),
                 }}
               />
@@ -127,8 +127,8 @@ const MapModal = ({ sourceCoords, destinationCoords, touch }) => {
               <Marker
                 position={directions.request.destination.location}
                 icon={{
-                  url: "images/location-pin.png",
-                  scaledSize: new google.maps.Size(35, 35),
+                  url: "images/touch2.png",
+                  scaledSize: new google.maps.Size(40, 40),
                 }}
               >
                 <InfoBox
