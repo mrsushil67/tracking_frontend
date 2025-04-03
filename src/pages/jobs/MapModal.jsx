@@ -1,6 +1,7 @@
 import {
   DirectionsRenderer,
   GoogleMap,
+  InfoBox,
   Marker,
   useLoadScript,
 } from "@react-google-maps/api";
@@ -13,7 +14,7 @@ const containerStyle = {
 
 const center = { lat: 28.7041, lng: 77.1025 };
 
-const MapModal = ({ sourceCoords, destinationCoords }) => {
+const MapModal = ({ sourceCoords, destinationCoords, touch }) => {
   const mapRef = useRef(null);
   const [zoom, setZoom] = useState(4);
   const [directions, setDirections] = useState(null);
@@ -35,22 +36,11 @@ const MapModal = ({ sourceCoords, destinationCoords }) => {
         lat: parseFloat(destinationCoords.lat),
         lng: parseFloat(destinationCoords.long),
       };
-
-      const TouchPoints = [
-        { location: { lat: 28.2576800811307, lng: 76.826758199115 } },
-        { location: { lat: 26.22973668607, lng: 91.6911107343093 } },
-        { location: { lat: 26.6639744850806, lng: 88.4751131569461 } },
-        { location: { lat: 26.6639744850806, lng: 88.4751131569461 } },
-        { location: { lat: 27.2315390388978, lng: 77.8795132204701 } },
-        { location: { lat: 28.4777260022206, lng: 76.8074957147551 } },
-        { location: { lat: 28.4777260022206, lng: 76.8074957147551 } },
-      ];
-
       directionsService.route(
         {
           origin: origin,
           destination: destination,
-          waypoints: TouchPoints,
+          waypoints: touch,
           travelMode: google.maps.TravelMode.DRIVING,
         },
         (result, status) => {
@@ -67,6 +57,8 @@ const MapModal = ({ sourceCoords, destinationCoords }) => {
   const onLoad = (map) => {
     mapRef.current = map;
   };
+
+  console.log("directions : ", directions);
 
   if (!isLoaded) return <div>Loading...</div>;
 
@@ -88,37 +80,91 @@ const MapModal = ({ sourceCoords, destinationCoords }) => {
       >
         {directions && (
           <>
-            {/* Render custom markers */}
-            <Marker
-              position={directions.request.origin.location}
-              icon={{
-                url: "images/location.png",
-                scaledSize: new google.maps.Size(45, 45),
-              }}
-            />
+            {directions.request.origin && (
+              <Marker
+                position={directions.request.origin.location}
+                icon={{
+                  url: "images/location.png",
+                  scaledSize: new google.maps.Size(35, 35),
+                }}
+              >
+                <InfoBox
+                  position={directions.request.origin.location}
+                  options={{
+                    closeBoxURL: "",
+                    enableEventPropagation: true,
+                    pixelOffset: new google.maps.Size(-17, -60), // Move upwards
+                  }}
+                >
+                  <div
+                    style={{
+                      background: "#6e6e6e",
+                      border: "1px solid #6e6e6e",
+                      padding: "5px",
+                      borderRadius: "5px",
+                      boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
+                      color: "#6e6e6e", // Make text visible
+                    }}
+                  >
+                    <p className="text-white">start</p>
+                  </div>
+                </InfoBox>
+              </Marker>
+            )}
 
             {directions.request.waypoints.map((wp, index) => (
               <Marker
                 key={index}
-                position={wp.location}
+                position={wp.location.location}
                 icon={{
-                  url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                  url: "images/touch.png",
+                  scaledSize: new google.maps.Size(30, 30),
                 }}
               />
             ))}
 
-            <Marker
-              position={directions.request.destination.location}
-              icon={{
-                url: "images/placeholder.png",
-                scaledSize: new google.maps.Size(45, 45),
-              }}
-            />
-
-            {/* Render the route */}
+            {directions.request.destination && (
+              <Marker
+                position={directions.request.destination.location}
+                icon={{
+                  url: "images/placeholder.png",
+                  scaledSize: new google.maps.Size(35, 35),
+                }}
+              >
+                <InfoBox
+                  position={directions.request.destination.location}
+                  options={{
+                    closeBoxURL: "",
+                    enableEventPropagation: true,
+                    pixelOffset: new google.maps.Size(-17, -60), // Move upwards
+                  }}
+                >
+                  <div
+                    style={{
+                      background: "#6e6e6e",
+                      border: "1px solid #6e6e6e",
+                      padding: "5px",
+                      borderRadius: "5px",
+                      boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
+                      color: "#6e6e6e", // Make text visible
+                    }}
+                  >
+                    <p className="text-white">End</p>
+                  </div>
+                </InfoBox>
+                </Marker>
+            )}
             <DirectionsRenderer
+              options={{
+                suppressMarkers: true,
+                preserveViewport: true,
+                polylineOptions: {
+                  strokeColor: "#079ef5",
+                  strokeOpacity: 3,
+                  strokeWeight: 3,
+                },
+              }}
               directions={directions}
-              options={{ suppressMarkers: false }}
             />
           </>
         )}

@@ -34,35 +34,48 @@ const JobModal = ({ modalIsOpen, setIsOpen, selectedJob }) => {
     ? { lat: latlongData.DestLat, long: latlongData.DestLong }
     : { lat: "", long: "" };
 
-    const fetchJobRout = async () => {
-      try {
-        if (!selectedJob?.id) {
-          // console.warn("Selected job is not available.");
-          return;
-        }
-    
-        const response = await axios.get(
-          `https://rcm.snaptrak.tech/VehicleJobListDeatils?id=${selectedJob.id}`
-        );
-    
-        console.log(response.data);
-        setLatlongData(response.data.trip);
-        setJobDetails(response.data.trip);
-        setJobTouchPoint(response.data.touch);
-      } catch (error) {
-        console.error("Error fetching job route:", error);
+  const fetchJobRout = async () => {
+    try {
+      if (!selectedJob?.id) {
+        // console.warn("Selected job is not available.");
+        return;
       }
-    };
-    
-    useEffect(() => {
-      fetchJobRout();
-    }, [selectedJob]);
-    
+
+      const response = await axios.get(
+        `https://rcm.snaptrak.tech/VehicleJobListDeatils?id=${selectedJob.id}`
+      );
+
+      console.log(response.data);
+      setLatlongData(response.data.trip);
+      setJobDetails(response.data.trip);
+      setJobTouchPoint(response.data.touch);
+    } catch (error) {
+      console.error("Error fetching job route:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobRout();
+  }, [selectedJob]);
 
   function closeModal() {
     setIsOpen(false);
     setLatlongData({});
   }
+
+  const touch = jobTouchPoint.map((job) => ({
+    location: { lat: parseFloat(job.TouchLat), lng: parseFloat(job.TouchLong) },
+  }));
+
+  const filteredTouch = touch.filter((num) => {
+    const isValidLat = !isNaN(num.location.lat) && num.location.lat !== 0 && num.location.lat !== null;
+    const isValidLng = !isNaN(num.location.lng) && num.location.lng !== 0 && num.location.lng !== null;
+    // console.log("num:", num.location.lat, num.location.lng);
+    return isValidLat && isValidLng;
+  });
+  
+  // console.log(jobDetails)
+  // console.log(filteredTouch)
 
   return (
     <div>
@@ -72,7 +85,6 @@ const JobModal = ({ modalIsOpen, setIsOpen, selectedJob }) => {
         style={customStyles}
         contentLabel="Example Modal"
         transparent={false}
-        
       >
         <div className="">
           <div className="flex justify-between px-3 py-1 bg-[#fc6a2a]">
@@ -105,6 +117,7 @@ const JobModal = ({ modalIsOpen, setIsOpen, selectedJob }) => {
               <MapModal
                 sourceCoords={sourceCoords}
                 destinationCoords={destinationCoords}
+                touch={filteredTouch}
               />
             </div>
           </div>

@@ -8,8 +8,6 @@ const AtoB_Path = ({ jobTouchPoint, jobDetails}) => {
 
 
   useEffect(() => {
-    console.log("jobTouchPoint",jobTouchPoint);
-    
     if (stopsRef.current) {
       if(jobTouchPoint.length < 5 ){
         setLineHeight(370);
@@ -17,11 +15,6 @@ const AtoB_Path = ({ jobTouchPoint, jobDetails}) => {
         // setLineHeight((jobTouchPoint.length)*100)
         setLineHeight(stopsRef.current.scrollHeight);
       }
-     
-      console.log("stopsRef.current.scrollHeight",stopsRef.current.scrollHeight);
-      
-      console.log("lineHeight",lineHeight);
-      
     }
   }, [jobTouchPoint]);
 
