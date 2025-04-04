@@ -80,10 +80,10 @@ const Layout = () => {
             <FaHome size={18} />
             {isSidebarOpen && <span>Home</span>}
           </Link>
-          {/* <Link to="/profile" className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3">
+          <Link to="/stream" className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3">
             <FaUser size={18} />
             {isSidebarOpen && <span>Profile</span>}
-          </Link> */}
+          </Link>
           <Link
             to="/alljobs"
             className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3"
