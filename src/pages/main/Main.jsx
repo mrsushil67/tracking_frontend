@@ -10,11 +10,12 @@ import SplashMap from "./SplashMap";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Commet } from "react-loading-indicators";
 import { useOutletContext } from "react-router-dom";
+import Streaming from "./Streaming";
 
 const googleMapsLibraries = ["places", "geometry", "marker"];
 
 function Main() {
-  const [vehicleno,setTotalVehicles, setFilterdCounts ] = useOutletContext();
+  const [vehicleno, setTotalVehicles, setFilterdCounts] = useOutletContext();
   const [vehiclelist, setVehiclelist] = useState([]);
   const [vehiclePath, setVehiclePath] = useState([]);
   const [filteredPath, setFilteredPath] = useState([]);
@@ -31,7 +32,9 @@ function Main() {
   const [loading, setLoading] = useState(false);
   const [vehicleData, setVehicleData] = useState([]);
   const [filterVehicles, setFilterVehicles] = useState([]);
-  const [pathloading, setPathLoading] = useState(false)
+  const [pathloading, setPathLoading] = useState(false);
+  const [vehicleStartTime, setVehicleStartTime] = useState({});
+  const [showVedio, setShowVedio] = useState(false);
   const [tempRange, setTempRange] = useState([
     {
       startDate: new Date(),
@@ -40,16 +43,16 @@ function Main() {
     },
   ]);
 
- useEffect(()=>{
-  if (vehiclelist && vehiclelist.length > 0 && vehicleno !== "" ) {
-    const filtered = vehiclelist.filter((vehicle) =>
-      vehicle.vehicleNo.toLowerCase().includes(vehicleno.toLowerCase())
-    );
-    setFilterVehicles(filtered);
-    console.log("ab : ",filtered)
-  }
- },[vehicleno])
- 
+  useEffect(() => {
+    if (vehiclelist && vehiclelist.length > 0 && vehicleno !== "") {
+      const filtered = vehiclelist.filter((vehicle) =>
+        vehicle.vehicleNo.toLowerCase().includes(vehicleno.toLowerCase())
+      );
+      setFilterVehicles(filtered);
+      console.log("ab : ", filtered);
+    }
+  }, [vehicleno]);
+
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
@@ -65,7 +68,7 @@ function Main() {
       }
     : null;
 
-    console.log("Loading : ",isLoaded)
+  console.log("Loading : ", isLoaded);
 
   const intervalIdRef = useRef(null);
   let lastKnownAngle = null;
@@ -119,8 +122,8 @@ function Main() {
         `${config.host}${config.getAllVehicles.url}`
       );
       setVehiclelist(response.data.vehicles);
-      setTotalVehicles(response.data?.vehicles.length)
-      console.log("response.data : ",response.data.vehicles.length)
+      setTotalVehicles(response.data?.vehicles.length);
+      console.log("response.data : ", response.data.vehicles.length);
       const markerpos = response.data.vehicles.map((position) => ({
         vehicleid: position._id,
         lat: position.latitude,
@@ -141,8 +144,9 @@ function Main() {
           params: { vehicleNo },
         }
       );
-     
-      console.log("response : ", response);
+
+      console.log("response : ", response.data[0]);
+      setVehicleStartTime(response.data[0]);
       setVehicleData(response.data);
       const formattedPath = response.data.map(({ lat, lng }) => ({ lat, lng }));
       setVehiclePath(formattedPath);
@@ -344,14 +348,21 @@ function Main() {
         {isLoaded ? (
           showSplashMap ? (
             <SplashMap markerPosition={markerPosition} icon1={icon1} />
-          ) : (
+          ) : !showVedio ? (
             <Map
               icon1={icon1}
               vehiclePath={vehiclePath}
               vehicleDetails={vehicleDetails}
               markerPosition={markerPosition}
               pathloading={pathloading}
+              vehicleStartTime={vehicleStartTime}
+              setShowVedio={setShowVedio}
             />
+          ) : (
+            <div><Streaming 
+            vehicleDetails={vehicleDetails}
+            range={range}
+            /></div>
           )
         ) : (
           <div className="grid min-h-full place-items-center">
