@@ -121,7 +121,11 @@ function Streaming() {
       setConnected(false);
     });
 
-    // Clean up on unmount
+    socket.emit("update-stream-settings", {
+      chunkSize: 50,
+      interval: 100,
+    });
+
     return () => {
       socket.disconnect();
     };
@@ -208,7 +212,7 @@ function Streaming() {
         )}
         <div className="flex justify-center items-center">
           <div className="mx-[1px]">
-            <FaPlay className="text-3xl border p-1 rounded" />
+            <FaPlay className="text-3xl border p-1 rounded" onClick={startStreaming}/>
           </div>
           <div className="mx-[1px]">
             <FaPause className="text-3xl border p-1 rounded" />
