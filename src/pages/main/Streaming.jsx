@@ -29,15 +29,56 @@ function Streaming({ vehicleDetails, range }) {
   const [intervalTime, setIntervalTime] = useState(100);
   const [pauseStream, setPauseStream] = useState(false);
   const [vehicle, setVehicle] = useState({ vehicleDetails });
+  const progressBarRef = useRef(null);
+  const [progress, setProgress] = useState(0); // percentage
+
+  const onSeek = "cre"
+
+  const handleClick = (e) => {
+    updateProgress(e);
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging.current) {
+      updateProgress(e);
+    }
+  };
+
+  const isDragging = useRef(false);
+
+  const updateProgress = (e) => {
+    const bar = progressBarRef.current;
+    if (!bar) return;
+
+    const rect = bar.getBoundingClientRect();
+
+    const x = e.clientX - rect.left;
+    let percent = (x / rect.width) * 100;
+
+    // console.log("percent : ",percent)
+
+    percent = Math.max(0, Math.min(100, percent)); // clamp 0-100
+    setProgress(percent);
+
+    // You can send the new value back to parent or simulate a seek
+    if (onSeek) {
+      const value = (percent / 100) * totalPath;
+
+      // console.log("value  :",value)
+      onSeek(value);
+    }
+  };
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
     libraries: libraries,
   });
 
-  const startDate = range != null ? range.startDate : new Date();
-  startDate.setHours(0, 0, 0, 0);
   const endDate = range != null ? range.endDate : new Date();
+  const startDate =
+    range != null
+      ? range.startDate
+      : new Date(endDate.getTime() - (24 * 60 * 60 - 1) * 1000); // 23:59:59 before
 
   const updatedCoordinates = [...path];
   const intervalIdRef = useRef(null);
@@ -143,7 +184,15 @@ function Streaming({ vehicleDetails, range }) {
       eventSource.close();
       setEventSource(null);
       setPauseStream(true);
+      // console.log("total lat long : ", totalPath);
+      // console.log("last lat long : ", path[0]);
+
+      // console.log("last lat long : ", path);
     }
+  };
+
+  const restartStreaming = () => {
+    // console.log("last lat long : ", path[path - 1]);
   };
 
   // console.log("Start : ", pauseStream);
@@ -163,7 +212,7 @@ function Streaming({ vehicleDetails, range }) {
       ? updatedCoordinates[updatedCoordinates.length - 1]
       : { lat: 22.4738, lng: 77.64372, time: "2025-03-26T07:36:40.307Z" };
 
-  const progress = (path.length / totalPath) * 100;
+  const Progress = (path.length / totalPath) * 100;
 
   const icon1 = isLoaded
     ? {
@@ -173,6 +222,11 @@ function Streaming({ vehicleDetails, range }) {
         scale: 1.5,
       }
     : null;
+
+  const checkKar = (e) => {
+    // console.log("it will be working");
+    // console.log("it w : ", e);
+  };
 
   return (
     <div style={{ width: "100%", height: "82vh" }}>
@@ -214,17 +268,27 @@ function Streaming({ vehicleDetails, range }) {
       </GoogleMap>
 
       <div className="bg-gray-200 rounded-full dark:bg-gray-700">
-        <div className="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-700 my-2">
+        <div
+          ref={progressBarRef}
+          className="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-700 my-2 cursor-pointer"
+          onClick={handleClick}
+          onMouseDown={() => (isDragging.current = true)}
+          onMouseUp={() => (isDragging.current = false)}
+          onMouseLeave={() => (isDragging.current = false)}
+          onMouseMove={handleMouseMove}
+        >
           <div
-            className="bg-blue-600 h-2.5 rounded-full"
-            style={{ width: path.length > 0 ? `${progress}%` : "0%" }}
+            className="bg-blue-600 h-2.5 rounded-full transition-all duration-75"
+            style={{ width: `${progress}%` }}
           ></div>
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4 my-1">
         {defaultCenter && (
-          <div className="font-bold text-1xl">{defaultCenter.time}</div>
+          <div className="font-bold text-1xl" onScroll={checkKar}>
+            {defaultCenter.time}
+          </div>
         )}
         <div className="flex justify-center items-center">
           <div className="mx-[1px]">
@@ -235,7 +299,10 @@ function Streaming({ vehicleDetails, range }) {
           </div>
           {pauseStream ? (
             <div className="mx-[1px]">
-              <FaPlay className="text-2xl border p-1 rounded" />
+              <FaPlay
+                className="text-2xl border p-1 rounded"
+                onClick={restartStreaming}
+              />
             </div>
           ) : (
             <div className="mx-[1px]">
@@ -273,7 +340,7 @@ function Streaming({ vehicleDetails, range }) {
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(100, 10)}
+            onClick={() => increasingSpped(2000, 10)}
           >
             200px
           </button>
