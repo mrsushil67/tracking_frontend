@@ -5,10 +5,14 @@ import { BsCalendar2WeekFill } from "react-icons/bs"; // Calendar Icon
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import TimePicker from "react-time-picker";
+import "react-time-picker/dist/TimePicker.css";
+import "react-clock/dist/Clock.css";
 import { format } from "date-fns";
 import axios from "axios";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { useGlobleContext } from "../../globle/context";
 
 const VehicleDetails = ({
   setShowDetails,
@@ -24,7 +28,10 @@ const VehicleDetails = ({
   getVehiclePath,
   vehicleData,
 }) => {
+  const { showDetailed } = useGlobleContext();
   const [showCalendar, setShowCalendar] = useState(false);
+  const [startTime, setStartTime] = useState("00:00");
+  const [endTime, setEndTime] = useState("23:59");
 
   const clearData = (vehicleNo) => {
     setRange(null);
@@ -33,7 +40,9 @@ const VehicleDetails = ({
     getVehiclePath(vehicleNo);
   };
 
-  console.log("range : ",range)
+  console.log("range : ", range);
+
+  console.log("showDetailed : showDetailed : ", showDetailed);
 
   useEffect(() => {
     if (range) {
@@ -41,17 +50,16 @@ const VehicleDetails = ({
     }
   }, [range]);
 
-
   const downloadExcel = async () => {
     let stopStartTime = null;
     let previousLocation = null;
     let isCurrentlyStopped = false;
     let Data = [];
-  
+
     vehicleData.forEach((vehicle, index, arr) => {
       let isStopped = "No";
       let stopDuration = "";
-  
+
       if (vehicle.speed === 0) {
         if (
           previousLocation &&
@@ -74,7 +82,7 @@ const VehicleDetails = ({
           let stopEndTime = new Date(vehicle.time);
           let durationInMs = stopEndTime - stopStartTime;
           let durationInMinutes = Math.ceil(durationInMs / (1000 * 60));
-  
+
           Data.push({
             speed: 0,
             address: previousLocation?.address || "Unknown",
@@ -84,12 +92,12 @@ const VehicleDetails = ({
             stop: "Yes",
             "stop duration": `${durationInMinutes} min`,
           });
-  
+
           // Reset stop tracking
           isCurrentlyStopped = false;
           stopStartTime = null;
         }
-  
+
         // Add moving vehicle entry
         Data.push({
           speed: vehicle.speed,
@@ -101,14 +109,14 @@ const VehicleDetails = ({
           "stop duration": "",
         });
       }
-  
+
       previousLocation = {
         lat: vehicle.lat,
         lng: vehicle.lng,
         address: vehicle.address,
       };
     });
-  
+
     // **Fix for Vehicles that Never Moved**
     if (Data.length === 0 && vehicleData.length > 0) {
       let firstVehicle = vehicleData[0];
@@ -122,7 +130,7 @@ const VehicleDetails = ({
         "stop duration": "Ongoing",
       });
     }
-  
+
     const worksheet = XLSX.utils.json_to_sheet(Data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
@@ -130,7 +138,7 @@ const VehicleDetails = ({
       bookType: "xlsx",
       type: "array",
     });
-  
+
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(blob, `vehicle_activity.xlsx`);
   };
@@ -174,7 +182,39 @@ const VehicleDetails = ({
                   onChange={(item) => setTempRange([{ ...item.selection }])}
                   moveRangeOnFirstSelection={false}
                 />
-                <div className="flex justify-end gap-2 mt-2">
+
+                {/* Time Pickers */}
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Start Time */}
+                  <div className="flex flex-col bg-gray-50 p-4 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                    <label className="text-sm font-semibold text-gray-600 mb-2 tracking-wide">
+                      🕓 Start Time
+                    </label>
+                    <TimePicker
+                      onChange={setStartTime}
+                      value={startTime}
+                      disableClock={false}
+                      className="w-full rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-blue-500"
+                      clearIcon={null}
+                    />
+                  </div>
+
+                  {/* End Time */}
+                  <div className="flex flex-col bg-gray-50 p-4 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                    <label className="text-sm font-semibold text-gray-600 mb-2 tracking-wide">
+                      🕓 End Time
+                    </label>
+                    <TimePicker
+                      onChange={setEndTime}
+                      value={endTime}
+                      // disableClock={true}
+                      className="w-full rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-blue-500"
+                      clearIcon={null}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 mt-4">
                   <button
                     className="px-3 py-1 text-sm bg-gray-300 rounded hover:bg-gray-400"
                     onClick={() => {
@@ -197,7 +237,18 @@ const VehicleDetails = ({
                   <button
                     className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
                     onClick={() => {
-                      setRange({ ...tempRange[0] }); // Apply selected range
+                      const updatedRange = {
+                        ...tempRange[0],
+                        startDate: new Date(
+                          tempRange[0].startDate.toDateString() +
+                            " " +
+                            startTime
+                        ),
+                        endDate: new Date(
+                          tempRange[0].endDate.toDateString() + " " + endTime
+                        ),
+                      };
+                      setRange(updatedRange);
                       setShowCalendar(false);
                     }}
                   >
@@ -263,8 +314,11 @@ const VehicleDetails = ({
                 : "N/A"}
             </span>
             <div className="flex justify-end">
-              <button className="border p-[3px] rounded text-xs font-semibold mt-2 bg-amber-500 border-amber-600  hover:bg-amber-500 cursor-pointer transition-transform transform hover:scale-104" onClick={downloadExcel}>
-              ⬇️Report
+              <button
+                className="border p-[3px] rounded text-xs font-semibold mt-2 bg-amber-500 border-amber-600  hover:bg-amber-500 cursor-pointer transition-transform transform hover:scale-104"
+                onClick={downloadExcel}
+              >
+                ⬇️Report
               </button>
             </div>
           </div>
