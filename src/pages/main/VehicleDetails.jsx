@@ -40,9 +40,7 @@ const VehicleDetails = ({
     getVehiclePath(vehicleNo);
   };
 
-  console.log("range : ", range);
-
-  console.log("showDetailed : showDetailed : ", showDetailed);
+  // console.log("range : ", range);
 
   useEffect(() => {
     if (range) {

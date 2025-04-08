@@ -11,11 +11,11 @@ const VehicleList = ({
   vehicleDetails,
   setFilterdCounts,
 }) => {
-  console.log("Filtered : ", filterVehicles);
+  // console.log("Filtered : ", filterVehicles);
   const vehiclesToDisplay =
     filterVehicles && filterVehicles.length > 0 ? filterVehicles : vehiclelist;
 
-  console.log("vehiclesToDisplay :", vehiclesToDisplay.length);
+  // console.log("vehiclesToDisplay :", vehiclesToDisplay.length);
   setFilterdCounts( vehiclesToDisplay.length)
 
   return (

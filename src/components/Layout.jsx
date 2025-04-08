@@ -23,9 +23,9 @@ const Layout = () => {
     setVehicleno(e.target.value);
   };
 
-  console.log("vehicleno : ", typeof vehicleno);
-  console.log("totalVehicles : ", totalVehicles);
-  console.log("filter Counts : ", filterdCounts);
+  // console.log("vehicleno : ", typeof vehicleno);
+  // console.log("totalVehicles : ", totalVehicles);
+  // console.log("filter Counts : ", filterdCounts);
 
   return (
     <div className="layout-container flex flex-col">

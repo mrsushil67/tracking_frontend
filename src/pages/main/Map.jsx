@@ -37,9 +37,9 @@ const Map = ({
     vehicleDetails.driverDetails
   );
 
-  console.log("driverDetails : ", vehicleDetails.driverDetails);
+  // console.log("driverDetails : ", vehicleDetails.driverDetails);
 
-  console.log("vehicleDetails : ", vehicleDetails);
+  // console.log("vehicleDetails : ", vehicleDetails);
   const handleMarkerClick = (event) => {
     setOpen(true);
     setMarker({ lat: event.latLng.lat(), lng: event.latLng.lng() });
@@ -47,7 +47,7 @@ const Map = ({
 
   const updatedCoordinates = [...vehiclePath];
 
-  console.log("updatedCoordinates : ", updatedCoordinates.length);
+  // console.log("updatedCoordinates : ", updatedCoordinates.length);
 
   const processBar = (updatedCoordinates.length / updatedCoordinates.length) * 100;
 
