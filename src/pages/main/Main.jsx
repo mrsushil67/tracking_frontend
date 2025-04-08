@@ -11,11 +11,13 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { Commet } from "react-loading-indicators";
 import { useOutletContext } from "react-router-dom";
 import Streaming from "./Streaming";
+import { useGlobleContext } from "../../globle/context";
 
 const googleMapsLibraries = ["places", "geometry", "marker"];
 
 function Main() {
   const [vehicleno, setTotalVehicles, setFilterdCounts] = useOutletContext();
+  const {showVedio, setShowVedio} = useGlobleContext(); 
   const [vehiclelist, setVehiclelist] = useState([]);
   const [vehiclePath, setVehiclePath] = useState([]);
   const [filteredPath, setFilteredPath] = useState([]);
@@ -34,7 +36,6 @@ function Main() {
   const [filterVehicles, setFilterVehicles] = useState([]);
   const [pathloading, setPathLoading] = useState(false);
   const [vehicleStartTime, setVehicleStartTime] = useState({});
-  const [showVedio, setShowVedio] = useState(false);
   const [tempRange, setTempRange] = useState([
     {
       startDate: new Date(),
@@ -68,7 +69,7 @@ function Main() {
       }
     : null;
 
-  console.log("Loading : ", isLoaded);
+  // console.log("Loading : ", isLoaded);
 
   const intervalIdRef = useRef(null);
   let lastKnownAngle = null;
@@ -123,7 +124,7 @@ function Main() {
       );
       setVehiclelist(response.data.vehicles);
       setTotalVehicles(response.data?.vehicles.length);
-      console.log("response.data : ", response.data.vehicles.length);
+      // console.log("response.data : ", response.data.vehicles.length);
       const markerpos = response.data.vehicles.map((position) => ({
         vehicleid: position._id,
         lat: position.latitude,
@@ -145,7 +146,7 @@ function Main() {
         }
       );
 
-      console.log("response : ", response.data[0]);
+      // console.log("response : ", response.data[0]);
       setVehicleStartTime(response.data[0]);
       setVehicleData(response.data);
       const formattedPath = response.data.map(({ lat, lng }) => ({ lat, lng }));
@@ -168,7 +169,7 @@ function Main() {
         }
       );
 
-      console.log("API Response:", response.data.data);
+      // console.log("API Response:", response.data.data);
       setVehicleDetails(response.data.data);
 
       const location = response.data.data;
@@ -208,7 +209,7 @@ function Main() {
         }
       );
 
-      console.log("Response:", response);
+      // console.log("Response:", response);
       setVehicleData(response.data);
       const formattedPath = response.data.map(({ lat, lng }) => ({ lat, lng }));
       setVehiclePath(formattedPath);
@@ -219,7 +220,7 @@ function Main() {
       }
 
       const vehicleLocation = response.data.slice(-3);
-      console.log("vehicleLocation : ", vehicleLocation);
+      // console.log("vehicleLocation : ", vehicleLocation);
 
       rotateIconBasedOnPath(vehicleLocation);
       setPathLoading(false);
@@ -234,6 +235,7 @@ function Main() {
     getVehiclePath(vehicleNo);
     setShowSplashMap();
     setShowDetails(true);
+    // setShowVedio(false)
   };
 
   const handleClick = () => {

@@ -32,7 +32,7 @@ function Streaming({ vehicleDetails, range }) {
   const progressBarRef = useRef(null);
   const [progress, setProgress] = useState(0); // percentage
 
-  const onSeek = "cre"
+  const onSeek = "cre";
 
   const handleClick = (e) => {
     updateProgress(e);
@@ -138,6 +138,8 @@ function Streaming({ vehicleDetails, range }) {
       eventSource.close();
     }
 
+    setPauseStream(false);
+
     setPath([]);
 
     let queryParams = `vehicleNo=${vehicle.vehicleDetails.vehicleNo}`;
@@ -184,15 +186,11 @@ function Streaming({ vehicleDetails, range }) {
       eventSource.close();
       setEventSource(null);
       setPauseStream(true);
-      // console.log("total lat long : ", totalPath);
-      // console.log("last lat long : ", path[0]);
-
-      // console.log("last lat long : ", path);
     }
   };
 
   const restartStreaming = () => {
-    // console.log("last lat long : ", path[path - 1]);
+
   };
 
   // console.log("Start : ", pauseStream);
@@ -203,6 +201,7 @@ function Streaming({ vehicleDetails, range }) {
   const increasingSpped = (chunk, interval) => {
     setChunkSize(chunk);
     setIntervalTime(interval);
+    startStreaming();
   };
 
   if (!isLoaded) return <div>Loading map...</div>;

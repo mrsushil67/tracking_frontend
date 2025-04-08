@@ -1,52 +1,64 @@
-import React,{useState, createContext, useContext, useReducer} from 'react'
-import reducer from './reducer'
+import React, { useState, createContext, useContext, useReducer } from "react";
+import reducer from "./reducer";
 
-const UserContext = createContext()
+const UserContext = createContext();
 
 const initialState = {
-    user : localStorage.getItem("user")
+  user: localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : {},
-    showDetailed : false,
+  showDetailed: false,
+  showVedio: false,
+};
 
-}
+const UserProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-const UserProvider = ({children}) => {
-    const[state, dispatch] = useReducer(reducer ,initialState)
+  const setUser = (user) => {
+    // console.log("Reducer got the User Data: ", userdata);
+    localStorage.setItem("user", JSON.stringify(user));
+    return dispatch({
+      type: "SET_USER",
+      payload: {
+        user: user,
+      },
+    });
+  };
 
-    const setUser = (user) => {
-        // console.log("Reducer got the User Data: ", userdata);
-        localStorage.setItem("user", JSON.stringify(user));
-        return dispatch({
-          type: "SET_USER",
-          payload: {
-            user: user,
-          },
-        });
-      };
+  const setShowDetailed = (showDetailed) => {
+    return dispatch({
+      type: "SET_SHOWDETAILS",
+      payload: {
+        showDetailed: showDetailed,
+      },
+    });
+  };
 
-    const setShowDetailed = (showDetailed) => {
-        return dispatch({
-          type: "SET_SHOWDETAILS",
-          payload: {
-            showDetailed: showDetailed,
-          },
-        });
-      }
-    return(
-        <UserContext.Provider
-         value={{
-            ...state,
-            setUser,
-            setShowDetailed,
-         }}>
-            {children}
-         </UserContext.Provider>
-    )
-}
+  const setShowVedio = (showVedio) => {
+    return dispatch({
+      type: "SET_SHOWVEDIO",
+      payload: {
+        showVedio: showVedio,
+      },
+    });
+  }
+
+  return (
+    <UserContext.Provider
+      value={{
+        ...state,
+        setUser,
+        setShowDetailed,
+        setShowVedio,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
+};
 
 const useGlobleContext = () => {
-    return useContext(UserContext)
-}
+  return useContext(UserContext);
+};
 
-export  {UserContext, UserProvider, useGlobleContext}
+export { UserContext, UserProvider, useGlobleContext };
