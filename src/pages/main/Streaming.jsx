@@ -30,9 +30,21 @@ function Streaming({ vehicleDetails, range }) {
   const [pauseStream, setPauseStream] = useState(false);
   const [vehicle, setVehicle] = useState({ vehicleDetails });
   const progressBarRef = useRef(null);
+  const [fullPath, setFullPath] = useState([]);
+
   const [progress, setProgress] = useState(0); // percentage
 
-  const onSeek = "cre";
+  const onSeek = (value) => {
+    if (eventSource) {
+      eventSource.close();
+      setEventSource(null);
+      setPauseStream(true);
+    }
+  
+    // Seek the path
+    const seekedPath = fullPath.slice(0, Math.floor(value));
+    setPath(seekedPath);
+  };
 
   const handleClick = (e) => {
     updateProgress(e);
@@ -68,6 +80,13 @@ function Streaming({ vehicleDetails, range }) {
       onSeek(value);
     }
   };
+
+  useEffect(() => {
+    if (totalPath > 0) {
+      const calculatedProgress = Math.min((path.length / totalPath) * 100, 100);
+      setProgress(calculatedProgress);
+    }
+  }, [path, totalPath]);
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
@@ -165,6 +184,7 @@ function Streaming({ vehicleDetails, range }) {
 
     es.addEventListener("vehicle-path", (e) => {
       const data = JSON.parse(e.data);
+      setFullPath((prev) => [...prev, ...data]);
       setPath((prev) => [...prev, ...data]);
     });
 
