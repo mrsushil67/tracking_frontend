@@ -188,7 +188,7 @@
 } */
 
 .custom-calendar {
-  transform: scale(0.8);
+  transform: scale(0.9);
   transform-origin: top center;
 }
 
@@ -197,9 +197,14 @@
 }
 
 .custom-calendar .rdrMonth {
-  width: 265px !important;
+  width: 300px !important;
 }
 
+
+.react-time-picker__wrapper {
+  border: none !important;
+  box-shadow: none !important;
+}
 /* .map-container .custom-calendar .rdrDay {
   height: 25px !important;
   width: 35px !important;

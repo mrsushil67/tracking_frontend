@@ -191,8 +191,8 @@ const VehicleDetails = ({
                     <TimePicker
                       onChange={setStartTime}
                       value={startTime}
-                      disableClock={false}
-                      className="w-full rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-blue-500"
+                      // disableClock={false}
+                      className="w-full px-3 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-blue-500"
                       clearIcon={null}
                     />
                   </div>
