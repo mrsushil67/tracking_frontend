@@ -6,6 +6,10 @@ const reducer = (state, action) => {
       return { ...state, showDetailed: action.payload.showDetailed };
     case "SET_SHOWVEDIO":
       return { ...state, showVedio: action.payload.showVedio };
+    case "SET_PATH":
+      return { ...state, path: action.payload.path };
+    case "SET_FULLPATH":
+      return { ...state, fullPath: action.payload.fullPath };
 
     default:
       return state;

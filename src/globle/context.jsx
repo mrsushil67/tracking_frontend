@@ -9,6 +9,8 @@ const initialState = {
     : {},
   showDetailed: false,
   showVedio: false,
+  path: [],
+  fullPath: [],
 };
 
 const UserProvider = ({ children }) => {
@@ -43,6 +45,24 @@ const UserProvider = ({ children }) => {
     });
   }
 
+  const setPath = (path) => {
+    return dispatch({
+      type: "SET_PATH",
+      payload: {
+        path: path,
+      },
+    });
+  }
+
+  const setFullPath = (fullPath) => {
+    return dispatch({
+      type: "SET_FULLPATH",
+      payload: {
+        fullPath: fullPath,
+      },
+    });
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -50,6 +70,8 @@ const UserProvider = ({ children }) => {
         setUser,
         setShowDetailed,
         setShowVedio,
+        setPath,
+        setFullPath,
       }}
     >
       {children}
