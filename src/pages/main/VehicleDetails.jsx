@@ -289,7 +289,7 @@ const VehicleDetails = ({
 
           <div className="mt-2 text-sm text-gray-700">
             <span className="font-bold text-xs">Coordinates</span>
-            <pan className=" font-bold text-xs px-1">:</pan>
+            <span className=" font-bold text-xs px-1">:</span>
             <span
               className={`font-semibold text-xs ${
                 vehicleDetails.speed === 0

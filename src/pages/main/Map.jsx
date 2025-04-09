@@ -49,7 +49,8 @@ const Map = ({
 
   // console.log("updatedCoordinates : ", updatedCoordinates.length);
 
-  const processBar = (updatedCoordinates.length / updatedCoordinates.length) * 100;
+  const processBar =
+    (updatedCoordinates.length / updatedCoordinates.length) * 100;
 
   if (
     vehicleDetails &&
@@ -79,14 +80,26 @@ const Map = ({
   };
 
   const showVedioPage = () => {
-    setShowVedio(true)
+    setShowVedio(true);
+  };
+
+  const isoString = vehicleStartTime.time;
+  const date = new Date(isoString);
+  let time = "";
+  
+  if (!isNaN(date.getTime())) {
+    time = date.toISOString().substr(11, 8);
+  } else {
+    // console.error("Invalid date:", isoString);
+    time = "--:--:--";
   }
 
+  console.log(time);
   return (
     <>
       {!pathloading ? (
         <div>
-          <div style={{ width: "100%", height: "82vh" }}>
+          <div style={{ width: "100%", height: "81vh" }}>
             <GoogleMap
               mapContainerStyle={containerStyle}
               ref={mapRef}
@@ -301,66 +314,77 @@ const Map = ({
          ))} */}
             </GoogleMap>
           </div>
-          <div className="bg-gray-200 rounded-full dark:bg-gray-700">
-            <div className="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-700 my-2">
-              <div
-                className="bg-blue-600 h-2.5 rounded-full"
-                style={{ width: updatedCoordinates ? `${processBar}%`:`16%` }}
-              ></div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4 my-1">
-            <div className="font-bold text-xs">{vehicleStartTime.time}</div>
-
-            <div className="flex justify-center items-center">
+          <div className="">
+            <div className="flex bg-gray-200 rounded-full dark:bg-gray-700">
               <div className="mx-[1px]">
-                <FaStop
-                  className="text-2xl border p-1 rounded"
+                <FaPlay
+                  className="text-2xl p-1 rounded"
                   onClick={showVedioPage}
                 />
               </div>
-              <div className="mx-[1px]">
-                <FaPlay className="text-2xl border p-1 rounded" />
+              <div className="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-700 my-2">
+                <div
+                  className="bg-[#fc6a2a] h-2.5 rounded-full"
+                  style={{
+                    width: updatedCoordinates ? `${processBar}%` : `16%`,
+                  }}
+                ></div>
               </div>
-              <div className="mx-[1px]">
-                <FaPause
-                  className="text-2xl border p-1 rounded"
-                  // onClick={pauseStreaming}
-                />
-              </div>
+              <div className="font-bold text-m mx-4">{time}</div>
             </div>
-            <div className="flex justify-end items-center">
-              <button
-                className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-                // onClick={() => increasingSpped(30, 90)}
-              >
-                10px
-              </button>
-              <button
-                className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-                // onClick={() => increasingSpped(40, 80)}
-              >
-                20px
-              </button>
-              <button
-                className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-                // onClick={() => increasingSpped(50, 70)}
-              >
-                50px
-              </button>
-              <button
-                className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-                // onClick={() => increasingSpped(70, 30)}
-              >
-                100px
-              </button>
-              <button
-                className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-                // onClick={() => increasingSpped(100, 10)}
-              >
-                200px
-              </button>
+
+            <div className="grid grid-cols-3 gap-4 my-1">
+              {/* <div className="font-bold text-xs">{vehicleStartTime.time}</div> */}
+
+              <div className="flex justify-center items-center">
+                <div className="mx-[1px]">
+                  {/* <FaStop
+                    className="text-2xl border p-1 rounded"
+                    
+                  /> */}
+                </div>
+                <div className="mx-[1px]">
+                  {/* <div className="font-bold text-xs">{vehicleStartTime.time}</div> */}
+                </div>
+                {/* <div className="mx-[1px]">
+                  <FaPause
+                    className="text-2xl border p-1 rounded"
+                    // onClick={pauseStreaming}
+                  />
+                </div> */}
+              </div>
+              {/* <div className="flex justify-end items-center">
+                <button
+                  className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
+                  // onClick={() => increasingSpped(30, 90)}
+                >
+                  10px
+                </button>
+                <button
+                  className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
+                  // onClick={() => increasingSpped(40, 80)}
+                >
+                  20px
+                </button>
+                <button
+                  className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
+                  // onClick={() => increasingSpped(50, 70)}
+                >
+                  50px
+                </button>
+                <button
+                  className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
+                  // onClick={() => increasingSpped(70, 30)}
+                >
+                  100px
+                </button>
+                <button
+                  className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
+                  // onClick={() => increasingSpped(100, 10)}
+                >
+                  200px
+                </button>
+              </div> */}
             </div>
           </div>
         </div>

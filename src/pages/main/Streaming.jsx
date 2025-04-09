@@ -19,6 +19,7 @@ const libraries = ["places"];
 
 function Streaming({ vehicleDetails, range }) {
   const ref = useRef();
+  const isDragging = useRef(false);
   const location = useLocation();
   const [center, setCenter] = useState({ lat: 22.015137, lng: 77.97953 });
   const [zoom, setZoom] = useState(8);
@@ -34,13 +35,24 @@ function Streaming({ vehicleDetails, range }) {
 
   const [progress, setProgress] = useState(0); // percentage
 
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
+    libraries: libraries,
+  });
+
+  const endDate = range != null ? range.endDate : new Date();
+  const startDate =
+    range != null
+      ? range.startDate
+      : new Date(endDate.getTime() - (24 * 60 * 60 - 1) * 1000);
+
   const onSeek = (value) => {
     if (eventSource) {
       eventSource.close();
       setEventSource(null);
       setPauseStream(true);
     }
-  
+
     // Seek the path
     const seekedPath = fullPath.slice(0, Math.floor(value));
     setPath(seekedPath);
@@ -55,8 +67,6 @@ function Streaming({ vehicleDetails, range }) {
       updateProgress(e);
     }
   };
-
-  const isDragging = useRef(false);
 
   const updateProgress = (e) => {
     const bar = progressBarRef.current;
@@ -83,26 +93,17 @@ function Streaming({ vehicleDetails, range }) {
 
   useEffect(() => {
     if (totalPath > 0) {
+      console.log(path)
       const calculatedProgress = Math.min((path.length / totalPath) * 100, 100);
       setProgress(calculatedProgress);
     }
   }, [path, totalPath]);
 
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
-    libraries: libraries,
-  });
-
-  const endDate = range != null ? range.endDate : new Date();
-  const startDate =
-    range != null
-      ? range.startDate
-      : new Date(endDate.getTime() - (24 * 60 * 60 - 1) * 1000); // 23:59:59 before
-
   const updatedCoordinates = [...path];
   const intervalIdRef = useRef(null);
   let lastKnownAngle = null;
 
+  // for vehicle rotation
   const rotateIconBasedOnPath = (vehicleLocation) => {
     if (vehicleLocation.length > 1 && window.google) {
       let point1 = vehicleLocation[vehicleLocation.length - 2];
@@ -209,9 +210,7 @@ function Streaming({ vehicleDetails, range }) {
     }
   };
 
-  const restartStreaming = () => {
-
-  };
+  const restartStreaming = () => {};
 
   // console.log("Start : ", pauseStream);
   useEffect(() => {
@@ -223,8 +222,6 @@ function Streaming({ vehicleDetails, range }) {
     setIntervalTime(interval);
     startStreaming();
   };
-
-  if (!isLoaded) return <div>Loading map...</div>;
 
   const defaultCenter =
     totalPath > 0
@@ -247,8 +244,9 @@ function Streaming({ vehicleDetails, range }) {
     // console.log("it w : ", e);
   };
 
+  if (!isLoaded) return <div>Loading map...</div>;
   return (
-    <div style={{ width: "100%", height: "82vh" }}>
+    <div style={{ width: "100%", height: "81vh" }}>
       <GoogleMap
         ref={ref}
         mapContainerStyle={containerStyle}
@@ -297,7 +295,7 @@ function Streaming({ vehicleDetails, range }) {
           onMouseMove={handleMouseMove}
         >
           <div
-            className="bg-blue-600 h-2.5 rounded-full transition-all duration-75"
+            className="bg-[#fc6a2a] h-2.5 rounded-full transition-all duration-75"
             style={{ width: `${progress}%` }}
           ></div>
         </div>
