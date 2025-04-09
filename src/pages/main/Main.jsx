@@ -137,6 +137,7 @@ function Main() {
   };
 
   const getVehiclePath = async (vehicleNo) => {
+    if(!vehicleNo) return
     try {
       // setPathLoading(true)
       const response = await axios.get(
@@ -149,6 +150,7 @@ function Main() {
       // console.log("response : ", response.data[0]);
       setVehicleStartTime(response.data[0]);
       setVehicleData(response.data);
+      console.log(response.data)
       const formattedPath = response.data.map(({ lat, lng }) => ({ lat, lng }));
       setVehiclePath(formattedPath);
       setCurrentPosition(formattedPath[0]);
@@ -161,6 +163,7 @@ function Main() {
   };
 
   const vehicleCurrentLocation = async (vehicleNo) => {
+    if(!vehicleNo) return
     try {
       const response = await axios.get(
         `${config.host}${config.currentLocation.url}`,
