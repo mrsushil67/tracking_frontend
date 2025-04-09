@@ -9,6 +9,7 @@ import {
 } from "@react-google-maps/api";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { FaStop } from "react-icons/fa";
+import { useGlobleContext } from "../../globle/context";
 
 const containerStyle = {
   width: "100%",
@@ -18,6 +19,7 @@ const containerStyle = {
 const libraries = ["places"];
 
 function Streaming({ vehicleDetails, range }) {
+  // const {path, setPath, fullPath, setFullPath} = useGlobleContext();
   const ref = useRef();
   const isDragging = useRef(false);
   const location = useLocation();
@@ -32,13 +34,78 @@ function Streaming({ vehicleDetails, range }) {
   const [vehicle, setVehicle] = useState({ vehicleDetails });
   const progressBarRef = useRef(null);
   const [fullPath, setFullPath] = useState([]);
-
   const [progress, setProgress] = useState(0); // percentage
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
     libraries: libraries,
   });
+
+
+  console.log("path : ",path)
+  console.log("fullpath : ",fullPath)
+
+  const updatedCoordinates = [...path];
+  const intervalIdRef = useRef(null);
+  let lastKnownAngle = null;
+
+  const defaultCenter =
+    totalPath > 0
+      ? updatedCoordinates[updatedCoordinates.length - 1]
+      : { lat: 22.4738, lng: 77.64372, time: "2025-03-26T07:36:40.307Z" };
+
+  const Progress = (path.length / totalPath) * 100;
+
+  const icon1 = isLoaded
+    ? zoom <= 8
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(30, 35),
+          anchor: new window.google.maps.Point(20, 20),
+          scale: 1.5,
+        }
+      : zoom >= 8 && zoom < 10
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(35, 39),
+          anchor: new window.google.maps.Point(20, 20),
+          scale: 1.5,
+        }
+      : zoom >= 10 && zoom < 12
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(40, 44),
+          anchor: new window.google.maps.Point(23, 23),
+          scale: 1.5,
+        }
+      : zoom >= 12 && zoom < 14
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(45, 49),
+          anchor: new window.google.maps.Point(25, 25),
+          scale: 1.5,
+        }
+      : zoom >= 14 && zoom < 16
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(50, 53),
+          anchor: new window.google.maps.Point(28, 28),
+          scale: 1.5,
+        }
+      : zoom >= 16
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(55, 56),
+          anchor: new window.google.maps.Point(30, 30),
+          scale: 1.5,
+        }
+      : {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(60, 60),
+          anchor: new window.google.maps.Point(30, 30),
+          scale: 1.5,
+        }
+    : null;
 
   const endDate = range != null ? range.endDate : new Date();
   const startDate =
@@ -93,15 +160,17 @@ function Streaming({ vehicleDetails, range }) {
 
   useEffect(() => {
     if (totalPath > 0) {
-      console.log(path)
+      console.log(path);
       const calculatedProgress = Math.min((path.length / totalPath) * 100, 100);
       setProgress(calculatedProgress);
     }
   }, [path, totalPath]);
 
-  const updatedCoordinates = [...path];
-  const intervalIdRef = useRef(null);
-  let lastKnownAngle = null;
+  function handleZoomChanged() {
+    setZoom(this.getZoom());
+  }
+
+  console.log("zoom : ", zoom);
 
   // for vehicle rotation
   const rotateIconBasedOnPath = (vehicleLocation) => {
@@ -223,26 +292,7 @@ function Streaming({ vehicleDetails, range }) {
     startStreaming();
   };
 
-  const defaultCenter =
-    totalPath > 0
-      ? updatedCoordinates[updatedCoordinates.length - 1]
-      : { lat: 22.4738, lng: 77.64372, time: "2025-03-26T07:36:40.307Z" };
-
-  const Progress = (path.length / totalPath) * 100;
-
-  const icon1 = isLoaded
-    ? {
-        url: "images/truck1.png",
-        scaledSize: new window.google.maps.Size(60, 60),
-        anchor: new window.google.maps.Point(30, 30),
-        scale: 1.5,
-      }
-    : null;
-
-  const checkKar = (e) => {
-    // console.log("it will be working");
-    // console.log("it w : ", e);
-  };
+  console.log(totalPath);
 
   if (!isLoaded) return <div>Loading map...</div>;
   return (
@@ -252,6 +302,7 @@ function Streaming({ vehicleDetails, range }) {
         mapContainerStyle={containerStyle}
         center={defaultCenter}
         zoom={zoom}
+        onZoomChanged={handleZoomChanged}
       >
         {window.google && window.google.maps && (
           <Polyline
@@ -279,7 +330,7 @@ function Streaming({ vehicleDetails, range }) {
             icon={icon1}
             position={defaultCenter}
             title="Vehicle"
-            label="S"
+            // label="S"
           />
         )}
       </GoogleMap>
@@ -303,7 +354,7 @@ function Streaming({ vehicleDetails, range }) {
 
       <div className="grid grid-cols-3 gap-4 my-1">
         {defaultCenter && (
-          <div className="font-bold text-1xl" onScroll={checkKar}>
+          <div className="font-bold text-1xl">
             {defaultCenter.time}
           </div>
         )}

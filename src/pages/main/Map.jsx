@@ -27,6 +27,8 @@ const Map = ({
   pathloading,
   vehicleStartTime,
   setShowVedio,
+  zoom,
+  handleZoomChanged,
 }) => {
   const mapRef = useRef(null);
   const [marker, setMarker] = useState(null);
@@ -99,12 +101,13 @@ const Map = ({
     <>
       {!pathloading ? (
         <div>
-          <div style={{ width: "100%", height: "81vh" }}>
+          <div style={{ width: "100%", height: "86vh" }}>
             <GoogleMap
               mapContainerStyle={containerStyle}
               ref={mapRef}
               center={center}
-              zoom={13}
+              zoom={zoom}
+              onZoomChanged={handleZoomChanged}
               options={{
                 clickableIcons: false,
                 fullscreenControl: true,
@@ -315,7 +318,7 @@ const Map = ({
             </GoogleMap>
           </div>
           <div className="">
-            <div className="flex bg-gray-200 rounded-full dark:bg-gray-700">
+            <div className="flex bg-gray-300 rounded dark:bg-gray-700">
               <div className="mx-[1px]">
                 <FaPlay
                   className="text-2xl p-1 rounded"

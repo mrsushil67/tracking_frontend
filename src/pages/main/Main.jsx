@@ -17,7 +17,7 @@ const googleMapsLibraries = ["places", "geometry", "marker"];
 
 function Main() {
   const [vehicleno, setTotalVehicles, setFilterdCounts] = useOutletContext();
-  const {showVedio, setShowVedio} = useGlobleContext(); 
+  const { showVedio, setShowVedio } = useGlobleContext();
   const [vehiclelist, setVehiclelist] = useState([]);
   const [vehiclePath, setVehiclePath] = useState([]);
   const [filteredPath, setFilteredPath] = useState([]);
@@ -36,6 +36,7 @@ function Main() {
   const [filterVehicles, setFilterVehicles] = useState([]);
   const [pathloading, setPathLoading] = useState(false);
   const [vehicleStartTime, setVehicleStartTime] = useState({});
+  const [zoom, setZoom] = useState(13)
   const [tempRange, setTempRange] = useState([
     {
       startDate: new Date(),
@@ -61,12 +62,54 @@ function Main() {
   });
 
   const icon1 = isLoaded
-    ? {
-        url: "images/truck1.png",
-        scaledSize: new window.google.maps.Size(60, 60),
-        anchor: new window.google.maps.Point(30, 30),
-        scale: 1.5,
-      }
+    ? zoom <= 8
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(30, 35),
+          anchor: new window.google.maps.Point(20, 20),
+          scale: 1.5,
+        }
+      : zoom >= 8 && zoom < 10
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(35, 39),
+          anchor: new window.google.maps.Point(20, 20),
+          scale: 1.5,
+        }
+      : zoom >= 10 && zoom < 12
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(40, 44),
+          anchor: new window.google.maps.Point(23, 23),
+          scale: 1.5,
+        }
+      : zoom >= 12 && zoom < 14
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(45, 49),
+          anchor: new window.google.maps.Point(25, 25),
+          scale: 1.5,
+        }
+      : zoom >= 14 && zoom < 16
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(50, 53),
+          anchor: new window.google.maps.Point(28, 28),
+          scale: 1.5,
+        }
+      : zoom >= 16
+      ? {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(55, 56),
+          anchor: new window.google.maps.Point(30, 30),
+          scale: 1.5,
+        }
+      : {
+          url: "images/truck1.png",
+          scaledSize: new window.google.maps.Size(60, 60),
+          anchor: new window.google.maps.Point(30, 30),
+          scale: 1.5,
+        }
     : null;
 
   // console.log("Loading : ", isLoaded);
@@ -112,6 +155,10 @@ function Main() {
     }
   };
 
+  function handleZoomChanged() {
+    setZoom(this.getZoom());
+  }
+
   const vehicleLocation = vehiclePath.slice(-3);
   setTimeout(() => {
     rotateIconBasedOnPath(vehicleLocation);
@@ -137,20 +184,28 @@ function Main() {
   };
 
   const getVehiclePath = async (vehicleNo) => {
-    if(!vehicleNo) return
+    if (!vehicleNo) return;
+
+    const twentyFourHoursAgo = new Date();
+    twentyFourHoursAgo.setTime(
+      twentyFourHoursAgo.getTime() - 24 * 60 * 60 * 1000
+    );
+
+    console.log(twentyFourHoursAgo);
+
     try {
       // setPathLoading(true)
       const response = await axios.get(
         `${config.host}${config.getVehiclePath.url}`,
         {
-          params: { vehicleNo },
+          params: { vehicleNo, twentyFourHoursAgo },
         }
       );
 
       // console.log("response : ", response.data[0]);
       setVehicleStartTime(response.data[0]);
       setVehicleData(response.data);
-      console.log(response.data)
+      console.log(response.data);
       const formattedPath = response.data.map(({ lat, lng }) => ({ lat, lng }));
       setVehiclePath(formattedPath);
       setCurrentPosition(formattedPath[0]);
@@ -163,7 +218,7 @@ function Main() {
   };
 
   const vehicleCurrentLocation = async (vehicleNo) => {
-    if(!vehicleNo) return
+    if (!vehicleNo) return;
     try {
       const response = await axios.get(
         `${config.host}${config.currentLocation.url}`,
@@ -196,7 +251,7 @@ function Main() {
 
   const FilterPathsByDate = async () => {
     clearVehiclePathInterval();
-    console.log("running ", vehicleDetails.vehicleNo);
+    // console.log("running ", vehicleDetails.vehicleNo);
     if (!range) return;
 
     try {
@@ -206,8 +261,8 @@ function Main() {
         {
           params: {
             vehicleNo: vehicleDetails.vehicleNo,
-            startDate: format(range.startDate, "yyyy-MM-dd"),
-            endDate: format(range.endDate, "yyyy-MM-dd"),
+            startDate: range.startDate,
+            endDate: range.endDate,
           },
         }
       );
@@ -238,7 +293,7 @@ function Main() {
     getVehiclePath(vehicleNo);
     setShowSplashMap();
     setShowDetails(true);
-    // setShowVedio(false)
+    setShowVedio(false)
   };
 
   const handleClick = () => {
@@ -362,12 +417,13 @@ function Main() {
               pathloading={pathloading}
               vehicleStartTime={vehicleStartTime}
               setShowVedio={setShowVedio}
+              zoom={zoom}
+              handleZoomChanged={handleZoomChanged}
             />
           ) : (
-            <div><Streaming 
-            vehicleDetails={vehicleDetails}
-            range={range}
-            /></div>
+            <div>
+              <Streaming vehicleDetails={vehicleDetails} range={range} />
+            </div>
           )
         ) : (
           <div className="grid min-h-full place-items-center">
