@@ -57,7 +57,7 @@ function Streaming({ vehicleDetails, range }) {
   const Progress = (path.length / totalPath) * 100;
 
   const icon1 = isLoaded
-    ? zoom <= 8
+    ? zoom < 8
       ? {
           url: "images/truck1.png",
           scaledSize: new window.google.maps.Size(30, 35),
