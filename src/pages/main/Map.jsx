@@ -319,7 +319,7 @@ const Map = ({
             </GoogleMap>
           </div>
           <div className="">
-            <div className="flex bg-gray-300 rounded dark:bg-gray-700">
+            <div className="flex bg-gray-200 rounded dark:bg-gray-700">
               <div className="mx-[1px]">
                 <FaPlay
                   className="text-2xl p-1 rounded"

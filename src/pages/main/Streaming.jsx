@@ -36,6 +36,23 @@ function Streaming({ vehicleDetails, range }) {
   const progressBarRef = useRef(null);
   const [fullPath, setFullPath] = useState([]);
   const [progress, setProgress] = useState(0); // percentage
+  const [currentDateTime, setCurrentDateTime] = useState(
+    new Date().getDate() +
+      "/" +
+      new Date().getMonth() +
+      "/" +
+      new Date().getFullYear() +
+      "   " +
+      new Date().getHours() +
+      ":" +
+      new Date().getMinutes() +
+      ":" +
+      new Date().getSeconds()
+  );
+
+  const [lastTime, setLastTime] = useState(null);
+
+  console.log("currentDateTime : ", currentDateTime);
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
@@ -49,7 +66,7 @@ function Streaming({ vehicleDetails, range }) {
   const defaultCenter =
     totalPath > 0
       ? updatedCoordinates[updatedCoordinates.length - 1]
-      : { lat: 22.4738, lng: 77.64372, time: "2025-03-26T07:36:40.307Z" };
+      : { lat: 22.4738, lng: 77.64372, time: currentDateTime };
 
   const Progress = (path.length / totalPath) * 100;
 
@@ -105,8 +122,12 @@ function Streaming({ vehicleDetails, range }) {
     : null;
 
   const time24 = moment().subtract(24, "h");
-  const startDate = range !== null ? range.startDate.toISOString() : new Date(time24).toISOString();
-  const endDate = range !== null ? range.endDate.toISOString() : new Date().toISOString();
+  const startDate =
+    range !== null
+      ? range.startDate.toISOString()
+      : new Date(time24).toISOString();
+  const endDate =
+    range !== null ? range.endDate.toISOString() : new Date().toISOString();
 
   const onSeek = (value) => {
     if (eventSource) {
@@ -223,6 +244,7 @@ function Streaming({ vehicleDetails, range }) {
     setPauseStream(false);
 
     setPath([]);
+    setFullPath([]);
 
     let queryParams = `vehicleNo=${vehicle.vehicleDetails.vehicleNo}`;
 
@@ -265,14 +287,22 @@ function Streaming({ vehicleDetails, range }) {
   };
 
   const pauseStreaming = () => {
+    setPauseStream(true);
     if (eventSource) {
       eventSource.close();
       setEventSource(null);
-      setPauseStream(true);
     }
   };
 
-  const restartStreaming = () => {};
+  const restartStreaming = () => {
+    setPauseStream(false);
+
+    // if(eventSource){
+    //   eventSource.close()
+    // }
+    console.log("path : ",path)
+    console.log("",fullPath)
+  };
 
   // console.log("Start : ", pauseStream);
   useEffect(() => {
@@ -286,6 +316,28 @@ function Streaming({ vehicleDetails, range }) {
   };
 
   console.log(totalPath);
+
+  useEffect(() => {
+    if (updatedCoordinates.length > 0) {
+      const lastCoord = updatedCoordinates[updatedCoordinates.length - 1];
+      if (lastCoord.time) {
+        const formate = new Date(lastCoord.time);
+        setLastTime(
+          formate.getDate() +
+            "/" +
+            formate.getMonth() +
+            "/" +
+            formate.getFullYear() +
+            "  " +
+            formate.getHours() +
+            ":" +
+            formate.getMinutes() +
+            ":" +
+            formate.getSeconds()
+        );
+      }
+    }
+  }, [updatedCoordinates]);
 
   if (!isLoaded) return <div>Loading map...</div>;
   return (
@@ -346,9 +398,11 @@ function Streaming({ vehicleDetails, range }) {
       </div>
 
       <div className="grid grid-cols-3 gap-4 my-1">
-        {defaultCenter && (
-          <div className="font-bold text-1xl">{defaultCenter.time}</div>
-        )}
+        {defaultCenter ? (
+          <div className="font-bold text-1xl">
+            {totalPath > 0 ? lastTime : defaultCenter.time}
+          </div>
+        ):(<div></div>)}
         <div className="flex justify-center items-center">
           <div className="mx-[1px]">
             <FaStop
@@ -375,31 +429,31 @@ function Streaming({ vehicleDetails, range }) {
         <div className="flex justify-end items-center">
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(10, 1000)}
+            onClick={() => increasingSpped(20, 100)}
           >
             1x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(20, 1000)}
+            onClick={() => increasingSpped(50, 100)}
           >
             2x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(50, 1000)}
+            onClick={() => increasingSpped(100, 100)}
           >
             5x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(100, 1000)}
+            onClick={() => increasingSpped(500, 100)}
           >
             10x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(100, 1000)}
+            onClick={() => increasingSpped(1000, 100)}
           >
             100x
           </button>
