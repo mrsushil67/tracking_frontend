@@ -11,6 +11,7 @@ import { FaPlay, FaPause } from "react-icons/fa";
 import { FaStop } from "react-icons/fa";
 import { useGlobleContext } from "../../globle/context";
 import moment from "moment";
+import config from "../../config/services";
 
 const containerStyle = {
   width: "100%",
@@ -259,7 +260,7 @@ function Streaming({ vehicleDetails, range }) {
     console.log("Query : ", queryParams);
 
     const es = new EventSource(
-      `http://localhost:7000/stream-path?${queryParams}`
+      `${config.host}/stream-path?${queryParams}`
     );
 
     es.addEventListener("total-path", (e) => {
