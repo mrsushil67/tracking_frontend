@@ -23,6 +23,7 @@ const libraries = ["places"];
 function Streaming({ vehicleDetails, range }) {
   // const {path, setPath, fullPath, setFullPath} = useGlobleContext();
   const ref = useRef();
+  const isInitialRender = useRef(true);
   const isDragging = useRef(false);
   const location = useLocation();
   const [center, setCenter] = useState({ lat: 22.015137, lng: 77.97953 });
@@ -30,17 +31,19 @@ function Streaming({ vehicleDetails, range }) {
   const [path, setPath] = useState([]);
   const [totalPath, setTotalPath] = useState(0);
   const [eventSource, setEventSource] = useState(null);
-  const [chunkSize, setChunkSize] = useState(10);
-  const [intervalTime, setIntervalTime] = useState(1000);
+  const [chunkSize, setChunkSize] = useState(6);
+  const [intervalTime, setIntervalTime] = useState(100);
   const [pauseStream, setPauseStream] = useState(false);
   const [vehicle, setVehicle] = useState({ vehicleDetails });
   const progressBarRef = useRef(null);
   const [fullPath, setFullPath] = useState([]);
   const [progress, setProgress] = useState(0); // percentage
+  const [resumeIndex, setResumeIndex] = useState(0);
+  const [lastTime, setLastTime] = useState(null);
   const [currentDateTime, setCurrentDateTime] = useState(
     new Date().getDate() +
       "/" +
-      new Date().getMonth() +
+      (new Date().getMonth()+1) +
       "/" +
       new Date().getFullYear() +
       "   " +
@@ -50,10 +53,6 @@ function Streaming({ vehicleDetails, range }) {
       ":" +
       new Date().getSeconds()
   );
-
-  const [lastTime, setLastTime] = useState(null);
-
-  console.log("currentDateTime : ", currentDateTime);
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
@@ -177,7 +176,6 @@ function Streaming({ vehicleDetails, range }) {
 
   useEffect(() => {
     if (totalPath > 0) {
-      console.log(path);
       const calculatedProgress = Math.min((path.length / totalPath) * 100, 100);
       setProgress(calculatedProgress);
     }
@@ -292,31 +290,61 @@ function Streaming({ vehicleDetails, range }) {
     if (eventSource) {
       eventSource.close();
       setEventSource(null);
+      setResumeIndex(path.length);
     }
   };
 
-  const restartStreaming = () => {
-    setPauseStream(false);
+  // const restartStreaming = () => {
+  //   setPauseStream(false);
+  //   // if(eventSource){
+  //   //   eventSource.close()
+  //   // }
+  //   console.log("path : ",path)
+  //   console.log("",fullPath)
+  // };
 
-    // if(eventSource){
-    //   eventSource.close()
-    // }
-    console.log("path : ",path)
-    console.log("",fullPath)
-  };
+const restartStreaming = () => {
+  setPauseStream(false);
+
+  console.log("resumeIndex : ",resumeIndex)
+  // Resume from last position
+  const remainingPath = fullPath.slice(resumeIndex);
+  console.log("remainingPath : ",remainingPath)
+  let index = 0;
+
+  intervalIdRef.current = setInterval(() => {
+    if (index < remainingPath.length) {
+      setPath((prev) => [...prev, remainingPath[index]]);
+      index++;
+    } else {
+      clearInterval(intervalIdRef.current);
+    }
+  }, intervalTime);
+};
 
   // console.log("Start : ", pauseStream);
   useEffect(() => {
     startStreaming();
   }, [vehicle]);
 
+
+  useEffect(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      return; // skip running on first render
+    }
+  
+    startStreaming();
+  }, [chunkSize, intervalTime]);
+  
   const increasingSpped = (chunk, interval) => {
     setChunkSize(chunk);
     setIntervalTime(interval);
-    startStreaming();
   };
 
-  console.log(totalPath);
+  console.log(intervalTime)
+  console.log(chunkSize)
+
 
   useEffect(() => {
     if (updatedCoordinates.length > 0) {
@@ -326,7 +354,7 @@ function Streaming({ vehicleDetails, range }) {
         setLastTime(
           formate.getDate() +
             "/" +
-            formate.getMonth() +
+            (formate.getMonth()+1) +
             "/" +
             formate.getFullYear() +
             "  " +
@@ -430,31 +458,31 @@ function Streaming({ vehicleDetails, range }) {
         <div className="flex justify-end items-center">
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(10, 1000)}
+            onClick={() => increasingSpped(6, 100)}
           >
             1x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(20, 1000)}
+            onClick={() => increasingSpped(12, 100)}
           >
             2x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(50, 1000)}
+            onClick={() => increasingSpped(30, 100)}
           >
             5x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(100, 1000)}
+            onClick={() => increasingSpped(60, 100)}
           >
             10x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(1000, 1000)}
+            onClick={() => increasingSpped(600, 100)}
           >
             100x
           </button>
