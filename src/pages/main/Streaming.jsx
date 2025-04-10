@@ -29,8 +29,8 @@ function Streaming({ vehicleDetails, range }) {
   const [path, setPath] = useState([]);
   const [totalPath, setTotalPath] = useState(0);
   const [eventSource, setEventSource] = useState(null);
-  const [chunkSize, setChunkSize] = useState(20);
-  const [intervalTime, setIntervalTime] = useState(100);
+  const [chunkSize, setChunkSize] = useState(10);
+  const [intervalTime, setIntervalTime] = useState(1000);
   const [pauseStream, setPauseStream] = useState(false);
   const [vehicle, setVehicle] = useState({ vehicleDetails });
   const progressBarRef = useRef(null);
@@ -375,33 +375,33 @@ function Streaming({ vehicleDetails, range }) {
         <div className="flex justify-end items-center">
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(30, 90)}
+            onClick={() => increasingSpped(10, 1000)}
           >
-            10px
+            1x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(40, 80)}
+            onClick={() => increasingSpped(20, 1000)}
           >
-            20px
+            2x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(50, 70)}
+            onClick={() => increasingSpped(50, 1000)}
           >
-            50px
+            5x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(70, 30)}
+            onClick={() => increasingSpped(100, 1000)}
           >
-            100px
+            10x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(2000, 10)}
+            onClick={() => increasingSpped(100, 1000)}
           >
-            200px
+            100x
           </button>
         </div>
       </div>
