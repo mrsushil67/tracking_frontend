@@ -429,31 +429,31 @@ function Streaming({ vehicleDetails, range }) {
         <div className="flex justify-end items-center">
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(20, 100)}
+            onClick={() => increasingSpped(10, 1000)}
           >
             1x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(50, 100)}
+            onClick={() => increasingSpped(20, 1000)}
           >
             2x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(100, 100)}
+            onClick={() => increasingSpped(50, 1000)}
           >
             5x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(500, 100)}
+            onClick={() => increasingSpped(100, 1000)}
           >
             10x
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-            onClick={() => increasingSpped(1000, 100)}
+            onClick={() => increasingSpped(1000, 1000)}
           >
             100x
           </button>
