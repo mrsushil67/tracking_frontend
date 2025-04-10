@@ -10,6 +10,7 @@ import {
 import { FaPlay, FaPause } from "react-icons/fa";
 import { FaStop } from "react-icons/fa";
 import { useGlobleContext } from "../../globle/context";
+import moment from "moment";
 
 const containerStyle = {
   width: "100%",
@@ -40,10 +41,6 @@ function Streaming({ vehicleDetails, range }) {
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
     libraries: libraries,
   });
-
-
-  console.log("path : ",path)
-  console.log("fullpath : ",fullPath)
 
   const updatedCoordinates = [...path];
   const intervalIdRef = useRef(null);
@@ -107,11 +104,9 @@ function Streaming({ vehicleDetails, range }) {
         }
     : null;
 
-  const endDate = range != null ? range.endDate : new Date();
-  const startDate =
-    range != null
-      ? range.startDate
-      : new Date(endDate.getTime() - (24 * 60 * 60 - 1) * 1000);
+  const time24 = moment().subtract(24, "h");
+  const startDate = range !== null ? range.startDate.toISOString() : new Date(time24).toISOString();
+  const endDate = range !== null ? range.endDate.toISOString() : new Date().toISOString();
 
   const onSeek = (value) => {
     if (eventSource) {
@@ -169,8 +164,6 @@ function Streaming({ vehicleDetails, range }) {
   function handleZoomChanged() {
     setZoom(this.getZoom());
   }
-
-  console.log("zoom : ", zoom);
 
   // for vehicle rotation
   const rotateIconBasedOnPath = (vehicleLocation) => {
@@ -354,9 +347,7 @@ function Streaming({ vehicleDetails, range }) {
 
       <div className="grid grid-cols-3 gap-4 my-1">
         {defaultCenter && (
-          <div className="font-bold text-1xl">
-            {defaultCenter.time}
-          </div>
+          <div className="font-bold text-1xl">{defaultCenter.time}</div>
         )}
         <div className="flex justify-center items-center">
           <div className="mx-[1px]">

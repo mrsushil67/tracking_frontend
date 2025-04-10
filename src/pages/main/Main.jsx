@@ -12,6 +12,7 @@ import { Commet } from "react-loading-indicators";
 import { useOutletContext } from "react-router-dom";
 import Streaming from "./Streaming";
 import { useGlobleContext } from "../../globle/context";
+import moment from 'moment'
 
 const googleMapsLibraries = ["places", "geometry", "marker"];
 
@@ -191,21 +192,21 @@ function Main() {
       twentyFourHoursAgo.getTime() - 24 * 60 * 60 * 1000
     );
 
-    console.log(twentyFourHoursAgo);
+     const time24 = moment().subtract(24,"h")
+    const twentyFourHoursAg = new Date(time24);
 
     try {
       // setPathLoading(true)
       const response = await axios.get(
         `${config.host}${config.getVehiclePath.url}`,
         {
-          params: { vehicleNo, twentyFourHoursAgo },
+          params: { vehicleNo, twentyFourHoursAg },
         }
       );
 
       // console.log("response : ", response.data[0]);
       setVehicleStartTime(response.data[0]);
       setVehicleData(response.data);
-      console.log(response.data);
       const formattedPath = response.data.map(({ lat, lng }) => ({ lat, lng }));
       setVehiclePath(formattedPath);
       setCurrentPosition(formattedPath[0]);

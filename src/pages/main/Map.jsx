@@ -98,7 +98,6 @@ const Map = ({
     time = "--:--:--";
   }
 
-  console.log(time);
   return (
     <>
       {!pathloading ? (
