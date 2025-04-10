@@ -65,6 +65,8 @@ const Map = ({
     });
   }
 
+
+  console.log(updatedCoordinates.length)
   const center =
     updatedCoordinates.length > 0
       ? updatedCoordinates[updatedCoordinates.length - 1]
