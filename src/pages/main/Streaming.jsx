@@ -40,10 +40,11 @@ function Streaming({ vehicleDetails, range }) {
   const [progress, setProgress] = useState(0); // percentage
   const [resumeIndex, setResumeIndex] = useState(0);
   const [lastTime, setLastTime] = useState(null);
+  const [pauseOnLastIndex, setPauseOnLastIndex] = useState({});
   const [currentDateTime, setCurrentDateTime] = useState(
     new Date().getDate() +
       "/" +
-      (new Date().getMonth()+1) +
+      (new Date().getMonth() + 1) +
       "/" +
       new Date().getFullYear() +
       "   " +
@@ -67,8 +68,6 @@ function Streaming({ vehicleDetails, range }) {
     totalPath > 0
       ? updatedCoordinates[updatedCoordinates.length - 1]
       : { lat: 22.4738, lng: 77.64372, time: currentDateTime };
-
-  const Progress = (path.length / totalPath) * 100;
 
   const icon1 = isLoaded
     ? zoom < 8
@@ -121,13 +120,45 @@ function Streaming({ vehicleDetails, range }) {
         }
     : null;
 
-  const time24 = moment().subtract(24, "h");
-  const startDate =
-    range !== null
-      ? range.startDate.toISOString()
-      : new Date(time24).toISOString();
-  const endDate =
-    range !== null ? range.endDate.toISOString() : new Date().toISOString();
+  // for vehicle rotation
+  const rotateIconBasedOnPath = (vehicleLocation) => {
+    if (vehicleLocation.length > 1 && window.google) {
+      let point1 = vehicleLocation[vehicleLocation.length - 2];
+      let point2 = vehicleLocation[vehicleLocation.length - 1];
+
+      for (let i = vehicleLocation.length - 3; i >= 0; i--) {
+        if (point1.lat !== point2.lat || point1.lng !== point2.lng) break;
+        point1 = vehicleLocation[i];
+      }
+
+      const point1LatLng = new window.google.maps.LatLng(
+        Number(point1.lat),
+        Number(point1.lng)
+      );
+      const point2LatLng = new window.google.maps.LatLng(
+        Number(point2.lat),
+        Number(point2.lng)
+      );
+
+      if (point1.lat !== point2.lat || point1.lng !== point2.lng) {
+        const angle = window.google.maps.geometry.spherical.computeHeading(
+          point1LatLng,
+          point2LatLng
+        );
+        lastKnownAngle = angle - 90;
+
+        const marker = document.querySelector(`[src="images/truck1.png"]`);
+        if (marker && lastKnownAngle !== null) {
+          marker.style.transform = `rotate(${lastKnownAngle}deg)`;
+        }
+      }
+    }
+  };
+
+  const vehicleLocation = path.slice(-3);
+  setTimeout(() => {
+    rotateIconBasedOnPath(vehicleLocation);
+  }, 500);
 
   const onSeek = (value) => {
     if (eventSource) {
@@ -177,6 +208,7 @@ function Streaming({ vehicleDetails, range }) {
   useEffect(() => {
     if (totalPath > 0) {
       const calculatedProgress = Math.min((path.length / totalPath) * 100, 100);
+      console.log("Cal Process : ", path.length, calculatedProgress, totalPath);
       setProgress(calculatedProgress);
     }
   }, [path, totalPath]);
@@ -184,46 +216,6 @@ function Streaming({ vehicleDetails, range }) {
   function handleZoomChanged() {
     setZoom(this.getZoom());
   }
-
-  // for vehicle rotation
-  const rotateIconBasedOnPath = (vehicleLocation) => {
-    if (vehicleLocation.length > 1 && window.google) {
-      let point1 = vehicleLocation[vehicleLocation.length - 2];
-      let point2 = vehicleLocation[vehicleLocation.length - 1];
-
-      for (let i = vehicleLocation.length - 3; i >= 0; i--) {
-        if (point1.lat !== point2.lat || point1.lng !== point2.lng) break;
-        point1 = vehicleLocation[i];
-      }
-
-      const point1LatLng = new window.google.maps.LatLng(
-        Number(point1.lat),
-        Number(point1.lng)
-      );
-      const point2LatLng = new window.google.maps.LatLng(
-        Number(point2.lat),
-        Number(point2.lng)
-      );
-
-      if (point1.lat !== point2.lat || point1.lng !== point2.lng) {
-        const angle = window.google.maps.geometry.spherical.computeHeading(
-          point1LatLng,
-          point2LatLng
-        );
-        lastKnownAngle = angle - 90;
-
-        const marker = document.querySelector(`[src="images/truck1.png"]`);
-        if (marker && lastKnownAngle !== null) {
-          marker.style.transform = `rotate(${lastKnownAngle}deg)`;
-        }
-      }
-    }
-  };
-
-  const vehicleLocation = path.slice(-3);
-  setTimeout(() => {
-    rotateIconBasedOnPath(vehicleLocation);
-  }, 500);
 
   // console.log("vehicleDetails : ",vehicle.vehicleDetails)
 
@@ -235,6 +227,15 @@ function Streaming({ vehicleDetails, range }) {
     };
   }, [eventSource]);
 
+  const time24 = moment().subtract(24, "h");
+  const startDate = pauseOnLastIndex?.time
+    ? new Date(pauseOnLastIndex?.time).toISOString()
+    : range !== null
+    ? range.startDate.toISOString()
+    : new Date(time24).toISOString();
+  const endDate =
+    range !== null ? range.endDate.toISOString() : new Date().toISOString();
+
   const startStreaming = () => {
     if (eventSource) {
       eventSource.close();
@@ -242,8 +243,8 @@ function Streaming({ vehicleDetails, range }) {
 
     setPauseStream(false);
 
-    setPath([]);
-    setFullPath([]);
+    // setPath([]);
+    // setFullPath([]);
 
     let queryParams = `vehicleNo=${vehicle.vehicleDetails.vehicleNo}`;
 
@@ -257,14 +258,14 @@ function Streaming({ vehicleDetails, range }) {
 
     console.log("Query : ", queryParams);
 
-    const es = new EventSource(
-      `${config.host}/stream-path?${queryParams}`
-    );
+    const es = new EventSource(`${config.host}/stream-path?${queryParams}`);
 
-    es.addEventListener("total-path", (e) => {
-      const data = JSON.parse(e.data);
-      setTotalPath(data.totalData);
-    });
+    if (totalPath === 0) {
+      es.addEventListener("total-path", (e) => {
+        const data = JSON.parse(e.data);
+        setTotalPath(data.totalData);
+      });
+    }
 
     es.addEventListener("vehicle-path", (e) => {
       const data = JSON.parse(e.data);
@@ -275,6 +276,7 @@ function Streaming({ vehicleDetails, range }) {
     es.addEventListener("No-more", () => {
       console.log("No more data to stream.");
       es.close();
+      setPauseOnLastIndex({});
     });
 
     es.onerror = (e) => {
@@ -290,61 +292,49 @@ function Streaming({ vehicleDetails, range }) {
     if (eventSource) {
       eventSource.close();
       setEventSource(null);
-      setResumeIndex(path.length);
+      setPauseOnLastIndex(path[path.length - 1]);
     }
   };
 
-  // const restartStreaming = () => {
-  //   setPauseStream(false);
-  //   // if(eventSource){
-  //   //   eventSource.close()
-  //   // }
-  //   console.log("path : ",path)
-  //   console.log("",fullPath)
-  // };
-
-const restartStreaming = () => {
-  setPauseStream(false);
-
-  console.log("resumeIndex : ",resumeIndex)
-  // Resume from last position
-  const remainingPath = fullPath.slice(resumeIndex);
-  console.log("remainingPath : ",remainingPath)
-  let index = 0;
-
-  intervalIdRef.current = setInterval(() => {
-    if (index < remainingPath.length) {
-      setPath((prev) => [...prev, remainingPath[index]]);
-      index++;
-    } else {
-      clearInterval(intervalIdRef.current);
-    }
-  }, intervalTime);
-};
+  const restartStreaming = () => {
+    setPauseStream(false);
+    startStreaming();
+  };
 
   // console.log("Start : ", pauseStream);
   useEffect(() => {
     startStreaming();
   }, [vehicle]);
 
-
   useEffect(() => {
     if (isInitialRender.current) {
       isInitialRender.current = false;
       return; // skip running on first render
     }
-  
+
+    setPauseStream(false);
     startStreaming();
   }, [chunkSize, intervalTime]);
-  
+
   const increasingSpped = (chunk, interval) => {
     setChunkSize(chunk);
     setIntervalTime(interval);
+    setPauseStream(true);
+    if (eventSource) {
+      eventSource.close();
+      setEventSource(null);
+      setPauseOnLastIndex(path[path.length - 1]);
+    }
   };
 
-  console.log(intervalTime)
-  console.log(chunkSize)
-
+  const startfromBegnning = () => {
+    setChunkSize(6);
+    setIntervalTime(100);
+    setPauseStream(false);
+    setFullPath([]);
+    setPath([]);
+    startStreaming();
+  };
 
   useEffect(() => {
     if (updatedCoordinates.length > 0) {
@@ -354,7 +344,7 @@ const restartStreaming = () => {
         setLastTime(
           formate.getDate() +
             "/" +
-            (formate.getMonth()+1) +
+            (formate.getMonth() + 1) +
             "/" +
             formate.getFullYear() +
             "  " +
@@ -401,6 +391,14 @@ const restartStreaming = () => {
 
         {updatedCoordinates.length > 0 && (
           <Marker
+            position={updatedCoordinates[0]}
+            title="Vehicle"
+            // label="S"
+          />
+        )}
+
+        {updatedCoordinates.length > 0 && (
+          <Marker
             icon={icon1}
             position={defaultCenter}
             title="Vehicle"
@@ -420,6 +418,7 @@ const restartStreaming = () => {
           onMouseMove={handleMouseMove}
         >
           <div
+            // aria-disabled="true"
             className="bg-[#fc6a2a] h-2.5 rounded-full transition-all duration-75"
             style={{ width: `${progress}%` }}
           ></div>
@@ -431,12 +430,14 @@ const restartStreaming = () => {
           <div className="font-bold text-1xl">
             {totalPath > 0 ? lastTime : defaultCenter.time}
           </div>
-        ):(<div></div>)}
+        ) : (
+          <div></div>
+        )}
         <div className="flex justify-center items-center">
           <div className="mx-[1px]">
             <FaStop
               className="text-2xl border p-1 rounded"
-              onClick={startStreaming}
+              onClick={startfromBegnning}
             />
           </div>
           {pauseStream ? (
