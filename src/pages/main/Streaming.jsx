@@ -41,6 +41,7 @@ function Streaming({ vehicleDetails, range }) {
   const [resumeIndex, setResumeIndex] = useState(0);
   const [lastTime, setLastTime] = useState(null);
   const [pauseOnLastIndex, setPauseOnLastIndex] = useState({});
+  const [filterStops, setFilterStops] = useState([]);
   const [currentDateTime, setCurrentDateTime] = useState(
     new Date().getDate() +
       "/" +
@@ -212,6 +213,18 @@ function Streaming({ vehicleDetails, range }) {
       setProgress(calculatedProgress);
     }
   }, [path, totalPath]);
+
+  useEffect(() => {
+    if (path.length > 0) {
+      const uniqueStops = path.filter((item, index, self) => {
+        return self.findIndex(
+          (t) => t.lat === item.lat && t.lng === item.lng && Number(t.speed) === 0
+        ) === index;
+      });
+      setFilterStops(uniqueStops);
+    }
+  },[path]);
+console.log("filterStops : ",filterStops);
 
   function handleZoomChanged() {
     setZoom(this.getZoom());
@@ -405,6 +418,15 @@ function Streaming({ vehicleDetails, range }) {
             // label="S"
           />
         )}
+        {filterStops.length > 0 && (
+          filterStops.map((stop, index) => (
+            <Marker
+              key={index}
+              position={stop}
+              title="Stop"
+            />
+          ))
+        )}
       </GoogleMap>
 
       <div className="bg-gray-200 rounded-full dark:bg-gray-700">
@@ -418,9 +440,8 @@ function Streaming({ vehicleDetails, range }) {
           onMouseMove={handleMouseMove}
         >
           <div
-            // aria-disabled="true"
-            className="bg-[#fc6a2a] h-2.5 rounded-full transition-all duration-75"
-            style={{ width: `${progress}%` }}
+            className=" h-2.5 rounded-full transition-all duration-75"
+            style={{ width: `${progress}%`, backgroundColor: progress > 30?"green":"red"  }}
           ></div>
         </div>
       </div>
