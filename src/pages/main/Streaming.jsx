@@ -7,8 +7,9 @@ import {
   Polyline,
   useLoadScript,
 } from "@react-google-maps/api";
-import { FaPlay, FaPause } from "react-icons/fa";
+import { FaPlay, FaPause, FaBackspace, FaBackward } from "react-icons/fa";
 import { FaStop } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 import { useGlobleContext } from "../../globle/context";
 import moment from "moment";
 import config from "../../config/services";
@@ -21,7 +22,7 @@ const containerStyle = {
 const libraries = ["places"];
 
 function Streaming({ vehicleDetails, range }) {
-  // const {path, setPath, fullPath, setFullPath} = useGlobleContext();
+  const { setShowVedio } = useGlobleContext();
   const ref = useRef();
   const isInitialRender = useRef(true);
   const isDragging = useRef(false);
@@ -42,6 +43,7 @@ function Streaming({ vehicleDetails, range }) {
   const [lastTime, setLastTime] = useState(null);
   const [pauseOnLastIndex, setPauseOnLastIndex] = useState({});
   const [filterStops, setFilterStops] = useState([]);
+  const [speeds, setSpeeds] = useState([]);
   const [currentDateTime, setCurrentDateTime] = useState(
     new Date().getDate() +
       "/" +
@@ -209,22 +211,55 @@ function Streaming({ vehicleDetails, range }) {
   useEffect(() => {
     if (totalPath > 0) {
       const calculatedProgress = Math.min((path.length / totalPath) * 100, 100);
-      console.log("Cal Process : ", path.length, calculatedProgress, totalPath);
+      const speedArray = path.map((item) => item.speed);
+      // console.log(
+      //   "Cal Process : ",
+      //   path.length,
+      //   speeds.length,
+      //   calculatedProgress,
+      //   totalPath
+      // );
       setProgress(calculatedProgress);
+      setSpeeds(speedArray);
     }
   }, [path, totalPath]);
 
   useEffect(() => {
     if (path.length > 0) {
-      const uniqueStops = path.filter((item, index, self) => {
-        return self.findIndex(
-          (t) => t.lat === item.lat && t.lng === item.lng && Number(t.speed) === 0
-        ) === index;
-      });
-      setFilterStops(uniqueStops);
+      const validStops = [];
+      let currentStop = null;
+      let count = 0;
+
+      for (let i = 0; i < path.length; i++) {
+        const point = path[i];
+
+        if (Number(point.speed) === 0) {
+          if (
+            currentStop &&
+            currentStop.lat === point.lat &&
+            currentStop.lng === point.lng
+          ) {
+            count++;
+          } else {
+            // New stop detected
+            currentStop = { lat: point.lat, lng: point.lng, time: point.time };
+            count = 1;
+          }
+        } else {
+          if (count >= 60) {
+            validStops.push(currentStop);
+          }
+          currentStop = null;
+          count = 0;
+        }
+      }
+      if (count >= 60 && currentStop) {
+        validStops.push(currentStop);
+      }
+      setFilterStops(validStops);
     }
-  },[path]);
-console.log("filterStops : ",filterStops);
+  }, [path]);
+  // console.log("filterStops : ", filterStops);
 
   function handleZoomChanged() {
     setZoom(this.getZoom());
@@ -232,7 +267,7 @@ console.log("filterStops : ",filterStops);
 
   // console.log("vehicleDetails : ",vehicle.vehicleDetails)
 
-  useEffect(() => {
+  useEffect(() => {closeStreamingPage
     return () => {
       if (eventSource) {
         eventSource.close();
@@ -284,6 +319,8 @@ console.log("filterStops : ",filterStops);
       const data = JSON.parse(e.data);
       setFullPath((prev) => [...prev, ...data]);
       setPath((prev) => [...prev, ...data]);
+
+      // setSpeeds((prev) => [...prev, ...data?.speed])
     });
 
     es.addEventListener("No-more", () => {
@@ -348,6 +385,13 @@ console.log("filterStops : ",filterStops);
     setPath([]);
     startStreaming();
   };
+
+  const closeStreamingPage = () => {
+    // setPath([]);
+    // setFullPath([]);
+    setShowVedio(false)
+
+  }
 
   useEffect(() => {
     if (updatedCoordinates.length > 0) {
@@ -418,31 +462,33 @@ console.log("filterStops : ",filterStops);
             // label="S"
           />
         )}
-        {filterStops.length > 0 && (
+        {filterStops.length > 0 &&
           filterStops.map((stop, index) => (
-            <Marker
-              key={index}
-              position={stop}
-              title="Stop"
-            />
-          ))
-        )}
+            <Marker key={index} position={stop} title="Stop" />
+          ))}
       </GoogleMap>
 
-      <div className="bg-gray-200 rounded-full dark:bg-gray-700">
+      <div className="bg-gray-200 rounded-full dark:bg-gray-700 h-2.5 my-2 relative overflow-hidden">
         <div
           ref={progressBarRef}
-          className="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-700 my-2 cursor-pointer"
+          className="w-full h-full rounded-full cursor-pointer"
           onClick={handleClick}
           onMouseDown={() => (isDragging.current = true)}
           onMouseUp={() => (isDragging.current = false)}
           onMouseLeave={() => (isDragging.current = false)}
           onMouseMove={handleMouseMove}
         >
-          <div
-            className=" h-2.5 rounded-full transition-all duration-75"
-            style={{ width: `${progress}%`, backgroundColor: progress > 30?"green":"red"  }}
-          ></div>
+          <div className="h-full flex" style={{ width: `${progress}%` }}>
+            {speeds.map((speed, index) => (
+              <div
+                key={index}
+                style={{ width: `${100 / speeds.length + 1}%` }}
+                className={`h-full ${
+                  speed > 0 ? "bg-green-700" : "bg-[#fc6a2a]"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
@@ -455,9 +501,15 @@ console.log("filterStops : ",filterStops);
           <div></div>
         )}
         <div className="flex justify-center items-center">
+        <div className="mx-[1px]">
+            <IoClose
+              className="text-2xl border p-1 rounded"
+              onClick={closeStreamingPage}
+            />
+          </div>
           <div className="mx-[1px]">
             <FaStop
-              className="text-2xl border p-1 rounded"
+              className="text-2xl font-bold border p-1 rounded"
               onClick={startfromBegnning}
             />
           </div>
