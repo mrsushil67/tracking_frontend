@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
   GoogleMap,
+  InfoWindow,
   LoadScript,
   Marker,
   Polyline,
@@ -44,6 +45,7 @@ function Streaming({ vehicleDetails, range }) {
   const [pauseOnLastIndex, setPauseOnLastIndex] = useState({});
   const [filterStops, setFilterStops] = useState([]);
   const [speeds, setSpeeds] = useState([]);
+  const [selectedStop, setSelectedStop] = useState(null);
   const [currentDateTime, setCurrentDateTime] = useState(
     new Date().getDate() +
       "/" +
@@ -212,13 +214,13 @@ function Streaming({ vehicleDetails, range }) {
     if (totalPath > 0) {
       const calculatedProgress = Math.min((path.length / totalPath) * 100, 100);
       const speedArray = path.map((item) => item.speed);
-      console.log(
-        "Cal Process : ",
-        path.length,
-        speeds.length,
-        calculatedProgress,
-        totalPath
-      );
+      // console.log(
+      //   "Cal Process : ",
+      //   path.length,
+      //   speeds.length,
+      //   calculatedProgress,
+      //   totalPath
+      // );
       setProgress(calculatedProgress);
       setSpeeds(speedArray);
     }
@@ -229,6 +231,8 @@ function Streaming({ vehicleDetails, range }) {
       const validStops = [];
       let currentStop = null;
       let count = 0;
+      let startTime = null;
+      let endTime = null;
 
       for (let i = 0; i < path.length; i++) {
         const point = path[i];
@@ -240,26 +244,71 @@ function Streaming({ vehicleDetails, range }) {
             currentStop.lng === point.lng
           ) {
             count++;
+            endTime = point.time;
           } else {
-            // New stop detected
-            currentStop = { lat: point.lat, lng: point.lng, time: point.time };
+            if (count >= 60 && currentStop && startTime && endTime) {
+              validStops.push({
+                ...currentStop,
+                duration: getDuration(startTime, endTime),
+                StartT: startTime,
+                EndT: endTime,
+                address: currentStop.address,
+              });
+            }
+            // New stop
+            currentStop = {
+              lat: point.lat,
+              lng: point.lng,
+              time: point.time,
+              address: point.address,
+            };
             count = 1;
+            startTime = point.time;
+            endTime = point.time;
           }
         } else {
-          if (count >= 60) {
-            validStops.push(currentStop);
+          if (count >= 60 && currentStop && startTime && endTime) {
+            validStops.push({
+              ...currentStop,
+              duration: getDuration(startTime, endTime),
+              StartT: startTime,
+              EndT: endTime,
+              address: currentStop.address,
+            });
           }
           currentStop = null;
           count = 0;
+          startTime = null;
+          endTime = null;
         }
       }
-      if (count >= 60 && currentStop) {
-        validStops.push(currentStop);
+
+      // Final stop
+      if (count >= 60 && currentStop && startTime && endTime) {
+        validStops.push({
+          ...currentStop,
+          duration: getDuration(startTime, endTime),
+          StartT: startTime,
+          EndT: endTime,
+          address: currentStop.address,
+        });
       }
+
       setFilterStops(validStops);
     }
   }, [path]);
-  // console.log("filterStops : ", filterStops);
+
+  // Helper to calculate duration between two timestamps
+  const getDuration = (start, end) => {
+    const diff = moment(end).diff(moment(start)); // difference in milliseconds
+    const dur = moment.duration(diff);
+    const days = dur.days();
+    const hours = dur.hours();
+    const minutes = dur.minutes();
+    const seconds = dur.seconds();
+
+    return `${days} days ${hours} Hour ${minutes} min ${seconds} sec`;
+  };
 
   function handleZoomChanged() {
     setZoom(this.getZoom());
@@ -267,7 +316,8 @@ function Streaming({ vehicleDetails, range }) {
 
   // console.log("vehicleDetails : ",vehicle.vehicleDetails)
 
-  useEffect(() => {closeStreamingPage
+  useEffect(() => {
+    closeStreamingPage;
     return () => {
       if (eventSource) {
         eventSource.close();
@@ -389,13 +439,8 @@ function Streaming({ vehicleDetails, range }) {
   const closeStreamingPage = () => {
     // setPath([]);
     // setFullPath([]);
-    setShowVedio(false)
-
-  }
-
-  const showStopDetails = (stop) => {
-    console.log("stop : ",stop)
-  }
+    setShowVedio(false);
+  };
 
   useEffect(() => {
     if (updatedCoordinates.length > 0) {
@@ -468,9 +513,93 @@ function Streaming({ vehicleDetails, range }) {
         )}
         {filterStops.length > 0 &&
           filterStops.map((stop, index) => (
-            <Marker key={index} position={stop} title="Stop"
-            onClick={() => showStopDetails(stop)}>
+            <Marker
+              key={index}
+              position={stop}
+              // title="Stop"
+              // label="stop"
+              icon={{
+                url:
+                  "data:image/svg+xml;charset=UTF-8," +
+                  encodeURIComponent(`
+                   <svg xmlns="http://www.w3.org/2000/svg" width="40" height="60" viewBox="0 0 40 60">
+                      <!-- Pin shape -->
+                      <path d="M20 0C9 0 0 9 0 20c0 11 20 40 20 40s20-29 20-40C40 9 31 0 20 0z" fill="#fc6a2a"/>
+                      <!-- White square in the center -->
+                      <rect x="13" y="13" width="14" height="14" fill="white" />
+                    </svg>
+                  `),
+                scaledSize: new google.maps.Size(24, 36),
+                anchor: new google.maps.Point(12, 36),
+              }}
+              onClick={() => setSelectedStop(stop)}
+            >
+              {selectedStop &&
+                selectedStop.lat === stop.lat &&
+                selectedStop.lng === stop.lng && (
+                  <InfoWindow
+                    position={selectedStop}
+                    options={{
+                      closeBoxURL: "",
+                      enableEventPropagation: true,
+                    }}
+                  >
+                    <div className="rounded-2xl shadow-md bg-white w-[300px]">
+                      <div className="mb-2">
+                        <div className="flex justify-between">
+                          <div className="font-bold pb-3">VEHICLE STOPPED</div>
+                        </div>
 
+                        <div class="grid grid-cols-3 gap-4">
+                          <div className="">
+                            <div className="text-xs font-bold text-gray-700 pb-1">
+                              from:{" "}
+                            </div>
+                            <div className="text-xs font-bold text-green-700">
+                              {new Date(selectedStop.StartT).toLocaleString()}
+                            </div>
+                          </div>
+                          {/* <div className="">
+                          <div className="text-xs font-bold text-gray-700">
+                            Fuel :{" "}
+                          </div>
+                          <div className="text-xs font-bold text-green-700">
+                            grfvsrtg
+                          </div>
+                        </div> */}
+                          <div className="">
+                            <div className="text-xs font-bold text-gray-700 pb-1">
+                              to:{" "}
+                            </div>
+                            <div className="text-xs font-bold text-green-700">
+                              {new Date(selectedStop.EndT).toLocaleString()}
+                            </div>
+                          </div>
+
+                          <div class="...">
+                            <div className="text-xs font-bold text-gray-700 pb-1">
+                              Duration:{" "}
+                            </div>
+                            <div className="text-xs font-bold text-green-700">
+                              {selectedStop.duration}
+                            </div>
+                          </div>
+                        </div>
+                        {/* <div>Latitude: 6732547823</div>
+                                   <div>Longitude: 4356436</div>  */}
+
+                        <div>
+                          <span className="text-xs font-bold text-gray-700 pt-2">
+                            Address :{" "}
+                          </span>
+                          <span className="text-xs text-gray-700">
+                            {selectedStop.address}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </InfoWindow>
+                )}
             </Marker>
           ))}
       </GoogleMap>
@@ -508,7 +637,7 @@ function Streaming({ vehicleDetails, range }) {
           <div></div>
         )}
         <div className="flex justify-center items-center">
-        <div className="mx-[1px]">
+          <div className="mx-[1px]">
             <IoClose
               className="text-2xl border p-1 rounded"
               onClick={closeStreamingPage}
