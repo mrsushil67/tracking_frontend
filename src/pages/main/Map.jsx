@@ -326,7 +326,7 @@ const Map = ({
                   onClick={showVedioPage}
                 />
               </div>
-              <div className="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-700 my-2">
+              <div className="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-400 my-2">
                 <div
                   className="bg-[#fc6a2a] h-2.5 rounded-full"
                   style={{
