@@ -212,13 +212,13 @@ function Streaming({ vehicleDetails, range }) {
     if (totalPath > 0) {
       const calculatedProgress = Math.min((path.length / totalPath) * 100, 100);
       const speedArray = path.map((item) => item.speed);
-      // console.log(
-      //   "Cal Process : ",
-      //   path.length,
-      //   speeds.length,
-      //   calculatedProgress,
-      //   totalPath
-      // );
+      console.log(
+        "Cal Process : ",
+        path.length,
+        speeds.length,
+        calculatedProgress,
+        totalPath
+      );
       setProgress(calculatedProgress);
       setSpeeds(speedArray);
     }
@@ -393,6 +393,10 @@ function Streaming({ vehicleDetails, range }) {
 
   }
 
+  const showStopDetails = (stop) => {
+    console.log("stop : ",stop)
+  }
+
   useEffect(() => {
     if (updatedCoordinates.length > 0) {
       const lastCoord = updatedCoordinates[updatedCoordinates.length - 1];
@@ -464,7 +468,10 @@ function Streaming({ vehicleDetails, range }) {
         )}
         {filterStops.length > 0 &&
           filterStops.map((stop, index) => (
-            <Marker key={index} position={stop} title="Stop" />
+            <Marker key={index} position={stop} title="Stop"
+            onClick={() => showStopDetails(stop)}>
+
+            </Marker>
           ))}
       </GoogleMap>
 
@@ -482,7 +489,7 @@ function Streaming({ vehicleDetails, range }) {
             {speeds.map((speed, index) => (
               <div
                 key={index}
-                style={{ width: `${100 / speeds.length + 1}%` }}
+                style={{ width: `${progress}%` }}
                 className={`h-full ${
                   speed > 0 ? "bg-green-700" : "bg-[#fc6a2a]"
                 }`}
