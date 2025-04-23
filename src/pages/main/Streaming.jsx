@@ -196,16 +196,12 @@ function Streaming({ vehicleDetails, range }) {
     const x = e.clientX - rect.left;
     let percent = (x / rect.width) * 100;
 
-    // console.log("percent : ",percent)
-
     percent = Math.max(0, Math.min(100, percent)); // clamp 0-100
     setProgress(percent);
 
-    // You can send the new value back to parent or simulate a seek
     if (onSeek) {
       const value = (percent / 100) * totalPath;
 
-      // console.log("value  :",value)
       onSeek(value);
     }
   };
@@ -300,14 +296,21 @@ function Streaming({ vehicleDetails, range }) {
 
   // Helper to calculate duration between two timestamps
   const getDuration = (start, end) => {
-    const diff = moment(end).diff(moment(start)); // difference in milliseconds
+    const diff = moment(end).diff(moment(start));
     const dur = moment.duration(diff);
     const days = dur.days();
     const hours = dur.hours();
     const minutes = dur.minutes();
     const seconds = dur.seconds();
 
-    return `${days} days ${hours} Hour ${minutes} min ${seconds} sec`;
+    let result = "";
+    if(days > 0 ) result += `${days} days `;
+    if(hours > 0 ) result += `${hours} hrs `;
+    if(minutes > 0 ) result += `${minutes} min `;
+    if(seconds > 0 ) result += `${seconds} sec `;
+
+
+    return result.trim();
   };
 
   function handleZoomChanged() {
@@ -473,6 +476,9 @@ function Streaming({ vehicleDetails, range }) {
         center={defaultCenter}
         zoom={zoom}
         onZoomChanged={handleZoomChanged}
+        options={{
+          streetViewControl:false
+        }}
       >
         {window.google && window.google.maps && (
           <Polyline
@@ -544,13 +550,13 @@ function Streaming({ vehicleDetails, range }) {
                       enableEventPropagation: true,
                     }}
                   >
-                    <div className="rounded-2xl shadow-md bg-white w-[300px]">
+                    <div className="p-1 rounded-2xl w-[300px]">
                       <div className="mb-2">
                         <div className="flex justify-between">
                           <div className="font-bold pb-3">VEHICLE STOPPED</div>
                         </div>
 
-                        <div class="grid grid-cols-3 gap-4">
+                        <div class="grid grid-cols-3 gap-2">
                           <div className="">
                             <div className="text-xs font-bold text-gray-700 pb-1">
                               from:{" "}
@@ -588,8 +594,8 @@ function Streaming({ vehicleDetails, range }) {
                         {/* <div>Latitude: 6732547823</div>
                                    <div>Longitude: 4356436</div>  */}
 
-                        <div>
-                          <span className="text-xs font-bold text-gray-700 pt-2">
+                        <div className="pt-2">
+                          <span className="text-xs font-bold text-gray-700">
                             Address :{" "}
                           </span>
                           <span className="text-xs text-gray-700">
