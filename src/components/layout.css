@@ -6,12 +6,12 @@
 }
 
 .navbar {
-  height: 9.5%;
+  /* height: 9.5%; */
   width: 100%;
 }
 
 .content-container {
-  height: calc(100% - 9.5%);
+  height: 100%;
   width: 100%;
   display: flex;
 }
@@ -189,7 +189,7 @@
 
 .custom-calendar {
   transform: scale(0.9);
-  transform-origin: top center;
+  transform-origin: top left;
 }
 
 .custom-calendar .rdrCalendarWrapper {
