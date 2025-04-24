@@ -28,8 +28,8 @@ const Layout = () => {
   // console.log("filter Counts : ", filterdCounts);
 
   return (
-    <div className="layout-container flex flex-col">
-      <div className="navbar bg-gray-100 text-black flex justify-between items-center p-3 fixed top-0 z-50 border-b-1">
+    <div className="layout-container flex flex-col h-screen">
+      <div className="navbar bg-gray-100 text-black flex justify-between items-center p-3 fixed top-0 z-50 border-b-1 w-full">
         <div className="flex text-gray-700 items-center gap-4">
           <button onClick={() => setSidebarOpen(!isSidebarOpen)}>
             {isSidebarOpen ? <IoClose size={25} /> : <IoMenu size={25} />}
@@ -38,7 +38,7 @@ const Layout = () => {
             src="https://snaptrak.tech/assets/images/snap1.png"
             onClick={() => navigate("/")}
             alt="logo"
-            className="w-30"
+            className="w-30 h-auto"
           />
         </div>
         {/* Right Side: Search Box */}
@@ -67,10 +67,10 @@ const Layout = () => {
         </div>
       </div>
 
-      <div className="content-container flex flex-grow pt-10 md:pt-13 lg:pt-16">
+      <div className="content-container flex flex-grow pt-10 md:pt-13 lg:pt-16 h-full">
         <div
           className={`sidebar bg-gray-100 text-black flex flex-col p-2 transition-all duration-400 ${
-            isSidebarOpen ? "sidebar-open" : "sidebar-closed"
+            isSidebarOpen ? "sidebar-open w-64" : "sidebar-closed w-16"
           }`}
         >
           <Link
