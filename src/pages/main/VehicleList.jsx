@@ -19,7 +19,7 @@ const VehicleList = ({
   setFilterdCounts( vehiclesToDisplay.length)
 
   return (
-    <div className="vehicle-card-container">
+    <div className="vehicle-card-container bg-gray-100">
       {vehiclesToDisplay.length > 0 ? (
         vehiclesToDisplay.map((vehicle, index) => (
           <div
