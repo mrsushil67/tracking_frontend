@@ -57,7 +57,7 @@ const VehicleDetails = ({
     restartInterval();
     getVehiclePath(vehicleNo);
   };
-   
+
   const closeVedioDetailsPage = (vehicleNo) => {
     setPathLoading(true);
     setShowDetails(false);
@@ -78,9 +78,30 @@ const VehicleDetails = ({
     setLastLoc([]);
     setRange(null);
     restartInterval();
-    getVehiclePath();
-  }
+    getVehiclePath(vehicleNo);
+  };
 
+  const clearFilter = (vehicleNo) => {
+    setPathLoading(true);
+    setShowCalendar(false);
+    setShowVedio(false);
+    setTempRange([
+      ...(range
+        ? [range]
+        : [
+            {
+              startDate: new Date(),
+              endDate: new Date(),
+              key: "selection",
+            },
+          ]),
+    ]);
+    setFilteredPath([]);
+    setLastLoc([]);
+    setRange(null);
+    restartInterval();
+    getVehiclePath(vehicleNo);
+  };
 
   useEffect(() => {
     if (range) {
@@ -270,7 +291,7 @@ const VehicleDetails = ({
                       setShowCalendar(false);
                     }}
                   >
-                    Clear Filter
+                    Cancle
                   </button>
                   <button
                     className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -350,7 +371,14 @@ const VehicleDetails = ({
             </span>
             <div className="flex justify-end">
               <button
-                className="border p-[3px] rounded text-xs font-semibold mt-2 bg-amber-500 border-amber-600  hover:bg-amber-500 cursor-pointer transition-transform transform hover:scale-104"
+                className={`m-1 p-[3px] rounded text-xs font-semibold mt-2 px-1 py-1 ${range ? "bg-gray-300 hover:bg-gray-400" : "bg-gray-300 text-gray-600 cursor-not-allowed"}`}
+                onClick={() => clearFilter(vehicleDetails.vehicleNo)}
+                disabled={!range}
+              >
+                Clear Filter
+              </button>
+              <button
+                className="m-1 p-[3px] rounded text-xs font-semibold  mt-2 px-1 py-1 bg-amber-500 border-amber-600  hover:bg-amber-500 cursor-pointer transition-transform transform hover:scale-104"
                 onClick={downloadExcel}
               >
                 ⬇️Report
