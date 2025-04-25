@@ -27,20 +27,60 @@ const VehicleDetails = ({
   restartInterval,
   getVehiclePath,
   vehicleData,
+  setPathLoading,
 }) => {
-  const { showDetailed } = useGlobleContext();
+  const { showDetailed, setShowVedio } = useGlobleContext();
   const [showCalendar, setShowCalendar] = useState(false);
   const [startTime, setStartTime] = useState("00:00");
   const [endTime, setEndTime] = useState("23:59");
 
   const clearData = (vehicleNo) => {
+    setPathLoading(true);
     setRange(null);
-    setShowCalendar(!!showCalendar);
+    setShowCalendar(false);
+    // setShowVedio(false);
+    setTempRange([
+      ...(range
+        ? [range]
+        : [
+            {
+              startDate: new Date(),
+              endDate: new Date(),
+              key: "selection",
+            },
+          ]),
+    ]);
+    setFilteredPath([]);
+    setLastLoc([]);
+    setRange(null);
+    setShowCalendar(!showCalendar);
     restartInterval();
     getVehiclePath(vehicleNo);
   };
+   
+  const closeVedioDetailsPage = (vehicleNo) => {
+    setPathLoading(true);
+    setShowDetails(false);
+    setShowCalendar(false);
+    setShowVedio(false);
+    setTempRange([
+      ...(range
+        ? [range]
+        : [
+            {
+              startDate: new Date(),
+              endDate: new Date(),
+              key: "selection",
+            },
+          ]),
+    ]);
+    setFilteredPath([]);
+    setLastLoc([]);
+    setRange(null);
+    restartInterval();
+    getVehiclePath();
+  }
 
-  // console.log("range : ", range);
 
   useEffect(() => {
     if (range) {
@@ -230,7 +270,7 @@ const VehicleDetails = ({
                       setShowCalendar(false);
                     }}
                   >
-                    Cancel
+                    Clear Filter
                   </button>
                   <button
                     className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -248,6 +288,7 @@ const VehicleDetails = ({
                       };
                       setRange(updatedRange);
                       setShowCalendar(false);
+                      setShowVedio(false);
                     }}
                   >
                     Apply
@@ -259,11 +300,7 @@ const VehicleDetails = ({
           <div>
             <IoClose
               className="text-gray-700 hover:text-gray-900 text-2xl font-bold cursor-pointer transition-transform transform hover:scale-110"
-              onClick={() => {
-                setShowDetails(false);
-                restartInterval();
-                getVehiclePath(vehicleDetails.vehicleNo);
-              }}
+              onClick={() => closeVedioDetailsPage(vehicleDetails.vehicleNo)}
             />
           </div>
         </div>

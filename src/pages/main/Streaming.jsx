@@ -23,7 +23,7 @@ const containerStyle = {
 const libraries = ["places"];
 
 function Streaming({ vehicleDetails, range }) {
-  const { setShowVedio } = useGlobleContext();
+  const { setShowVedio, setPathLoading } = useGlobleContext();
   const ref = useRef();
   const isInitialRender = useRef(true);
   const isDragging = useRef(false);
@@ -441,8 +441,12 @@ function Streaming({ vehicleDetails, range }) {
 
   const closeStreamingPage = () => {
     // setPath([]);
-    // setFullPath([]);
     setShowVedio(false);
+    setPathLoading(true);
+    if (eventSource) {
+      eventSource.close();
+      setEventSource(null);
+    }
   };
 
   useEffect(() => {
