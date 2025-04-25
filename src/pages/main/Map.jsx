@@ -293,29 +293,6 @@ const Map = ({
                   onClick={handleMarkerClick}
                 />
               ) : null}
-
-              {/* {visibleMarkers.map((marker) => (
-           <Marker icon={icon2} key={marker.id} position={marker.position}>
-             <InfoBox
-               position={markerPosition}
-               options={{
-                 closeBoxURL: "",
-                 enableEventPropagation: true,
-               }}
-             >
-               <div
-                 style={{
-                   background: "#565657",
-                   padding: "5px",
-                   borderRadius: "5px",
-                   boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
-                 }}
-               >
-                 <p className="text-white">{marker.vehicleNo}</p>
-               </div>
-             </InfoBox> 
-           </Marker>
-         ))} */}
             </GoogleMap>
           </div>
           <div className="">
@@ -342,53 +319,12 @@ const Map = ({
 
               <div className="flex justify-center items-center">
                 <div className="mx-[1px]">
-                  {/* <FaStop
-                    className="text-2xl border p-1 rounded"
-                    
-                  /> */}
+                 
                 </div>
                 <div className="mx-[1px]">
                   {/* <div className="font-bold text-xs">{vehicleStartTime.time}</div> */}
                 </div>
-                {/* <div className="mx-[1px]">
-                  <FaPause
-                    className="text-2xl border p-1 rounded"
-                    // onClick={pauseStreaming}
-                  />
-                </div> */}
               </div>
-              {/* <div className="flex justify-end items-center">
-                <button
-                  className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-                  // onClick={() => increasingSpped(30, 90)}
-                >
-                  10px
-                </button>
-                <button
-                  className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-                  // onClick={() => increasingSpped(40, 80)}
-                >
-                  20px
-                </button>
-                <button
-                  className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-                  // onClick={() => increasingSpped(50, 70)}
-                >
-                  50px
-                </button>
-                <button
-                  className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-                  // onClick={() => increasingSpped(70, 30)}
-                >
-                  100px
-                </button>
-                <button
-                  className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-700 font-bold py-1 px-2 m-[1px] rounded"
-                  // onClick={() => increasingSpped(100, 10)}
-                >
-                  200px
-                </button>
-              </div> */}
             </div>
           </div>
         </div>
