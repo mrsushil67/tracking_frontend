@@ -9,6 +9,7 @@ const initialState = {
     : {},
   showDetailed: false,
   showVedio: false,
+  pathLoading: false,
   path: [],
   fullPath: [],
 };
@@ -45,6 +46,15 @@ const UserProvider = ({ children }) => {
     });
   }
 
+  const setPathLoading = (pathloading) => {
+    return dispatch({
+      type: "SET_PATH_LOADING",
+      payload: {
+        pathloading: pathloading,
+      },
+    });
+  }
+
   const setPath = (path) => {
     return dispatch({
       type: "SET_PATH",
@@ -70,6 +80,7 @@ const UserProvider = ({ children }) => {
         setUser,
         setShowDetailed,
         setShowVedio,
+        setPathLoading,
         setPath,
         setFullPath,
       }}

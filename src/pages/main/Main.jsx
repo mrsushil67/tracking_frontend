@@ -18,7 +18,7 @@ const googleMapsLibraries = ["places", "geometry", "marker"];
 
 function Main() {
   const [vehicleno, setTotalVehicles, setFilterdCounts] = useOutletContext();
-  const { showVedio, setShowVedio } = useGlobleContext();
+  const { showVedio, setShowVedio, pathloading, setPathLoading } = useGlobleContext();
   const [vehiclelist, setVehiclelist] = useState([]);
   const [vehiclePath, setVehiclePath] = useState([]);
   const [filteredPath, setFilteredPath] = useState([]);
@@ -35,7 +35,7 @@ function Main() {
   const [loading, setLoading] = useState(false);
   const [vehicleData, setVehicleData] = useState([]);
   const [filterVehicles, setFilterVehicles] = useState([]);
-  const [pathloading, setPathLoading] = useState(false);
+  // const [pathloading, setPathLoading] = useState(false);
   const [vehicleStartTime, setVehicleStartTime] = useState({});
   const [zoom, setZoom] = useState(13)
   const [tempRange, setTempRange] = useState([
@@ -45,6 +45,8 @@ function Main() {
       key: "selection",
     },
   ]);
+  console.log("PathLoading : ", pathloading);
+  console.log("showVedio : ", showVedio);
 
   useEffect(() => {
     if (vehiclelist && vehiclelist.length > 0 && vehicleno !== "") {
@@ -52,7 +54,6 @@ function Main() {
         vehicle.vehicleNo.toLowerCase().includes(vehicleno.toLowerCase())
       );
       setFilterVehicles(filtered);
-      console.log("ab : ", filtered);
     }
   }, [vehicleno]);
 
@@ -196,7 +197,9 @@ function Main() {
     const twentyFourHoursAg = new Date(time24);
 
     try {
-      // setPathLoading(true)
+      // if (!pathloading) {
+      //   setPathLoading(true);
+      // }
       const response = await axios.get(
         `${config.host}${config.getVehiclePath.url}`,
         {
@@ -212,7 +215,7 @@ function Main() {
       setCurrentPosition(formattedPath[0]);
       const lastLatLong = formattedPath.slice(-1)[0];
       setLastLoc(lastLatLong);
-      // setPathLoading(false)
+      setPathLoading(false)
     } catch (error) {
       console.log(error);
     }
@@ -295,6 +298,7 @@ function Main() {
     setShowSplashMap();
     setShowDetails(true);
     setShowVedio(false)
+    setPathLoading(true);
   };
 
   const handleClick = () => {
@@ -402,6 +406,7 @@ function Main() {
             restartInterval={restartInterval}
             getVehiclePath={getVehiclePath}
             vehicleData={vehicleData}
+            setPathLoading={setPathLoading}
           />
         )}
       </div>
