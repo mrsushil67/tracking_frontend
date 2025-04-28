@@ -3,13 +3,17 @@ import { Outlet, Link, useNavigate } from "react-router-dom";
 import { IoMenu, IoClose, IoSearch } from "react-icons/io5";
 import {
   FaHome,
-  FaUser,
-  FaMapMarkerAlt,
-  FaCog,
-  FaChevronDown,
   FaList,
 } from "react-icons/fa";
 import "./layout.css";
+import {
+  Badge,
+  Box,
+  Divider,
+  Popover,
+} from "@mui/material";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import NotificationList from "./NotificationList";
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -18,14 +22,91 @@ const Layout = () => {
   const [vehicleno, setVehicleno] = useState("");
   const [totalVehicles, setTotalVehicles] = useState(0);
   const [filterdCounts, setFilterdCounts] = useState(0);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleChange = (e) => {
     setVehicleno(e.target.value);
   };
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
   // console.log("vehicleno : ", typeof vehicleno);
   // console.log("totalVehicles : ", totalVehicles);
   // console.log("filter Counts : ", filterdCounts);
+
+  const notifyDetails = [
+    {
+      id: 1,
+      title: "New Notification",
+      description: "You have a new notification",
+      time: "2 mins ago",
+      icon: "warning",
+    },
+    {
+      id: 2,
+      title: "New Job Alert",
+      description: "A new job has been posted",
+      time: "5 mins ago",
+      icon: "info",
+    },
+    {
+      id: 3,
+      title: "System Update",
+      description: "The system will be updated tonight",
+      time: "10 mins ago",
+      icon: "success",
+    },
+    {
+      id: 4,
+      title: "Server Maintenance",
+      description: "The server will be down for maintenance",
+      time: "15 mins ago",
+      icon: "error",
+    },
+    {
+      id: 5,
+      title: "New Message",
+      description: "You have a new message from admin",
+      time: "20 mins ago",
+      icon: "info",
+    },
+    {
+      id: 6,
+      title: "New Job Alert",
+      description: "A new job has been posted",
+      time: "5 mins ago",
+      icon: "success",
+    },
+    {
+      id: 7,
+      title: "System Update",
+      description: "The system will be updated tonight",
+      time: "10 mins ago",
+      icon: "success",
+    },
+    {
+      id: 8,
+      title: "Server Maintenance",
+      description: "The server will be down for maintenance",
+      time: "15 mins ago",
+      icon: "error",
+    },
+    {
+      id: 9,
+      title: "New Message",
+      description: "You have a new message from admin",
+      time: "20 mins ago",
+      icon: "info",
+    },
+  ];
 
   return (
     <div className="layout-container flex flex-col h-screen">
@@ -63,6 +144,32 @@ const Layout = () => {
             <button className="ml-2 text-blue-600 hover:text-blue-800 transition">
               <IoSearch size={22} />
             </button>
+          </div>
+          <div className="pr-4">
+            <Badge badgeContent={4} color="success" onClick={handleClick}>
+              <NotificationsIcon sx={{ fontSize: 30 }} color="action" />
+            </Badge>
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+            >
+              <Box sx={{ width: 300, height: 400, overflow: 'scroll', margin: 1}}>
+                {notifyDetails.map((notify, index) => (
+                  <Box key={notify.id}>
+                    <NotificationList notify={notify} />
+                    {index !== notifyDetails.length - 1 && (
+                      <Divider />
+                    )}
+                  </Box>
+                ))}
+              </Box>
+            </Popover>
           </div>
         </div>
       </div>
