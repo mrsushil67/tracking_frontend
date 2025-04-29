@@ -1,19 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { IoMenu, IoClose, IoSearch } from "react-icons/io5";
-import {
-  FaHome,
-  FaList,
-} from "react-icons/fa";
+import { FaHome, FaList } from "react-icons/fa";
 import "./layout.css";
-import {
-  Badge,
-  Box,
-  Divider,
-  Popover,
-} from "@mui/material";
+import { Badge, Box, Button, Divider, Paper, Popover } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationList from "./NotificationList";
+import socket from "../services/socket";
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -23,6 +16,7 @@ const Layout = () => {
   const [totalVehicles, setTotalVehicles] = useState(0);
   const [filterdCounts, setFilterdCounts] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [notification, setNotification] = useState([]);
 
   const handleChange = (e) => {
     setVehicleno(e.target.value);
@@ -108,6 +102,18 @@ const Layout = () => {
     },
   ];
 
+  useEffect(() => {
+    socket.on("message", (data) => {
+      console.log("Notification received:", data);
+    });
+    socket.on("notification", (data) => {
+      console.log("Notification received:", data);
+      setNotification((prevNotifications) => [...prevNotifications, data]);
+    });
+  }, [socket]);
+
+  console.log("Notification List : ", notification);
+
   return (
     <div className="layout-container flex flex-col h-screen">
       <div className="navbar bg-gray-100 text-black flex justify-between items-center p-3 fixed top-0 z-50 border-b-1 w-full">
@@ -146,8 +152,15 @@ const Layout = () => {
             </button>
           </div>
           <div className="pr-4">
-            <Badge badgeContent={4} color="success" onClick={handleClick}>
-              <NotificationsIcon sx={{ fontSize: 30 }} color="action" />
+            <Badge
+              badgeContent={notification.length}
+              color="warning"
+              onClick={handleClick}
+            >
+              <NotificationsIcon
+                sx={{ fontSize: 30 }}
+                color="action"
+              />
             </Badge>
             <Popover
               id={id}
@@ -159,15 +172,34 @@ const Layout = () => {
                 horizontal: "left",
               }}
             >
-              <Box sx={{ width: 300, height: 400, overflow: 'scroll', margin: 1}}>
-                {notifyDetails.map((notify, index) => (
-                  <Box key={notify.id}>
-                    <NotificationList notify={notify} />
-                    {index !== notifyDetails.length - 1 && (
-                      <Divider />
-                    )}
-                  </Box>
-                ))}
+              <Box>
+                <Box className="pt-2 pl-2 font-bold text-[#fc6a2a]">
+                  Notifications -{" "}
+                </Box>
+                <Box
+                  sx={{
+                    width: 300,
+                    height: 400,
+                    overflow: "scroll",
+                    margin: 1,
+                  }}
+                >
+                  {notification.length > 0 &&
+                    notification.map((notify, index) => (
+                      <Box key={notify.id}>
+                        <NotificationList notify={notify} />
+                        {index !== notifyDetails.length - 1 && <Divider />}
+                      </Box>
+                    ))}
+                </Box>
+                <Box className="p-2 flex justify-end">
+                  <Button
+                    variant="outlined"
+                    style={{ borderColor: "#fc6a2a", color: "#fc6a2a" }}
+                  >
+                    Mark as Read
+                  </Button>
+                </Box>
               </Box>
             </Popover>
           </div>
