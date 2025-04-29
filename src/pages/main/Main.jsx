@@ -12,13 +12,14 @@ import { Commet } from "react-loading-indicators";
 import { useOutletContext } from "react-router-dom";
 import Streaming from "./Streaming";
 import { useGlobleContext } from "../../globle/context";
-import moment from 'moment'
+import moment from "moment";
 
 const googleMapsLibraries = ["places", "geometry", "marker"];
 
 function Main() {
   const [vehicleno, setTotalVehicles, setFilterdCounts] = useOutletContext();
-  const { showVedio, setShowVedio, pathloading, setPathLoading } = useGlobleContext();
+  const { showVedio, setShowVedio, pathloading, setPathLoading } =
+    useGlobleContext();
   const [vehiclelist, setVehiclelist] = useState([]);
   const [vehiclePath, setVehiclePath] = useState([]);
   const [filteredPath, setFilteredPath] = useState([]);
@@ -37,7 +38,7 @@ function Main() {
   const [filterVehicles, setFilterVehicles] = useState([]);
   // const [pathloading, setPathLoading] = useState(false);
   const [vehicleStartTime, setVehicleStartTime] = useState({});
-  const [zoom, setZoom] = useState(13)
+  const [zoom, setZoom] = useState(13);
   const [tempRange, setTempRange] = useState([
     {
       startDate: new Date(),
@@ -45,8 +46,6 @@ function Main() {
       key: "selection",
     },
   ]);
-  console.log("PathLoading : ", pathloading);
-  console.log("showVedio : ", showVedio);
 
   useEffect(() => {
     if (vehiclelist && vehiclelist.length > 0 && vehicleno !== "") {
@@ -193,7 +192,7 @@ function Main() {
       twentyFourHoursAgo.getTime() - 24 * 60 * 60 * 1000
     );
 
-     const time24 = moment().subtract(24,"h")
+    const time24 = moment().subtract(24, "h");
     const twentyFourHoursAg = new Date(time24);
 
     try {
@@ -215,7 +214,7 @@ function Main() {
       setCurrentPosition(formattedPath[0]);
       const lastLatLong = formattedPath.slice(-1)[0];
       setLastLoc(lastLatLong);
-      setPathLoading(false)
+      setPathLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -297,7 +296,7 @@ function Main() {
     getVehiclePath(vehicleNo);
     setShowSplashMap();
     setShowDetails(true);
-    setShowVedio(false)
+    setShowVedio(false);
     setPathLoading(true);
   };
 
