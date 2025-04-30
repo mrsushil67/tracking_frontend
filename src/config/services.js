@@ -11,7 +11,13 @@ const config = {
     },
     currentLocation:{
         url:'/api/v1/vehicle/getVehicle'
-    }
+    },
+    getAllNotifications:{
+        url:'/api/v1/notification/getAllNotifications'
+    },
+    markAllNotaficationAsRead:{
+        url:'/api/v1/notification/updateNotification'
+    },
 }
 
 export default config;

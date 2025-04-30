@@ -6,7 +6,10 @@ import "./layout.css";
 import { Badge, Box, Button, Divider, Paper, Popover } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationList from "./NotificationList";
+import CloseIcon from "@mui/icons-material/Close";
 import socket from "../services/socket";
+import axios from "axios";
+import config from "../config/services";
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -17,6 +20,9 @@ const Layout = () => {
   const [filterdCounts, setFilterdCounts] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
   const [notification, setNotification] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+
+  const totalNotification = [...notification, ...notifications];
 
   const handleChange = (e) => {
     setVehicleno(e.target.value);
@@ -32,87 +38,37 @@ const Layout = () => {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  // console.log("vehicleno : ", typeof vehicleno);
-  // console.log("totalVehicles : ", totalVehicles);
-  // console.log("filter Counts : ", filterdCounts);
 
-  const notifyDetails = [
-    {
-      id: 1,
-      title: "New Notification",
-      description: "You have a new notification",
-      time: "2 mins ago",
-      icon: "warning",
-    },
-    {
-      id: 2,
-      title: "New Job Alert",
-      description: "A new job has been posted",
-      time: "5 mins ago",
-      icon: "info",
-    },
-    {
-      id: 3,
-      title: "System Update",
-      description: "The system will be updated tonight",
-      time: "10 mins ago",
-      icon: "success",
-    },
-    {
-      id: 4,
-      title: "Server Maintenance",
-      description: "The server will be down for maintenance",
-      time: "15 mins ago",
-      icon: "error",
-    },
-    {
-      id: 5,
-      title: "New Message",
-      description: "You have a new message from admin",
-      time: "20 mins ago",
-      icon: "info",
-    },
-    {
-      id: 6,
-      title: "New Job Alert",
-      description: "A new job has been posted",
-      time: "5 mins ago",
-      icon: "success",
-    },
-    {
-      id: 7,
-      title: "System Update",
-      description: "The system will be updated tonight",
-      time: "10 mins ago",
-      icon: "success",
-    },
-    {
-      id: 8,
-      title: "Server Maintenance",
-      description: "The server will be down for maintenance",
-      time: "15 mins ago",
-      icon: "error",
-    },
-    {
-      id: 9,
-      title: "New Message",
-      description: "You have a new message from admin",
-      time: "20 mins ago",
-      icon: "info",
-    },
-  ];
+  const getAllNotifications = async () => {
+    const response = await axios.get(`${config.host}${config.getAllNotifications.url}`);
+    if (response.status === 200) {
+      setNotification(response.data);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      const response = await axios.post(`${config.host}${config.markAllNotaficationAsRead.url}`);
+      if (response.status === 200) {
+        setNotification([]);
+        setNotifications([]);
+        console.log(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error marking notifications as read:", error);
+    }
+  };
+
 
   useEffect(() => {
+    getAllNotifications();
     socket.on("message", (data) => {
-      console.log("Notification received:", data);
+      console.log("Notification:", data);
     });
     socket.on("notification", (data) => {
-      console.log("Notification received:", data);
-      setNotification((prevNotifications) => [...prevNotifications, data]);
+      setNotifications((prevNotifications) => [...prevNotifications, data]);
     });
   }, [socket]);
-
-  console.log("Notification List : ", notification);
 
   return (
     <div className="layout-container flex flex-col h-screen">
@@ -132,7 +88,7 @@ const Layout = () => {
         <div className="flex items-center space-x-3">
           {totalVehicles > 0 ? (
             <div>
-              <span className="font-bold">Total Vehicles: </span>
+              <span className="font-bold  text-gray-700">Total Vehicles : </span>
 
               <span className="font-bold  text-[#fc6a2a]">
                 {totalVehicles}{" "}
@@ -153,55 +109,62 @@ const Layout = () => {
           </div>
           <div className="pr-4">
             <Badge
-              badgeContent={notification.length}
+              badgeContent={totalNotification.length}
               color="warning"
               onClick={handleClick}
             >
-              <NotificationsIcon
-                sx={{ fontSize: 30 }}
-                color="action"
-              />
+              <NotificationsIcon sx={{ fontSize: 30 }} color="action" />
             </Badge>
-            <Popover
-              id={id}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-            >
-              <Box>
-                <Box className="pt-2 pl-2 font-bold text-[#fc6a2a]">
-                  Notifications -{" "}
-                </Box>
-                <Box
-                  sx={{
-                    width: 300,
-                    height: 400,
-                    overflow: "scroll",
-                    margin: 1,
-                  }}
-                >
-                  {notification.length > 0 &&
-                    notification.map((notify, index) => (
-                      <Box key={notify.id}>
-                        <NotificationList notify={notify} />
-                        {index !== notifyDetails.length - 1 && <Divider />}
-                      </Box>
-                    ))}
-                </Box>
-                <Box className="p-2 flex justify-end">
-                  <Button
-                    variant="outlined"
-                    style={{ borderColor: "#fc6a2a", color: "#fc6a2a" }}
+            {totalNotification.length > 0 && (
+              <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+              >
+                <Box className="bg-gray-100">
+                  <Box className="flex justify-between items-center px-3 pt-2">
+                    <Box className="font-bold text-[#fc6a2a]">
+                      Notifications -{" "}
+                    </Box>
+                    <Box>
+                      <CloseIcon onClick={handleClose} />
+                    </Box>
+                  </Box>
+                  <Box
+                    sx={{
+                      width: 300,
+                      height: 400,
+                      overflow: "scroll",
+                      margin: 1,
+                    }}
                   >
-                    Mark as Read
-                  </Button>
+                    {totalNotification.length > 0 &&
+                      totalNotification.toReversed().map((notify, index) => (
+                        <Box className="m-1" key={notify.id}>
+                          <NotificationList notify={notify} />
+                          {/* {index !== notifyDetails.length - 1 && <Divider />} */}
+                        </Box>
+                      ))}
+                  </Box>
+                  <Box className="px-2 pb-2 flex justify-end">
+
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      style={{ borderColor: "#fc6a2a", color: "#fc6a2a" }}
+                      onClick={markAllAsRead}
+                    >
+                      Mark as Read
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
-            </Popover>
+              </Popover>
+            )}
           </div>
         </div>
       </div>
