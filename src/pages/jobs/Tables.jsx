@@ -46,14 +46,20 @@ const Tables = () => {
       },
       {
         name: "JOB DESCRIPTION",
-        selector: (row) => `${row.SourceCity}-${row.DestCity}-${row.TripSheet}`,
+        selector: (row) => `${row.SourceCity}-${row.DestCity}`,
         sortable: false,
+      },
+      {
+        name: "TRIP SHEET",
+        selector: (row) => row.TripSheet,
+        sortable: false,
+        width: "9rem",
       },
       {
         name: "VEHICLE No.",
         selector: (row) => row.Vehicle_no,
         sortable: false,
-        width: "11rem",
+        width: "9rem",
       },
       {
         name: "JOB START",
