@@ -39,6 +39,8 @@ const Map = ({
     vehicleDetails.driverDetails
   );
 
+  const localDateTime = new Date(vehicleDetails.lastUpdateAt).toLocaleString();
+
   // console.log("driverDetails : ", vehicleDetails.driverDetails);
 
   // console.log("vehicleDetails : ", vehicleDetails);
@@ -65,8 +67,7 @@ const Map = ({
     });
   }
 
-
-  console.log(updatedCoordinates.length)
+  console.log(updatedCoordinates.length);
   const center =
     updatedCoordinates.length > 0
       ? updatedCoordinates[updatedCoordinates.length - 1]
@@ -90,7 +91,7 @@ const Map = ({
   const isoString = vehicleStartTime.time;
   const date = new Date(isoString);
   let time = "";
-  
+
   if (!isNaN(date.getTime())) {
     time = date.toISOString().substr(11, 8);
   } else {
@@ -200,7 +201,7 @@ const Map = ({
                     >
                       <div className="p-2 rounded-2xl shadow-md bg-white w-[300px]">
                         <div className="mb-2">
-                          <div className="flex justify-between">
+                          <div className="flex justify-between pb-1">
                             <div className="font-bold">
                               Vehicle No: {vehicleDetails.vehicleNo}
                             </div>
@@ -209,7 +210,7 @@ const Map = ({
                             </div>
                           </div>
                           {vehicleDetails?.driverDetails?.driverName !== "" ? (
-                            <div className="flex">
+                            <div className="flex pb-1">
                               <span className="text-xs font-bold text-gray-600">
                                 Driver :{" "}
                               </span>
@@ -221,6 +222,7 @@ const Map = ({
                                   {" "}
                                   <IoCall />
                                 </span>
+                                <span> </span>
                                 <span className="text-xs font-bold text-gray-600">
                                   {vehicleDetails?.driverDetails?.driverNumber}
                                 </span>
@@ -229,11 +231,11 @@ const Map = ({
                           ) : null}
                           <div className="flex items-center gap-1">
                             <span className="w-2 h-2 border-2 border-amber-600 bg-amber-600 rounded-full"></span>
-                            <span className="text-xs font-bold text-gray-600">
-                              Last Updated: {vehicleDetails.lastUpdateAt}
+                            <span className="text-xs font-bold text-gray-600 pb-1">
+                              Last Updated: {localDateTime}
                             </span>
                           </div>
-                          <div class="grid grid-cols-4 gap-4">
+                          <div class="grid grid-cols-4 gap-4 pb-1">
                             <div className="">
                               <div className="text-xs font-bold text-gray-700">
                                 Speed:{" "}
@@ -318,9 +320,7 @@ const Map = ({
               {/* <div className="font-bold text-xs">{vehicleStartTime.time}</div> */}
 
               <div className="flex justify-center items-center">
-                <div className="mx-[1px]">
-                 
-                </div>
+                <div className="mx-[1px]"></div>
                 <div className="mx-[1px]">
                   {/* <div className="font-bold text-xs">{vehicleStartTime.time}</div> */}
                 </div>
