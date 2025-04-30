@@ -132,7 +132,7 @@ const Layout = () => {
         <div className="flex items-center space-x-3">
           {totalVehicles > 0 ? (
             <div>
-              <span className="font-bold">Total : </span>
+              <span className="font-bold">Total Vehicles: </span>
 
               <span className="font-bold  text-[#fc6a2a]">
                 {totalVehicles}{" "}
