@@ -2,6 +2,14 @@ const reducer = (state, action) => {
   switch (action.type) {
     case "SET_USER":
       return { ...state, user: action.payload.user };
+    case "SET_VEHICLELIST":
+      return { ...state, vehiclelist: action.payload.vehiclelist };
+    case "SET_TOTALVEHICLES":
+      return { ...state, totalVehicles: action.payload.totalVehicles };
+    case "SET_VEHICLENO" :
+      return { ...state, vehicleno: action.payload.vehicleno };
+    case "SET_FILTERBYSTATUS":
+      return { ...state, filterByStutus: action.payload.filterByStutus };
     case "SET_SHOWDETAILS":
       return { ...state, showDetailed: action.payload.showDetailed };
     case "SET_SHOWVEDIO":
