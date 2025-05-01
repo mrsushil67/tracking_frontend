@@ -10,14 +10,10 @@ const VehicleList = ({
   handleShowDetails,
   handleClick,
   vehicleDetails,
-  setFilterdCounts,
 }) => {
   // console.log("Filtered : ", filterVehicles);
   const vehiclesToDisplay =
     filterVehicles && filterVehicles.length > 0 ? filterVehicles : vehiclelist;
-
-  // console.log("vehiclesToDisplay :", vehiclesToDisplay.length);
-  setFilterdCounts(vehiclesToDisplay.length);
 
   return (
     <div className="vehicle-card-container bg-gray-100">

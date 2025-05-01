@@ -17,10 +17,8 @@ import moment from "moment";
 const googleMapsLibraries = ["places", "geometry", "marker"];
 
 function Main() {
-  const [vehicleno, setTotalVehicles, setFilterdCounts] = useOutletContext();
-  const { showVedio, setShowVedio, pathloading, setPathLoading } =
-    useGlobleContext();
-  const [vehiclelist, setVehiclelist] = useState([]);
+  const [] = useOutletContext();
+  const { showVedio, setShowVedio, pathloading, setPathLoading, vehiclelist, setVehiclelist, setTotalVehicles, vehicleno} = useGlobleContext();
   const [vehiclePath, setVehiclePath] = useState([]);
   const [filteredPath, setFilteredPath] = useState([]);
   const [vehicleDetails, setVehicleDetails] = useState({});
@@ -30,10 +28,8 @@ function Main() {
   const [showDetails, setShowDetails] = useState(false);
   const [range, setRange] = useState(null);
   const [currentPosition, setCurrentPosition] = useState(null);
-  const [index, setIndex] = useState(0);
   const [markerPosition, setMarkerPosition] = useState([]);
   const [showSplashMap, setShowSplashMap] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [vehicleData, setVehicleData] = useState([]);
   const [filterVehicles, setFilterVehicles] = useState([]);
   // const [pathloading, setPathLoading] = useState(false);
@@ -386,7 +382,6 @@ function Main() {
           handleShowDetails={handleShowDetails}
           handleClick={handleClick}
           vehicleDetails={vehicleDetails}
-          setFilterdCounts={setFilterdCounts}
         />
       </div>
 
