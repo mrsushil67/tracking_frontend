@@ -31,7 +31,6 @@ function Main() {
   const [markerPosition, setMarkerPosition] = useState([]);
   const [showSplashMap, setShowSplashMap] = useState(true);
   const [vehicleData, setVehicleData] = useState([]);
-  const [filterVehicles, setFilterVehicles] = useState([]);
   // const [pathloading, setPathLoading] = useState(false);
   const [vehicleStartTime, setVehicleStartTime] = useState({});
   const [zoom, setZoom] = useState(13);
@@ -42,15 +41,6 @@ function Main() {
       key: "selection",
     },
   ]);
-
-  useEffect(() => {
-    if (vehiclelist && vehiclelist.length > 0 && vehicleno !== "") {
-      const filtered = vehiclelist.filter((vehicle) =>
-        vehicle.vehicleNo.toLowerCase().includes(vehicleno.toLowerCase())
-      );
-      setFilterVehicles(filtered);
-    }
-  }, [vehicleno]);
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -378,7 +368,6 @@ function Main() {
       <div className="vehicle-list">
         <VehicleList
           vehiclelist={vehiclelist}
-          filterVehicles={filterVehicles}
           handleShowDetails={handleShowDetails}
           handleClick={handleClick}
           vehicleDetails={vehicleDetails}

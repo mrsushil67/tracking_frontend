@@ -3,17 +3,43 @@ import { FaRegClock } from "react-icons/fa";
 import { IoMdSpeedometer } from "react-icons/io";
 import { MdOutlineFullscreen } from "react-icons/md";
 import VehicleCard from "../../components/VehicleCard";
+import { useGlobleContext } from "../../globle/context";
 
 const VehicleList = ({
   vehiclelist,
-  filterVehicles,
   handleShowDetails,
   handleClick,
   vehicleDetails,
 }) => {
-  // console.log("Filtered : ", filterVehicles);
+  const { vehicleno, filterByStatus } = useGlobleContext();
+  const [filterVehicles, setFilterVehicles] = useState([]);
+  const [filterVehiclesByStatus, setFilterVehiclesByStatus] = useState([]);
+
+  useEffect(() => {
+    if (vehiclelist && vehiclelist.length > 0) {
+      console.log("Filtered : ", filterByStatus);
+      const filtered = vehiclelist.filter((vehicle) =>
+        filterByStatus.some((status) => vehicle.currentStatus.includes(status))
+      );
+      setFilterVehiclesByStatus(filterByStatus.length > 0 ? filtered : []);
+    }
+  }, [filterByStatus]);
+
+  useEffect(() => {
+    if (vehiclelist && vehiclelist.length > 0 && vehicleno !== "") {
+      const filtered = vehiclelist.filter((vehicle) =>
+        vehicle.vehicleNo.toLowerCase().includes(vehicleno.toLowerCase())
+      );
+      setFilterVehicles(filtered);
+    }
+  }, [vehicleno]);
+
   const vehiclesToDisplay =
-    filterVehicles && filterVehicles.length > 0 ? filterVehicles : vehiclelist;
+    filterVehiclesByStatus && filterVehiclesByStatus.length > 0
+      ? filterVehiclesByStatus
+      : filterVehicles && filterVehicles.length > 0
+      ? filterVehicles
+      : vehiclelist;
 
   return (
     <div className="vehicle-card-container bg-gray-100">

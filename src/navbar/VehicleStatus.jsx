@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Switch from "@mui/material/Switch";
 import Paper from "@mui/material/Paper";
 import Collapse from "@mui/material/Collapse";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Checkbox, Grid2, Popover } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { useGlobleContext } from "../globle/context";
 
 const VehicleStatus = ({
   vehicleStatus,
@@ -13,30 +15,25 @@ const VehicleStatus = ({
   openVehicleStatusFilter,
   id2,
 }) => {
-  const [selectedStatuses, setSelectedStatuses] = useState([]);
-
+  const { filterByStatus, setFilterByStatus } = useGlobleContext();
   const handleCheckboxChange = (status) => {
-    setSelectedStatuses((prev) =>
-      prev.includes(status)
-        ? prev.filter((item) => item !== status)
-        : [...prev, status]
-    );
+    const updatedStatus = filterByStatus.includes(status)
+      ? filterByStatus.filter((item) => item !== status)
+      : [...filterByStatus, status];
+
+    setFilterByStatus(updatedStatus.length > 0 ? updatedStatus : []); // ✅ Ensure empty array if all unchecked
   };
+
+  // useEffect(() => {
+  //   if(filterByStatus.length === 0){
+  //     console.log("ye abhi nahi chalega")
+  //     setFilterByStatus([])
+  //   }
+  // },[filterByStatus])
 
   const handleClose = () => {
     setHoverVehicleCount(null);
   };
-
-  console.log("Selected Statuses", selectedStatuses);
-
-  const statuses = [
-    { label: "123 Running", value: "running" },
-    { label: "14 Parked", value: "parked" },
-    { label: "67 Unreachable", value: "unreachable" },
-    { label: "289 Idle", value: "idle" },
-    { label: "9 Battery Discharge", value: "batteryDischarge" },
-    { label: "16 Not Available", value: "notAvailable" },
-  ];
 
   return (
     <div>
@@ -53,19 +50,26 @@ const VehicleStatus = ({
           vertical: "top",
           horizontal: "center",
         }}
-        sx={{marginTop: 3}}
+        sx={{ marginTop: 3 }}
       >
-        <Box className="p-2">
-          <Grid2 container spacing={1} width={500}>
+        <Box className="p-3">
+          <Box className="flex justify-between">
+            <Box className="font-bold">Filter Vehicles</Box>
+            <Box>
+                <CloseIcon sx={{cursor: "pointer"}} onClick={handleClose} />
+              </Box>
+          </Box>
+          <Grid2 container spacing={1} width={450}>
             {vehicleStatus.map((status, index) => (
               <Grid2 key={index} size={6}>
                 <Box className="flex justify-start items-center">
-                  <Checkbox
-                    checked={selectedStatuses.includes(status.status)}
+                  <Checkbox 
+                    size="small"
+                    checked={filterByStatus.includes(status.status)}
                     onChange={() => handleCheckboxChange(status.status)}
                   />
-                  <span className="pr-1 font-bold">{status.count} </span>
-                  <span>{status.status}</span>
+                  <span className={status.status === "RUNNING" ? `text-green-700 text-sm font-bold pr-1` : status.status === "IDLE" ? 'text-yellow-500 text-sm font-bold pr-1' : 'text-red-700 text-sm font-bold pr-1'}>{status.count} </span>
+                  <span className="text-sm text-gray-700">{status.status}</span>
                 </Box>
               </Grid2>
             ))}
