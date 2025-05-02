@@ -139,7 +139,7 @@ const Tables = () => {
   }
 
   return (
-    <div className="border h-[100%] p-5 bg-gray-100">
+    <div className="h-[100%] p-5 bg-gray-100">
       <Box
         sx={{
           marginBottom: 2,
