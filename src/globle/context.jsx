@@ -10,7 +10,7 @@ const initialState = {
   vehiclelist : [], //setVehiclelist
   totalVehicles: 0, //setTotalVehicles
   vehicleno : "", //setVehicleno
-  filterByStutus: [], //for filtering vehicles by Current Status
+  filterByStatus: [], //for filtering vehicles by Current Status
   showDetailed: false,
   showVedio: false,
   pathLoading: false,
@@ -59,11 +59,11 @@ const UserProvider = ({ children }) => {
     })
   }
 
-  const setFilterByStatus = (filterByStutus) => {
+  const setFilterByStatus = (filterByStatus) => {
     return dispatch({
       type: "SET_FILTERBYSTATUS",
       payload: {
-        filterByStutus: filterByStutus,
+        filterByStatus: filterByStatus,
       },
     })
   } 

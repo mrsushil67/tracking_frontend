@@ -9,7 +9,7 @@ const reducer = (state, action) => {
     case "SET_VEHICLENO" :
       return { ...state, vehicleno: action.payload.vehicleno };
     case "SET_FILTERBYSTATUS":
-      return { ...state, filterByStutus: action.payload.filterByStutus };
+      return { ...state, filterByStatus: action.payload.filterByStatus };
     case "SET_SHOWDETAILS":
       return { ...state, showDetailed: action.payload.showDetailed };
     case "SET_SHOWVEDIO":
