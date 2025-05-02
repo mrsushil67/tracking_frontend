@@ -17,8 +17,6 @@ const TotalVehiclesCount = () => {
     status: key,
     count: value,
   }));
-
-  console.log("Vehicle Status Count: ", vehicleStatus);
   const handlePopoverOpen = (event) => {
     setHoverVehicleCount(event.currentTarget);
   };
