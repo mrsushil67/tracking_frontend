@@ -37,22 +37,26 @@ const TotalVehiclesCount = () => {
       onMouseLeave={handlePopoverClose}
     >
       <div className="pr-10">
-        <span className="font-bold text-gray-700">Running : </span>
-        <span className="font-bold text-green-700">{count.RUNNING}</span>
+        {count.RUNNING > 0 && (
+          <div>
+            <span className="font-bold text-gray-700">Running : </span>
+            <span className="font-bold text-green-700">{count.RUNNING}</span>
+          </div>
+        )}
       </div>
       <div className="pr-10">
-        <span className="font-bold text-gray-700">Idle : </span>
-        <span className="font-bold text-yellow-500">{count.IDLE}</span>
+        {count.IDLE > 0 && (
+          <div>
+            <span className="font-bold text-gray-700">Idle : </span>
+            <span className="font-bold text-yellow-500">{count.IDLE}</span>
+          </div>
+        )}
       </div>
       <div className="pr-10">
         {totalVehicles > 0 && (
           <div>
-            <span className="font-bold text-gray-700">
-              Total Vehicles :{" "}
-            </span>
-            <span className="font-bold text-[#fc6a2a]">
-              {totalVehicles}{" "}
-            </span>
+            <span className="font-bold text-gray-700">Total Vehicles : </span>
+            <span className="font-bold text-[#fc6a2a]">{totalVehicles} </span>
             <VehicleStatus
               vehicleStatus={vehicleStatus}
               hoverVehicleCount={hoverVehicleCount}
