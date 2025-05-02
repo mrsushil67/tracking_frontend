@@ -14,7 +14,7 @@ const Layout = () => {
 
   return (
     <div className="layout-container flex flex-col h-screen">
-      <div className="navbar bg-gray-100 text-black flex justify-between items-center p-3 fixed top-0 z-50 border-b-1 w-full">
+      <div className="navbar bg-gray-100 text-black flex justify-between items-center p-3 fixed top-0 z-50 border-b-1 border-gray-300 w-full">
         <div className="flex text-gray-700 items-center gap-4">
           <button onClick={() => setSidebarOpen(!isSidebarOpen)}>
             {isSidebarOpen ? <IoClose size={25} /> : <IoMenu size={25} />}
@@ -42,7 +42,7 @@ const Layout = () => {
 
       <div className="content-container flex flex-grow pt-10 md:pt-13 lg:pt-16 h-full">
         <div
-          className={`sidebar bg-gray-100 text-black flex flex-col p-2 transition-all duration-400 ${
+          className={`sidebar bg-gray-100  text-black flex flex-col p-2 transition-all duration-400 border-r-1 border-gray-300 ${
             isSidebarOpen ? "sidebar-open w-64" : "sidebar-closed w-16"
           }`}
         >
