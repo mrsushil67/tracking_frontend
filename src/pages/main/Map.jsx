@@ -33,7 +33,6 @@ const Map = ({
   const mapRef = useRef(null);
   const [marker, setMarker] = useState(null);
   const [open, setOpen] = useState(false);
-  // const [zoom, setZoom] = useState(6);
   const [showInfoWindow, setShowInfoWindow] = useState(false);
   const [driverDetails, setDriverDetails] = useState(
     vehicleDetails.driverDetails
@@ -41,17 +40,12 @@ const Map = ({
 
   const localDateTime = new Date(vehicleDetails.lastUpdateAt).toLocaleString();
 
-  // console.log("driverDetails : ", vehicleDetails.driverDetails);
-
-  // console.log("vehicleDetails : ", vehicleDetails);
   const handleMarkerClick = (event) => {
     setOpen(true);
     setMarker({ lat: event.latLng.lat(), lng: event.latLng.lng() });
   };
 
   const updatedCoordinates = [...vehiclePath];
-
-  // console.log("updatedCoordinates : ", updatedCoordinates.length);
 
   const processBar =
     (updatedCoordinates.length / updatedCoordinates.length) * 100;
@@ -67,7 +61,6 @@ const Map = ({
     });
   }
 
-  console.log(updatedCoordinates.length);
   const center =
     updatedCoordinates.length > 0
       ? updatedCoordinates[updatedCoordinates.length - 1]
@@ -75,10 +68,6 @@ const Map = ({
 
   const address = vehicleDetails.currentAddress || "";
   const parts = address.split(",");
-
-  const handleRedirect = () => {
-    window.open("https://www.google.com/maps/");
-  };
 
   const handleShowInfoWindow = () => {
     setShowInfoWindow(true);
@@ -95,9 +84,18 @@ const Map = ({
   if (!isNaN(date.getTime())) {
     time = date.toISOString().substr(11, 8);
   } else {
-    // console.error("Invalid date:", isoString);
     time = "--:--:--";
   }
+
+  const handleRedirect = () => {
+    if (updatedCoordinates.length > 0) {
+      const startLatLng = updatedCoordinates[0];
+      const currentLatLng =
+        updatedCoordinates[updatedCoordinates.length - 1];
+      const googleMapsUrl = `https://www.google.com/maps/dir/${startLatLng.lat},${startLatLng.lng}/${currentLatLng.lat},${currentLatLng.lng}`;
+      window.open(googleMapsUrl, "_blank");
+    }
+  };
 
   return (
     <>
@@ -260,19 +258,7 @@ const Map = ({
                                 {vehicleDetails.currentStatus}
                               </div>
                             </div>
-
-                            {/* <div class="...">
-                          <div className="text-xs font-bold text-gray-700">
-                          Speed:{" "} 
                           </div>
-                          <div className="text-xs font-bold text-green-700">
-                          {vehicleDetails.speed} km/h
-                          </div>
-                        </div> */}
-                          </div>
-                          {/* <div>Latitude: {vehicleDetails.latitude}</div>
-                      <div>Longitude: {vehicleDetails.longitude}</div> */}
-
                           <div>
                             <span className="text-xs font-bold text-gray-700">
                               Address :{" "}
@@ -317,13 +303,9 @@ const Map = ({
             </div>
 
             <div className="grid grid-cols-3 gap-4 my-1">
-              {/* <div className="font-bold text-xs">{vehicleStartTime.time}</div> */}
-
               <div className="flex justify-center items-center">
                 <div className="mx-[1px]"></div>
-                <div className="mx-[1px]">
-                  {/* <div className="font-bold text-xs">{vehicleStartTime.time}</div> */}
-                </div>
+                <div className="mx-[1px]"></div>
               </div>
             </div>
           </div>
