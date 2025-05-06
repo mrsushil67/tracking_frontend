@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { IoMenu, IoClose, IoSearch } from "react-icons/io5";
-import { FaHome, FaList } from "react-icons/fa";
 import "./layout.css";
 import Notification from "../navbar/Notification";
-import { useGlobleContext } from "../globle/context";
 import TotalVehiclesCount from "../navbar/TotalVehiclesCount";
 import SearchBar from "../navbar/SearchBar";
+import SideBar from "./SideBar";
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -41,41 +40,7 @@ const Layout = () => {
       </div>
 
       <div className="content-container flex flex-grow pt-10 md:pt-13 lg:pt-16 h-full">
-        <div
-          className={`sidebar bg-gray-100  text-black flex flex-col p-2 transition-all duration-400 border-r-1 border-gray-300 ${
-            isSidebarOpen ? "sidebar-open w-64" : "sidebar-closed w-16"
-          }`}
-        >
-          <Link
-            to="/"
-            className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3"
-          >
-            <FaHome size={18} />
-            {isSidebarOpen && <span>Home</span>}
-          </Link>
-          <Link
-            to="/alljobs"
-            className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3"
-          >
-            <FaList size={18} />
-            {isSidebarOpen && <span>Jobs</span>}
-          </Link>
-
-          {/* <div className="relative">
-            <button onClick={() => setDropdownOpen(!isDropdownOpen)} className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center items-center gap-3 w-full">
-              <FaCog size={18} />
-              {isSidebarOpen && <span>Settings</span>}
-              {isSidebarOpen && <FaChevronDown size={15} className={`ml-auto ${isDropdownOpen ? "rotate-180" : ""}`} />}
-            </button>
-            {isDropdownOpen && isSidebarOpen && (
-              <div className="bg-gray-800 text-white p-2 rounded mt-2 ml-5 space-y-2">
-                <Link to="/settings/profile" className="block hover:bg-gray-700 p-2 rounded">Profile Settings</Link>
-                <Link to="/settings/account" className="block hover:bg-gray-700 p-2 rounded">Account Settings</Link>
-              </div>
-            )}
-          </div> */}
-        </div>
-
+        <SideBar isSidebarOpen={isSidebarOpen} />
         <div className="main-content flex-grow overflow-auto">
           <Outlet context={[]} />
         </div>
