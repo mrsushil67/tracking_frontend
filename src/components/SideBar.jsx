@@ -15,12 +15,13 @@ const SideBar = ({ isSidebarOpen }) => {
         isSidebarOpen ? "sidebar-open w-64" : "sidebar-closed w-16"
       }`}
     >
-      {sidebarComponent.map((items) => (
+      {sidebarComponent.map((items, index) => (
         <Link
+          key={index}
           to={items.path}
           className="hover:bg-gray-300 text-gray-700 p-2 rounded flex items-center gap-3"
         >
-          <Box fontSize={20}>{items.icon}</Box>
+          <Box fontSize={18}>{items.icon}</Box>
           {isSidebarOpen && <span>{items.name}</span>}
         </Link>
       ))}
