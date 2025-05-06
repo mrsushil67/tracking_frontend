@@ -4,6 +4,7 @@ import { IoMdSpeedometer } from "react-icons/io";
 import { MdOutlineFullscreen } from "react-icons/md";
 import VehicleCard from "../../components/VehicleCard";
 import { useGlobleContext } from "../../globle/context";
+import VehicleCardSkeleton from "../../components/VehicleCardSkeleton";
 
 const VehicleList = ({
   vehiclelist,
@@ -52,8 +53,12 @@ const VehicleList = ({
           />
         ))
       ) : (
-        <div className="flex justify-center items-center">
-          <span className="items-center">Loading ... </span>
+        <div>
+          <VehicleCardSkeleton />
+          <VehicleCardSkeleton />
+          <VehicleCardSkeleton />
+          <VehicleCardSkeleton />
+          <VehicleCardSkeleton />
         </div>
       )}
     </div>
