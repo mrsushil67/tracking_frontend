@@ -4,8 +4,8 @@ import {
   Box,
   TextField,
   Typography,
-  Grid,
   InputAdornment,
+  Grid2,
 } from "@mui/material";
 import axios from "axios";
 import Moment from "moment";
@@ -149,20 +149,20 @@ const Tables = () => {
           boxShadow: 1,
         }}
       >
-        <Grid
+        <Grid2
           container
           spacing={2}
           alignItems="center"
           justifyContent="space-between"
         >
-          <Grid item>
+          <Grid2 item>
             <Typography variant="h6">
               Total Jobs: <span className="text-[#fc6a2a]">{totaljobs}</span>
             </Typography>
-          </Grid>
-          <Grid item>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item>
+          </Grid2>
+          <Grid2 item>
+            <Grid2 container spacing={2} alignItems="center">
+              <Grid2 item>
                 <TextField
                   size="small"
                   placeholder="Search by vehicle"
@@ -170,8 +170,8 @@ const Tables = () => {
                   value={searchByVehicle}
                   onChange={(e) => setSearchByVehicle(e.target.value)}
                 />
-              </Grid>
-              <Grid item>
+              </Grid2>
+              <Grid2 item>
                 <TextField
                   size="small"
                   // label="from"
@@ -181,9 +181,9 @@ const Tables = () => {
                   value={fromDate}
                   onChange={(e) => setFromDate(e.target.value)}
                 />
-              </Grid>
+              </Grid2>
 
-              <Grid item>
+              <Grid2 item>
                 <TextField
                   size="small"
                   // label="To"
@@ -193,16 +193,16 @@ const Tables = () => {
                   value={toDate}
                   onChange={(e) => setTodate(e.target.value)}
                 />
-              </Grid>
-              <Grid item>
+              </Grid2>
+              <Grid2 item>
                 <BiRefresh
                   className="text-4xl border border-gray-400 rounded cursor-pointer"
                   onClick={handleRefresh}
                 />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+              </Grid2>
+            </Grid2>
+          </Grid2>
+        </Grid2>
       </Box>
       <Box sx={{ borderRadius: 1.5, border: "1px solid black" }}>
         <DataTable
