@@ -22,7 +22,7 @@ const Layout = () => {
             src="https://snaptrak.tech/assets/images/snap1.png"
             onClick={() => navigate("/")}
             alt="logo"
-            className="w-30 h-auto"
+            className="w-30 h-auto cursor-pointer"
           />
         </div>
         {/* Right Side: Search Box */}
