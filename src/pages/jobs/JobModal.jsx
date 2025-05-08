@@ -6,6 +6,7 @@ import MapModal from "./MapModal";
 import AtoB_Path from "./AtoB_Path";
 import { IoClose } from "react-icons/io5";
 import axios from "axios";
+import config from "../../config/services";
 
 const customStyles = {
   content: {
@@ -21,11 +22,15 @@ const customStyles = {
 
 Modal.setAppElement("#root");
 
-const JobModal = ({ modalIsOpen, setIsOpen, selectedJob }) => {
-  const [latlongData, setLatlongData] = useState({});
-  const [jobTouchPoint, setJobTouchPoint] = useState([]);
-  const [jobDetails, setJobDetails] = useState(null);
-
+const JobModal = ({
+  modalIsOpen,
+  setIsOpen,
+  selectedJob,
+  latlongData,
+  jobTouchPoint,
+  jobDetails,
+  setLatlongData,
+}) => {
   const sourceCoords = latlongData
     ? { lat: latlongData.SourceLat, long: latlongData.SourceLong }
     : { lat: "", long: "" };
@@ -34,29 +39,39 @@ const JobModal = ({ modalIsOpen, setIsOpen, selectedJob }) => {
     ? { lat: latlongData.DestLat, long: latlongData.DestLong }
     : { lat: "", long: "" };
 
-  const fetchJobRout = async () => {
+  const getTripData = async () => {
     try {
-      if (!selectedJob?.id) {
-        // console.warn("Selected job is not available.");
-        return;
+      console.log("jobDetails : ", jobDetails);
+
+      const payload = {
+        vehicleNo: jobDetails.Vehicle_no,
+        source: {
+          lat: jobDetails.SourceLat,
+          long: jobDetails.SourceLong,
+        },
+        destination: {
+          lat: jobDetails.DestLat,
+          long: jobDetails.DestLong,
+        },
+        jobArr_Date : jobDetails.Job_Arrivle,
+        jobDept_Date : jobDetails.Job_Departure,
       }
 
-      const response = await axios.get(
-        `https://rcm.snaptrak.tech/VehicleJobListDeatils?id=${selectedJob.id}`
+      console.log(payload)
+      const tripData = await axios.post(
+        `${config.host}${config.getRootDataByTripDetails.url}`,
+        payload
       );
 
-      console.log(response.data);
-      setLatlongData(response.data.trip);
-      setJobDetails(response.data.trip);
-      setJobTouchPoint(response.data.touch);
+      console.log("Received tripData: ", tripData.data);
     } catch (error) {
-      console.error("Error fetching job route:", error);
+      console.error("Error fetching trip data: ", error);
     }
   };
 
   useEffect(() => {
-    fetchJobRout();
-  }, [selectedJob]);
+    getTripData();
+  }, [jobDetails]);
 
   function closeModal() {
     setIsOpen(false);
@@ -68,12 +83,18 @@ const JobModal = ({ modalIsOpen, setIsOpen, selectedJob }) => {
   }));
 
   const filteredTouch = touch.filter((num) => {
-    const isValidLat = !isNaN(num.location.lat) && num.location.lat !== 0 && num.location.lat !== null;
-    const isValidLng = !isNaN(num.location.lng) && num.location.lng !== 0 && num.location.lng !== null;
+    const isValidLat =
+      !isNaN(num.location.lat) &&
+      num.location.lat !== 0 &&
+      num.location.lat !== null;
+    const isValidLng =
+      !isNaN(num.location.lng) &&
+      num.location.lng !== 0 &&
+      num.location.lng !== null;
     // console.log("num:", num.location.lat, num.location.lng);
     return isValidLat && isValidLng;
   });
-  
+
   // console.log(jobDetails)
   // console.log(filteredTouch)
 

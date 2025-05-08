@@ -18,6 +18,9 @@ const config = {
     markAllNotaficationAsRead:{
         url:'/api/v1/notification/updateNotification'
     },
+    getRootDataByTripDetails:{
+        url:'/api/v1/vehicle/routByTripDetails'
+    }
 }
 
 export default config;

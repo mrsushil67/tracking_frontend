@@ -24,6 +24,9 @@ const Tables = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [latlongData, setLatlongData] = useState({});
+  const [jobTouchPoint, setJobTouchPoint] = useState([]);
+  const [jobDetails, setJobDetails] = useState(null);
   const [defaulString, setDefaultString] = useState("Loading...");
   const start = fromDate ? Moment(fromDate).format("DD-MM-YYYY") : "";
   const end = toDate ? Moment(toDate).format("DD-MM-YYYY") : "";
@@ -112,11 +115,26 @@ const Tables = () => {
   };
 
   const handleRowClicked = (jobData) => {
-
+    fetchJobRout(jobData.id)
     console.log("jobData : ",jobData)
     setSelectedJob(jobData);
     setIsOpen(true);
   };
+    const fetchJobRout = async (id) => {
+      try {
+     
+        const response = await axios.get(
+          `https://rcm.snaptrak.tech/VehicleJobListDeatils?id=${id}`
+        );
+  
+        console.log(response.data);
+        setLatlongData(response.data.trip);
+        setJobDetails(response.data.trip);
+        setJobTouchPoint(response.data.touch);
+      } catch (error) {
+        console.error("Error fetching job route:", error);
+      }
+    };
 
   // Run `getalljobs` when any filter changes
   useEffect(() => {
@@ -236,7 +254,12 @@ const Tables = () => {
         modalIsOpen={modalIsOpen}
         setIsOpen={setIsOpen}
         selectedJob={selectedJob}
+        latlongData={latlongData}
+        jobTouchPoint={jobTouchPoint}
+        jobDetails={jobDetails}
+        setLatlongData={setLatlongData}
       />
+
     </div>
   );
 };
