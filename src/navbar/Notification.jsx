@@ -13,7 +13,7 @@ const Notification = () => {
     const [notifications, setNotifications] = useState([]);
     const totalNotification = [...notification, ...notifications];
 
-    console.log(totalNotification.length)
+    // console.log(totalNotification.length)
 
   // functions for notifiction list open
   const handleClick = (event) => {
