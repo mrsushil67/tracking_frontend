@@ -58,7 +58,7 @@ const MapModal = ({ sourceCoords, destinationCoords, touch }) => {
     mapRef.current = map;
   };
 
-  console.log("directions : ", directions);
+  // console.log("directions : ", directions);
 
   if (!isLoaded) return <div>Loading...</div>;
 

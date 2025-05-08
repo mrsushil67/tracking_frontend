@@ -1,173 +1,118 @@
 import axios from "axios";
 import React, { useRef, useEffect, useState } from "react";
 import { Commet } from "react-loading-indicators";
+import {
+  Stepper,
+  Step,
+  StepLabel,
+  StepContent,
+  Typography,
+  Box,
+} from "@mui/material";
 
 const AtoB_Path = ({ jobTouchPoint, jobDetails }) => {
-  const stopsRef = useRef(null);
-  const [lineHeight, setLineHeight] = useState(0);
-
-  useEffect(() => {
-    if (stopsRef.current) {
-      if (jobTouchPoint.length < 5) {
-        setLineHeight(330);
-      } else {
-        // setLineHeight((jobTouchPoint.length)*100)
-        setLineHeight(stopsRef.current.scrollHeight);
-      }
-    }
-  }, [jobTouchPoint]);
-
   return (
-    <div className="w-[400px] h-[420px] overflow-y-auto rounded-lg shadow-lg relative">
-      {jobDetails !== null || undefined ? (
-        jobTouchPoint[0].Id !== null ? (
-          <div>
-            <div className="flex flex-col justify-center items-center">
-              <div className="font-bold">
-                {jobDetails ? jobDetails.SourceCity : ""}
-              </div>
-              <div className="text-xs font-bold text-gray-500">
-                Job Start : {jobDetails ? jobDetails.Job_Departure : ""}
-              </div>
-            </div>
-            <div
-              className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-green-500"
-              style={{ height: `${lineHeight}px` }}
-            ></div>
+    <Box className="w-[400px] h-[420px] overflow-y-auto rounded-lg shadow-lg relative p-4">
+      <Box className="flex justify-center">
+        {jobDetails !== null || undefined ? (
+          jobTouchPoint[0].Id !== null ? (
+            <Box>
+              <Stepper orientation="vertical" sx={{}}>
+                <Step active={true}>
+                  <StepLabel>
+                    <Box className="text-sm font-semibold text-green-700">
+                      {jobDetails ? jobDetails.SourceCity : ""}
+                    </Box>
+                  </StepLabel>
+                  <StepContent>
+                    <Box className="text-gray-600 font-medium text-xs">
+                      Job Start:
+                      {jobDetails ? jobDetails.Job_Departure : ""}
+                    </Box>
+                  </StepContent>
+                </Step>
 
-            <div ref={stopsRef} className="relative">
-              {jobTouchPoint.map((stop, index) => (
-                <div
-                  key={index}
-                  className="flex w-full items-center justify-center relative"
-                  style={
-                    jobTouchPoint.length <= 4
-                      ? { height: `${lineHeight / jobTouchPoint.length - 1}px` }
-                      : { marginTop: "3rem", marginBottom: "3rem" }
-                  }
-                >
-                  {index % 2 === 0 ? (
-                    <>
-                      <div className="w-1/2 text-right pr-3">
-                        <h3 className="text-sm font-bold text-green-700">
-                          {stop.TouchPoint}
-                        </h3>
-                        <p className="text-xs text-gray-500">
-                          <span className="font-semibold">Sch Arr:</span>{" "}
-                          {stop.ShuArr}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          <span className="font-semibold">Sch Dept:</span>{" "}
-                          {stop.ShuDept}
-                        </p>
-                      </div>
-                      <div
-                        className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-green-500"
-                        style={{ height: `100px` }}
-                      ></div>
-                      <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-                        <div className="w-4 h-4 bg-white border-2 border-green-500 rounded-full"></div>
-                      </div>
-                      <div className="w-1/2 text-left pl-3">
-                        <p className="text-xs text-gray-500">
-                          <span className="font-semibold">Act Arr:</span>{" "}
-                          {stop.Indate} {stop.Intime}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          <span className="font-semibold">Act Dept:</span>{" "}
-                          {stop.OutDate} {stop.OutTime}
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="w-1/2 text-right pr-3">
-                        <p className="text-xs text-gray-500">
-                          <span className="font-semibold">Act Arr:</span>{" "}
-                          {stop.Indate} {stop.Intime}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          <span className="font-semibold">Act Dept:</span>{" "}
-                          {stop.OutDate} {stop.OutTime}
-                        </p>
-                      </div>
-                      <div
-                        className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-green-500"
-                        style={{ height: `100px` }}
-                      ></div>
-                      <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-                        <div className="w-4 h-4 bg-white border-2 border-green-500 rounded-full"></div>
-                      </div>
-                      <div className="w-1/2 text-left pl-3">
-                        <h3 className="text-sm font-bold text-green-700">
-                          {stop.TouchPoint}
-                        </h3>
-                        <p className="text-xs text-gray-500">
-                          <span className="font-semibold">Sch Arr:</span>{" "}
-                          {stop.ShuArr}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          <span className="font-semibold">Sch Dept:</span>{" "}
-                          {stop.ShuDept}
-                        </p>
-                      </div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
+                {jobTouchPoint.map((stop, index) => (
+                  <Step key={index} active={true}>
+                    <StepLabel>
+                      <Box className="text-sm font-semibold text-green-700">
+                        {stop.TouchPoint}
+                      </Box>
+                    </StepLabel>
+                    <StepContent>
+                      <Box className="text-gray-600 font-medium text-xs">
+                        <Box>Sch Arr: {stop.ShuArr}</Box>
+                        <Box>Sch Dept: {stop.ShuDept}</Box>
+                      </Box>
+                      <Box className="text-gray-600 font-medium text-xs">
+                        <Box>
+                          Act Arr: {stop.Indate} {stop.Intime}
+                        </Box>
+                        <Box>
+                          Act Dept: {stop.OutDate} {stop.OutTime}
+                        </Box>
+                      </Box>
+                    </StepContent>
+                  </Step>
+                ))}
 
-            <div className="font-bold mb-2">
-              <div className="flex flex-col justify-center items-center">
-                <div className="font-bold">
-                  {jobDetails ? jobDetails.DestCity : ""}
-                </div>
-                <div className="text-xs text-gray-500">
-                  Job End : {jobDetails ? jobDetails.Job_Arrivle : ""}
-                </div>
-              </div>
-            </div>
-          </div>
+                <Step active={true}>
+                  <StepLabel>
+                    <Box className="text-sm font-semibold text-green-700">
+                      {jobDetails ? jobDetails.DestCity : ""}
+                    </Box>
+                  </StepLabel>
+                  <StepContent>
+                    <Box className="text-gray-600 font-medium text-xs">
+                      Job End: {jobDetails ? jobDetails.Job_Arrivle : ""}
+                    </Box>
+                  </StepContent>
+                </Step>
+              </Stepper>
+            </Box>
+          ) : (
+            <Box className="flex flex-col items-center">
+              <Stepper orientation="vertical">
+                <Step active={true}>
+                  <StepLabel>
+                    <Box className="text-sm font-semibold text-green-700">
+                      {jobDetails ? jobDetails.SourceCity : ""}
+                    </Box>
+                  </StepLabel>
+                  <StepContent>
+                    <Box className="text-gray-600 font-medium text-xs">
+                      Job Start: {jobDetails ? jobDetails.Job_Departure : ""}
+                    </Box>
+                  </StepContent>
+                </Step>
+
+                <Step active={true}>
+                  <StepLabel>
+                    <Box className="text-sm font-semibold text-green-700">
+                      {jobDetails ? jobDetails.DestCity : ""}
+                    </Box>
+                  </StepLabel>
+                  <StepContent>
+                    <Box className="text-gray-600 font-medium text-xs">
+                      Job End: {jobDetails ? jobDetails.Job_Arrivle : ""}
+                    </Box>
+                  </StepContent>
+                </Step>
+              </Stepper>
+            </Box>
+          )
         ) : (
-          <div className="flex flex-col items-center">
-            <div className="font-bold my-2">
-              <div className="flex flex-col justify-center items-center">
-                <div className="font-bold">
-                  {jobDetails ? jobDetails.SourceCity : ""}
-                </div>
-                <div className="text-xs text-gray-500">
-                  Job Start : {jobDetails ? jobDetails.Job_Departure : ""}
-                </div>
-              </div>
-            </div>
-            <div className="relative flex flex-col items-center">
-              <div
-                className="w-1 bg-green-500"
-                style={{ height: "300px" }}
-              ></div>
-              <div className="w-4 h-4 bg-white border-2 border-green-500 rounded-full -mt-2"></div>
-            </div>
-            <div className="font-bold mb-2">
-              <div className="flex flex-col justify-center items-center">
-                <div className="font-bold">
-                  {jobDetails ? jobDetails.DestCity : ""}
-                </div>
-                <div className="text-xs text-gray-500">
-                  Job End : {jobDetails ? jobDetails.Job_Arrivle : ""}
-                </div>
-              </div>
-            </div>
-          </div>
-        )
-      ) : (
-        <div className="grid min-h-full place-items-center">
-          <div className="text-center">
-            <Commet color="#fc7d32" size="medium" text="" textColor="" />
-            <h1 className="text-[#fc7d32]">Loading...</h1>
-          </div>
-        </div>
-      )}
-    </div>
+          <Box className="grid min-h-full place-items-center">
+            <Box className="text-center">
+              <Commet color="#fc7d32" size="medium" text="" textColor="" />
+              <Typography variant="h6" color="primary">
+                Loading...
+              </Typography>
+            </Box>
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 };
 
