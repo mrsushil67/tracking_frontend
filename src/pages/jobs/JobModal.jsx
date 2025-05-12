@@ -53,8 +53,8 @@ const JobModal = ({
           lat: jobDetails.DestLat,
           long: jobDetails.DestLong,
         },
-        jobArr_Date : jobDetails.Job_Arrivle,
-        jobDept_Date : jobDetails.Job_Departure,
+        jobArr_Date : new Date(jobDetails.Job_Arrivle),
+        jobDept_Date : new Date(jobDetails.Job_Departure),
       }
 
       console.log(payload)
