@@ -20,7 +20,7 @@ const Tables = () => {
   const [toDate, setTodate] = useState("04-30-2025");
   const [totaljobs, setTotaljobs] = useState(null);
   const [page, setPage] = useState(1);
-  const [rowPerPage, setRowPerPage] = useState(12);
+  const [rowPerPage, setRowPerPage] = useState(10);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [loading, setLoading] = useState(false);
