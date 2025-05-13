@@ -43,6 +43,11 @@ const JobModal = ({
     try {
       console.log("jobDetails : ", jobDetails);
 
+      const formatDate = (date) => {
+        return new Date(date).toISOString().replace(/\.000Z$/, "");
+      };
+  
+
       const payload = {
         vehicleNo: jobDetails.Vehicle_no,
         source: {
@@ -53,8 +58,8 @@ const JobModal = ({
           lat: jobDetails.DestLat,
           long: jobDetails.DestLong,
         },
-        jobArr_Date : new Date(jobDetails.Job_Arrivle),
-        jobDept_Date : new Date(jobDetails.Job_Departure),
+        jobArr_Date : formatDate(new Date(jobDetails.Job_Arrivle)),
+        jobDept_Date : formatDate(new Date(jobDetails.Job_Departure)),
       }
 
       console.log(payload)
@@ -62,7 +67,10 @@ const JobModal = ({
         `${config.host}${config.getRootDataByTripDetails.url}`,
         payload
       );
-
+      console.log(tripData)
+      if(tripData.data.status === 404){
+        console.log(tripData.data?.message)
+      }
       console.log("Received tripData: ", tripData.data);
     } catch (error) {
       console.error("Error fetching trip data: ", error);
