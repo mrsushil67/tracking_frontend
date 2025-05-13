@@ -20,7 +20,7 @@ const Tables = () => {
   const [toDate, setTodate] = useState("04-30-2025");
   const [totaljobs, setTotaljobs] = useState(null);
   const [page, setPage] = useState(1);
-  const [rowPerPage, setRowPerPage] = useState(10);
+  const [rowPerPage, setRowPerPage] = useState(12);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -42,45 +42,57 @@ const Tables = () => {
   const columns = useMemo(() => {
     return [
       {
-        name: "SL#",
+        name: "#SN",
         selector: (row) => row.id,
         sortable: false,
-        width: "5rem",
+        width: "4rem",
       },
       {
-        name: "JOB DESCRIPTION",
-        selector: (row) => `${row.SourceCity}-${row.DestCity}`,
+        name: "CUSTOMER NAME",
+        selector: (row) => row.CustomerName,
         sortable: false,
+        width: "9rem",
       },
       {
         name: "TRIP SHEET",
         selector: (row) => row.TripSheet,
         sortable: false,
-        width: "9rem",
+        width: "7rem",
       },
       {
         name: "VEHICLE No.",
         selector: (row) => row.Vehicle_no,
         sortable: false,
-        width: "9rem",
+        width: "7rem",
+      },
+      {
+        name: "ROUTE",
+        selector: (row) => `${row.SourceCity}-${row.DestCity}`,
+        sortable: false,
       },
       {
         name: "JOB START",
         selector: (row) => row.Job_Start,
         sortable: false,
-        width: "11rem",
+        width: "9rem",
       },
       {
-        name: "CREATE AT",
-        selector: (row) => row.createdAt,
+        name: "DEPT DATE",
+        selector: (row) => row.Dept,
         sortable: false,
-        width: "11rem",
+        width: "10rem",
       },
       {
-        name: "UPDATE AT",
-        selector: (row) => row.updatedAt,
+        name: "ARR DATE",
+        selector: (row) => row.Arr,
         sortable: false,
-        width: "11rem",
+        width: "10rem",
+      },
+      {
+        name: "TRIP TYPE",
+        selector: (row) => row.TripType === 2 ? "REVERSE" : "FORWARD",
+        sortable: false,
+        width: "7rem",
       },
     ];
   }, []);
@@ -106,6 +118,7 @@ const Tables = () => {
         `https://rcm.snaptrak.tech/VehicleJobList?${queryParams}`
       );
 
+      console.log(">>>>>>>>> ", response.data.data);
       setJobs(response.data.data);
       setTotaljobs(response.data.total);
       setLoading(false);
@@ -115,26 +128,27 @@ const Tables = () => {
   };
 
   const handleRowClicked = (jobData) => {
-    fetchJobRout(jobData.id)
-    console.log("jobData : ",jobData)
+    fetchJobRout(jobData.id);
+    console.log("jobData : ", jobData);
     setSelectedJob(jobData);
     setIsOpen(true);
   };
-    const fetchJobRout = async (id) => {
-      try {
-     
-        const response = await axios.get(
-          `https://rcm.snaptrak.tech/VehicleJobListDeatils?id=${id}`
-        );
-  
-        console.log(response.data);
-        setLatlongData(response.data.trip);
-        setJobDetails(response.data.trip);
-        setJobTouchPoint(response.data.touch);
-      } catch (error) {
-        console.error("Error fetching job route:", error);
-      }
-    };
+  const fetchJobRout = async (id) => {
+    try {
+      const response = await axios.get(
+        `https://rcm.snaptrak.tech/VehicleJobListDeatils?id=${id}`
+      );
+
+      console.log(response.data.trip);
+      console.log(response.data.touch);
+
+      setLatlongData(response.data.trip);
+      setJobDetails(response.data.trip);
+      setJobTouchPoint(response.data.touch);
+    } catch (error) {
+      console.error("Error fetching job route:", error);
+    }
+  };
 
   // Run `getalljobs` when any filter changes
   useEffect(() => {
@@ -150,11 +164,11 @@ const Tables = () => {
   }, [loading]);
 
   const handleRefresh = () => {
-    console.log("refresh")
-    setSearchByVehicle("")
+    console.log("refresh");
+    setSearchByVehicle("");
     setFromDate("04-01-2025");
     setTodate("04-30-2025");
-  }
+  };
 
   return (
     <div className="h-[100%] p-5 bg-gray-100">
@@ -222,7 +236,14 @@ const Tables = () => {
           </Grid2>
         </Grid2>
       </Box>
-      <Box sx={{ borderRadius: 1.5, border: "1px solid black" }}>
+      <Box
+        sx={{
+          borderRadius: 1.5,
+          border: "1px solid black",
+          width: "100%", // Ensure table takes full width
+          overflowX: "auto", // Allow horizontal scrolling if needed
+        }}
+      >
         <DataTable
           columns={columns}
           data={jobs}
@@ -240,13 +261,21 @@ const Tables = () => {
               style: {
                 backgroundColor: "#fc6a2a",
                 color: "#ffffff",
-                fontSize: "15px",
+                fontSize: "12px",
                 fontWeight: "bold",
-                paddingTop: "12px", // Adjust padding to increase height
-                paddingBottom: "12px",
-                lineHeight: "20px", // Adjust line height for spacing
+                paddingTop: "10px", // Adjust padding to increase height
+                paddingBottom: "10px",
+                lineHeight: "15px", // Adjust line height for spacing
               },
             },
+            cells: {
+              style: {
+                fontSize: "11px", // Reduce font size for data cells
+              },
+            },
+          }}
+          style={{
+            tableLayout: "fixed", // Ensures consistent column widths
           }}
         />
       </Box>
@@ -259,7 +288,6 @@ const Tables = () => {
         jobDetails={jobDetails}
         setLatlongData={setLatlongData}
       />
-
     </div>
   );
 };

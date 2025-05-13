@@ -63,11 +63,53 @@ const AtoB_Path = ({ jobTouchPoint, jobDetails }) => {
                     </Box>
                   </StepLabel>
                   <StepContent>
-                    <Box className="text-gray-600 font-medium text-xs">
-                      Job End: {jobDetails ? jobDetails.Job_Arrivle : ""}
-                    </Box>
+                    {jobDetails.TripType === 2 ? (
+                      <Box>
+                        <Box className="text-gray-600 font-medium text-xs">
+                          Arr at :
+                          {jobDetails &&
+                          jobDetails.Arr &&
+                          jobDetails.Arr.split(",")[0]
+                            ? jobDetails.Arr.split(",")[0].trim()
+                            : jobDetails.Arr}
+                        </Box>
+                        <Box className="text-gray-600 font-medium text-xs">
+                          Dept at :
+                          {jobDetails &&
+                          jobDetails.Dept &&
+                          jobDetails.Dept.split(",")[1]
+                            ? jobDetails.Dept.split(",")[1].trim()
+                            : jobDetails.Dept}
+                        </Box>
+                      </Box>
+                    ) : (
+                      <Box className="text-gray-600 font-medium text-xs">
+                        Arr at :
+                        {jobDetails && jobDetails.Arr ? jobDetails.Arr : ""}
+                      </Box>
+                    )}
                   </StepContent>
                 </Step>
+
+                {jobDetails.TripType === 2 && (
+                  <Step active={true}>
+                    <StepLabel>
+                      <Box className="text-sm font-semibold text-green-700">
+                        {jobDetails ? jobDetails.SourceCity : ""}
+                      </Box>
+                    </StepLabel>
+                    <StepContent>
+                      <Box className="text-gray-600 font-medium text-xs">
+                        Arr at :
+                        {jobDetails &&
+                        jobDetails.Arr &&
+                        jobDetails.Arr.split(",")[1]
+                          ? jobDetails.Arr.split(",")[1].trim()
+                          : jobDetails.Arr}
+                      </Box>
+                    </StepContent>
+                  </Step>
+                )}
               </Stepper>
             </Box>
           ) : (
@@ -93,11 +135,53 @@ const AtoB_Path = ({ jobTouchPoint, jobDetails }) => {
                     </Box>
                   </StepLabel>
                   <StepContent>
-                    <Box className="text-gray-600 font-medium text-xs">
-                      Job End: {jobDetails ? jobDetails.Job_Arrivle : ""}
-                    </Box>
+                    {jobDetails.TripType === 2 ? (
+                      <Box>
+                        <Box className="text-gray-600 font-medium text-xs">
+                          Arr at :
+                          {jobDetails &&
+                          jobDetails.Arr &&
+                          jobDetails.Arr.split(",")[0]
+                            ? jobDetails.Arr.split(",")[0].trim()
+                            : jobDetails.Arr}
+                        </Box>
+                        <Box className="text-gray-600 font-medium text-xs">
+                          Dept at :
+                          {jobDetails &&
+                          jobDetails.Dept &&
+                          jobDetails.Dept.split(",")[1]
+                            ? jobDetails.Dept.split(",")[1].trim()
+                            : jobDetails.Dept}
+                        </Box>
+                      </Box>
+                    ) : (
+                      <Box className="text-gray-600 font-medium text-xs">
+                        Arr at :
+                        {jobDetails && jobDetails.Arr ? jobDetails.Arr : ""}
+                      </Box>
+                    )}
                   </StepContent>
                 </Step>
+
+                {jobDetails.TripType === 2 && (
+                  <Step active={true}>
+                    <StepLabel>
+                      <Box className="text-sm font-semibold text-green-700">
+                        {jobDetails ? jobDetails.SourceCity : ""}
+                      </Box>
+                    </StepLabel>
+                    <StepContent>
+                      <Box className="text-gray-600 font-medium text-xs">
+                        Arr at :
+                        {jobDetails &&
+                        jobDetails.Arr &&
+                        jobDetails.Arr.split(",")[1]
+                          ? jobDetails.Arr.split(",")[1].trim()
+                          : jobDetails.Arr}
+                      </Box>
+                    </StepContent>
+                  </Step>
+                )}
               </Stepper>
             </Box>
           )
