@@ -43,9 +43,9 @@ const JobModal = ({
     try {
       console.log("jobDetails : ", jobDetails);
 
-      const formatDate = (date) => {
-        return new Date(date).toISOString().replace(/\.000Z$/, "");
-      };
+      // const formatDate = (date) => {
+      //   return new Date(date).toISOString().replace(/\.000Z$/, "");
+      // };
   
 
       const payload = {
@@ -58,8 +58,11 @@ const JobModal = ({
           lat: jobDetails.DestLat,
           long: jobDetails.DestLong,
         },
-        jobArr_Date : formatDate(new Date(jobDetails.Job_Arrivle)),
-        jobDept_Date : formatDate(new Date(jobDetails.Job_Departure)),
+
+        jobArr_Date: jobDetails.Job_Arrivle,
+        jobDept_Date : jobDetails.Job_Departure,
+        // jobArr_Date : formatDate(new Date(jobDetails.Job_Arrivle)),
+        // jobDept_Date : formatDate(new Date(jobDetails.Job_Departure)),
       }
 
       console.log(payload)
