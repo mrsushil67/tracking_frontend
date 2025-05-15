@@ -192,11 +192,9 @@ const containerStyle = {
 
 const center = { lat: 28.7041, lng: 77.1025 };
 
-const MapModal = ({ sourceCoords, destinationCoords, touch, jobPath }) => {
+const MapModal = ({ jobPath, jobStops }) => {
   const mapRef = useRef(null);
   const [zoom, setZoom] = useState(4);
-  const [directions, setDirections] = useState(null);
-
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
   });
@@ -205,6 +203,11 @@ const MapModal = ({ sourceCoords, destinationCoords, touch, jobPath }) => {
   const pathCoordinates = jobPath.map((point) => ({
     lat: parseFloat(point.latitude),
     lng: parseFloat(point.longitude),
+  }));
+
+  const stopsCoordinates = jobStops.map((point) => ({
+    lat: parseFloat(point.location.lat),
+    lng: parseFloat(point.location.long),
   }));
 
   const onLoad = (map) => {
@@ -247,20 +250,24 @@ const MapModal = ({ sourceCoords, destinationCoords, touch, jobPath }) => {
             ],
           }}
         />
-        {pathCoordinates.length > 0 ? (
+        {pathCoordinates.length > 0 && (
+          <Marker position={pathCoordinates[0]} title="start" label="S" />
+        )}
+        {pathCoordinates.length > 0 && (
           <Marker
-            position={pathCoordinates[0]}
-            title="start"
-            label="S"
-          />
-        ) : null}
-         {pathCoordinates.length > 0 ? (
-          <Marker
-            position={pathCoordinates[pathCoordinates.length -1]}
+            position={pathCoordinates[pathCoordinates.length - 1]}
             title="destination"
             label="D"
           />
-        ) : null}
+        )}
+        {stopsCoordinates.map((stop, index) => (
+          <Marker
+            key={index}
+            position={stop}
+            title={`Stop ${index + 1}`}
+            label={`${index + 1}`}
+          />
+        ))}
       </GoogleMap>
     </div>
   );
