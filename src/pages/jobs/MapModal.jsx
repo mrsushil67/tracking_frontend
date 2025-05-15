@@ -179,6 +179,7 @@ import {
   DirectionsRenderer,
   GoogleMap,
   InfoBox,
+  InfoWindow,
   Marker,
   Polyline,
   useLoadScript,
@@ -195,6 +196,8 @@ const center = { lat: 28.7041, lng: 77.1025 };
 const MapModal = ({ jobPath, jobStops }) => {
   const mapRef = useRef(null);
   const [zoom, setZoom] = useState(4);
+  const [activeMarker, setActiveMarker] = useState(null);
+
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
   });
@@ -208,10 +211,20 @@ const MapModal = ({ jobPath, jobStops }) => {
   const stopsCoordinates = jobStops.map((point) => ({
     lat: parseFloat(point.location.lat),
     lng: parseFloat(point.location.long),
+    startTime: point.startTime,
+    endTime : point.endTime,
+    address : point.address,
+    hour: point.duration.hours,
+    minutes: point.duration.minutes,
+    seconds: point.duration.seconds
+
   }));
 
-  const onLoad = (map) => {
-    mapRef.current = map;
+  console.log("stopsCoordinates : ",stopsCoordinates)
+  console.log("jobStops : ",jobStops)
+
+  const handleShowInfoWindow = (index) => {
+    setActiveMarker(index);
   };
 
   if (!isLoaded) return <div>Loading...</div>;
@@ -222,7 +235,6 @@ const MapModal = ({ jobPath, jobStops }) => {
         mapContainerStyle={containerStyle}
         center={center}
         zoom={zoom}
-        onLoad={onLoad}
         options={{
           zoomControl: false,
           mapTypeControl: true,
@@ -266,7 +278,55 @@ const MapModal = ({ jobPath, jobStops }) => {
             position={stop}
             title={`Stop ${index + 1}`}
             label={`${index + 1}`}
-          />
+            onClick={() => handleShowInfoWindow(index)}
+          >
+            {activeMarker === index && (
+              <InfoWindow
+                position={stop}
+                options={{
+                  closeBoxURL: "",
+                  enableEventPropagation: true,
+                }}
+                onCloseClick={() => setShowInfoWindow(false)}
+              >
+                <div className="p-2 rounded-2xl shadow-md bg-white w-[250px]">
+                  <div className="mb-2">
+                    <div className="flex justify-between pb-1">
+                      <div className="font-bold text-red-500">
+                       Vehicle Stopped
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-gray-700">
+                        Address :{" "}
+                      </span>
+                      <span className="text-xs text-gray-700">
+                        {stop.address}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="w-2 h-2 border-2 border-amber-600 bg-amber-600 rounded-full"></span>
+                      <span className="text-xs font-bold text-gray-600 pb-1">
+                        Start Time : {new Date(stop.startTime).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="w-2 h-2 border-2 border-amber-600 bg-amber-600 rounded-full"></span>
+                      <span className="text-xs font-bold text-gray-600 pb-1">
+                        End Time : {new Date(stop.endTime).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="w-2 h-2 border-2 border-amber-600 bg-amber-600 rounded-full"></span>
+                      <span className="text-xs font-bold text-gray-600 pb-1">
+                        Duration : {`${stop.hour}h ${stop.minutes}m ${stop.seconds}s`}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
         ))}
       </GoogleMap>
     </div>
