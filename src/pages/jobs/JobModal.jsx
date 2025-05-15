@@ -7,6 +7,7 @@ import AtoB_Path from "./AtoB_Path";
 import { IoClose } from "react-icons/io5";
 import axios from "axios";
 import config from "../../config/services";
+import { Commet } from "react-loading-indicators";
 
 const customStyles = {
   content: {
@@ -31,9 +32,9 @@ const JobModal = ({
   jobDetails,
   setLatlongData,
 }) => {
-
   const [jobPath, setJobPath] = useState([]);
-  const [jobStops, setJobStops] = useState([])
+  const [jobStops, setJobStops] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const sourceCoords = latlongData
     ? { lat: latlongData.SourceLat, long: latlongData.SourceLong }
@@ -45,12 +46,12 @@ const JobModal = ({
 
   const getTripData = async () => {
     try {
+      setLoading(true);
       console.log("jobDetails : ", jobDetails);
 
       // const formatDate = (date) => {
       //   return new Date(date).toISOString().replace(/\.000Z$/, "");
       // };
-  
 
       const payload = {
         vehicleNo: jobDetails.Vehicle_no,
@@ -64,25 +65,28 @@ const JobModal = ({
         },
 
         jobArr_Date: jobDetails.Job_Arrivle,
-        jobDept_Date : jobDetails.Job_Departure,
+        jobDept_Date: jobDetails.Job_Departure,
         // jobArr_Date : formatDate(new Date(jobDetails.Job_Arrivle)),
         // jobDept_Date : formatDate(new Date(jobDetails.Job_Departure)),
-      }
+      };
 
-      console.log(payload)
+      console.log(payload);
       const tripData = await axios.post(
         `${config.host}${config.getRootDataByTripDetails.url}`,
         payload
       );
-      console.log(tripData)
-      if(tripData.data.status === 404){
-        console.log(tripData.data?.message)
+      console.log(tripData);
+      if (tripData.data.status === 404) {
+        console.log(tripData.data?.message);
       }
       console.log("Received tripData: ", tripData.data);
-      setJobPath(tripData.data.path)
-      setJobStops(tripData.data.stops)
+      setJobPath(tripData.data.path);
+      setJobStops(tripData.data.stops);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching trip data: ", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,44 +128,54 @@ const JobModal = ({
         contentLabel="Example Modal"
         transparent={false}
       >
-        <div className="">
-          <div className="flex justify-between px-3 py-1 bg-[#fc6a2a]">
-            <div className="text-sm font-bold text-white">
-              {selectedJob ? (
-                <>
-                  <span>{selectedJob.Vehicle_no} | </span>
-                  <span>{selectedJob.SourceCity} to </span>
-                  <span>{selectedJob.DestCity} - </span>
-                  <span>{selectedJob.TripSheet}</span>
-                </>
-              ) : (
-                <span>No Vehicle data</span>
-              )}
+        {!loading ? (
+          <div className="">
+            <div className="flex justify-between px-3 py-1 bg-[#fc6a2a]">
+              <div className="text-sm font-bold text-white">
+                {selectedJob ? (
+                  <>
+                    <span>{selectedJob.Vehicle_no} | </span>
+                    <span>{selectedJob.SourceCity} to </span>
+                    <span>{selectedJob.DestCity} - </span>
+                    <span>{selectedJob.TripSheet}</span>
+                  </>
+                ) : (
+                  <span>No Vehicle data</span>
+                )}
+              </div>
+              <div>
+                <button onClick={closeModal}>
+                  <IoClose />
+                </button>
+              </div>
             </div>
-            <div>
-              <button onClick={closeModal}>
-                <IoClose />
-              </button>
+            <div className=" flex ">
+              <div className="border border-gray-400">
+                <AtoB_Path
+                  jobTouchPoint={jobTouchPoint}
+                  jobDetails={jobDetails}
+                />
+              </div>
+              <div className="border border-gray-400">
+                <MapModal
+                  sourceCoords={sourceCoords}
+                  destinationCoords={destinationCoords}
+                  touch={filteredTouch}
+                  jobPath={jobPath}
+                  jobStops={jobStops}
+                  loading={loading}
+                />
+              </div>
             </div>
           </div>
-          <div className=" flex ">
-            <div className="border border-gray-400">
-              <AtoB_Path
-                jobTouchPoint={jobTouchPoint}
-                jobDetails={jobDetails}
-              />
-            </div>
-            <div className="border border-gray-400">
-              <MapModal
-                sourceCoords={sourceCoords}
-                destinationCoords={destinationCoords}
-                touch={filteredTouch}
-                jobPath={jobPath}
-                jobStops={jobStops}
-              />
+        ) : (
+          <div className="grid min-h-full place-items-center">
+            <div className="text-center">
+              <Commet color="#fc7d32" size="medium" text="" textColor="" />
+              <h1 className="text-[#fc7d32]">Loading...</h1>
             </div>
           </div>
-        </div>
+        )}
       </Modal>
     </div>
   );

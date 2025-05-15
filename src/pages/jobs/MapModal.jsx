@@ -185,6 +185,7 @@ import {
   useLoadScript,
 } from "@react-google-maps/api";
 import React, { useRef, useState, useEffect } from "react";
+import { Commet } from "react-loading-indicators";
 
 const containerStyle = {
   width: "100%",
@@ -193,7 +194,7 @@ const containerStyle = {
 
 const center = { lat: 28.7041, lng: 77.1025 };
 
-const MapModal = ({ jobPath, jobStops }) => {
+const MapModal = ({ jobPath, jobStops, loading }) => {
   const mapRef = useRef(null);
   const [zoom, setZoom] = useState(4);
   const [activeMarker, setActiveMarker] = useState(null);
@@ -212,16 +213,15 @@ const MapModal = ({ jobPath, jobStops }) => {
     lat: parseFloat(point.location.lat),
     lng: parseFloat(point.location.long),
     startTime: point.startTime,
-    endTime : point.endTime,
-    address : point.address,
+    endTime: point.endTime,
+    address: point.address,
     hour: point.duration.hours,
     minutes: point.duration.minutes,
-    seconds: point.duration.seconds
-
+    seconds: point.duration.seconds,
   }));
 
-  console.log("stopsCoordinates : ",stopsCoordinates)
-  console.log("jobStops : ",jobStops)
+  console.log("stopsCoordinates : ", stopsCoordinates);
+  console.log("jobStops : ", jobStops);
 
   const handleShowInfoWindow = (index) => {
     setActiveMarker(index);
@@ -230,106 +230,119 @@ const MapModal = ({ jobPath, jobStops }) => {
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
-    <div style={{ width: "400px", height: "420px" }}>
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={zoom}
-        options={{
-          zoomControl: false,
-          mapTypeControl: true,
-          scaleControl: false,
-          streetViewControl: false,
-          overviewMapControl: false,
-          rotateControl: false,
-        }}
-      >
-        <Polyline
-          path={pathCoordinates}
-          options={{
-            strokeColor: "blue",
-            strokeWeight: 3,
-            icons: [
-              {
-                icon: {
-                  path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                  scale: 1.5,
-                  strokeColor: "#027699",
-                },
-                offset: "100%",
-                repeat: "40px",
-              },
-            ],
-          }}
-        />
-        {pathCoordinates.length > 0 && (
-          <Marker position={pathCoordinates[0]} title="start" label="S" />
-        )}
-        {pathCoordinates.length > 0 && (
-          <Marker
-            position={pathCoordinates[pathCoordinates.length - 1]}
-            title="destination"
-            label="D"
-          />
-        )}
-        {stopsCoordinates.map((stop, index) => (
-          <Marker
-            key={index}
-            position={stop}
-            title={`Stop ${index + 1}`}
-            label={`${index + 1}`}
-            onClick={() => handleShowInfoWindow(index)}
+    <>
+      {!loading ? (
+        <div style={{ width: "400px", height: "420px" }}>
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={center}
+            zoom={zoom}
+            options={{
+              zoomControl: false,
+              mapTypeControl: true,
+              scaleControl: false,
+              streetViewControl: false,
+              overviewMapControl: false,
+              rotateControl: false,
+            }}
           >
-            {activeMarker === index && (
-              <InfoWindow
+            <Polyline
+              path={pathCoordinates}
+              options={{
+                strokeColor: "blue",
+                strokeWeight: 3,
+                icons: [
+                  {
+                    icon: {
+                      path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                      scale: 1.5,
+                      strokeColor: "#027699",
+                    },
+                    offset: "100%",
+                    repeat: "40px",
+                  },
+                ],
+              }}
+            />
+            {pathCoordinates.length > 0 && (
+              <Marker position={pathCoordinates[0]} title="start" label="S" />
+            )}
+            {pathCoordinates.length > 0 && (
+              <Marker
+                position={pathCoordinates[pathCoordinates.length - 1]}
+                title="destination"
+                label="D"
+              />
+            )}
+            {stopsCoordinates.map((stop, index) => (
+              <Marker
+                key={index}
                 position={stop}
-                options={{
-                  closeBoxURL: "",
-                  enableEventPropagation: true,
-                }}
-                onCloseClick={() => setShowInfoWindow(false)}
+                title={`Stop ${index + 1}`}
+                label={`${index + 1}`}
+                onClick={() => handleShowInfoWindow(index)}
               >
-                <div className="p-2 rounded-2xl shadow-md bg-white w-[250px]">
-                  <div className="mb-2">
-                    <div className="flex justify-between pb-1">
-                      <div className="font-bold text-red-500">
-                       Vehicle Stopped
+                {activeMarker === index && (
+                  <InfoWindow
+                    position={stop}
+                    options={{
+                      closeBoxURL: "",
+                      enableEventPropagation: true,
+                    }}
+                    onCloseClick={() => setShowInfoWindow(false)}
+                  >
+                    <div className="p-2 rounded-2xl shadow-md bg-white w-[250px]">
+                      <div className="mb-2">
+                        <div className="flex justify-between pb-1">
+                          <div className="font-bold text-red-500">
+                            Vehicle Stopped
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold text-gray-700">
+                            Address :{" "}
+                          </span>
+                          <span className="text-xs text-gray-700">
+                            {stop.address}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="w-2 h-2 border-2 border-amber-600 bg-amber-600 rounded-full"></span>
+                          <span className="text-xs font-bold text-gray-600 pb-1">
+                            Start Time :{" "}
+                            {new Date(stop.startTime).toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="w-2 h-2 border-2 border-amber-600 bg-amber-600 rounded-full"></span>
+                          <span className="text-xs font-bold text-gray-600 pb-1">
+                            End Time : {new Date(stop.endTime).toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="w-2 h-2 border-2 border-amber-600 bg-amber-600 rounded-full"></span>
+                          <span className="text-xs font-bold text-gray-600 pb-1">
+                            Duration :{" "}
+                            {`${stop.hour}h ${stop.minutes}m ${stop.seconds}s`}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <span className="text-xs font-bold text-gray-700">
-                        Address :{" "}
-                      </span>
-                      <span className="text-xs text-gray-700">
-                        {stop.address}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="w-2 h-2 border-2 border-amber-600 bg-amber-600 rounded-full"></span>
-                      <span className="text-xs font-bold text-gray-600 pb-1">
-                        Start Time : {new Date(stop.startTime).toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="w-2 h-2 border-2 border-amber-600 bg-amber-600 rounded-full"></span>
-                      <span className="text-xs font-bold text-gray-600 pb-1">
-                        End Time : {new Date(stop.endTime).toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="w-2 h-2 border-2 border-amber-600 bg-amber-600 rounded-full"></span>
-                      <span className="text-xs font-bold text-gray-600 pb-1">
-                        Duration : {`${stop.hour}h ${stop.minutes}m ${stop.seconds}s`}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </InfoWindow>
-            )}
-          </Marker>
-        ))}
-      </GoogleMap>
-    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+            ))}
+          </GoogleMap>
+        </div>
+      ) : (
+        <div className="grid min-h-full place-items-center">
+          <div className="text-center">
+            <Commet color="#fc7d32" size="medium" text="" textColor="" />
+            <h1 className="text-[#fc7d32]">Loading...</h1>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
