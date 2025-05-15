@@ -31,6 +31,9 @@ const JobModal = ({
   jobDetails,
   setLatlongData,
 }) => {
+
+  const [jobPath, setJobPath] = useState([]);
+
   const sourceCoords = latlongData
     ? { lat: latlongData.SourceLat, long: latlongData.SourceLong }
     : { lat: "", long: "" };
@@ -75,6 +78,7 @@ const JobModal = ({
         console.log(tripData.data?.message)
       }
       console.log("Received tripData: ", tripData.data);
+      setJobPath(tripData.data.path)
     } catch (error) {
       console.error("Error fetching trip data: ", error);
     }
@@ -150,6 +154,7 @@ const JobModal = ({
                 sourceCoords={sourceCoords}
                 destinationCoords={destinationCoords}
                 touch={filteredTouch}
+                jobPath={jobPath}
               />
             </div>
           </div>
