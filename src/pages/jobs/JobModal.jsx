@@ -78,41 +78,46 @@ const JobModal = ({
       setJobStops(tripData.data.stops);
       setLoading(false);
 
-      const threshold = 0.5; // km
       const results = [];
+      let threshold = 0.5; // Initial range in km
 
-      tripData.data.stops.forEach((stop, index) => {
-        const lat1 = Number(stop.latitude || stop.location?.lat);
-        const lon1 = Number(stop.longitude || stop.location?.long);
+      jobTouchPoint.forEach((tp) => {
+        let matched = false;
 
-        if (isNaN(lat1) || isNaN(lon1)) {
-          console.warn(`Invalid coordinates at stop ${index + 1}:`, stop);
-          return; // Skip this stop
-        }
-
-        const matchedTouchPoints = jobTouchPoint.filter((tp) => {
+        while (!matched) {
           const lat2 = Number(tp.TouchLat);
           const lon2 = Number(tp.TouchLong);
 
-          const distance = haversineDistance(lat1, lon1, lat2, lon2);
+          const matchedStops = tripData.data.stops.filter((stop) => {
+            const lat1 = Number(stop.latitude || stop.location?.lat);
+            const lon1 = Number(stop.longitude || stop.location?.long);
 
-          return !isNaN(distance) && distance <= threshold;
-        });
+            if (isNaN(lat1) || isNaN(lon1)) {
+              console.warn(`Invalid coordinates for stop:`, stop);
+              return false; // Skip invalid stops
+            }
 
-        if (matchedTouchPoints.length > 0) {
-          results.push({
-            stopIndex: index,
-            stopDetails: stop,
-            matchedTouchPoints: matchedTouchPoints.map((tp) => ({
-              touchPoint: tp.TouchPoint,
-              distance: haversineDistance(
-                lat1,
-                lon1,
-                Number(tp.TouchLat),
-                Number(tp.TouchLong)
-              ).toFixed(3),
-            })),
+            const distance = haversineDistance(lat1, lon1, lat2, lon2);
+            return !isNaN(distance) && distance <= threshold;
           });
+
+          if (matchedStops.length > 0) {
+            results.push({
+              touchPoint: tp.TouchPoint,
+              matchedStops: matchedStops.map((stop) => ({
+                stopDetails: stop,
+                distance: haversineDistance(
+                  Number(stop.latitude || stop.location?.lat),
+                  Number(stop.longitude || stop.location?.long),
+                  lat2,
+                  lon2
+                ).toFixed(3),
+              })),
+            });
+            matched = true;
+          } else {
+            threshold += 0.5; // Increase range by 0.5 km if no match found
+          }
         }
       });
 
