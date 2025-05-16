@@ -96,7 +96,7 @@ const JobModal = ({
           // Allow some difference in latitudes and longitudes
           const latDiff = Math.abs(lat1 - lat2);
           const lonDiff = Math.abs(lon1 - lon2);
-          const threshold = 0.20; // Adjust threshold as needed
+          const threshold = 0.2; // Adjust threshold as needed
 
           return latDiff <= threshold && lonDiff <= threshold;
         });
@@ -105,7 +105,7 @@ const JobModal = ({
           const mergedStop = matchedStops.reduce(
             (acc, stop, index) => {
               if (index === 0) {
-          acc.startTime = stop.startTime;
+                acc.startTime = stop.startTime;
               }
               acc.endTime = stop.endTime;
               acc.totalTime += stop.totalTime || 0;
@@ -115,16 +115,21 @@ const JobModal = ({
             { startTime: null, endTime: null, totalTime: 0, stops: [] }
           );
 
-          const totalDuration = new Date(mergedStop.endTime) - new Date(mergedStop.startTime);
+          const totalDurationMs =
+            new Date(mergedStop.endTime) - new Date(mergedStop.startTime);
+          const totalDurationSeconds = Math.floor(totalDurationMs / 1000);
+          const hours = Math.floor(totalDurationSeconds / 3600);
+          const minutes = Math.floor((totalDurationSeconds % 3600) / 60);
+          const seconds = totalDurationSeconds % 60;
 
           results.push({
             touchPoint: tp.TouchPoint,
             matchedStops: [mergedStop],
-            totalDuration: totalDuration > 0 ? totalDuration : 0, // Ensure non-negative duration
+            totalDuration: totalDurationMs > 0 ? totalDurationMs : 0, // Ensure non-negative duration
+            formattedDuration: `${hours}h ${minutes}m ${seconds}s`, // Duration in hours, minutes, and seconds
           });
         }
       });
-
       setMatchedStops(results);
     } catch (error) {
       console.error("Error fetching trip data: ", error);
