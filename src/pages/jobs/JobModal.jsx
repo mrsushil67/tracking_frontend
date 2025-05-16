@@ -80,33 +80,15 @@ const JobModal = ({
 
       const results = [];
       let threshold = 0.5; // Initial range in km
-      const maxThreshold = 5; // Maximum threshold (in km) to avoid infinite loop
 
-      if (!jobTouchPoint || jobTouchPoint.some((tp) => tp.id == null)) {
+      if (!jobTouchPoint || jobTouchPoint.some(tp => tp.id == null)) {
         console.warn("Invalid jobTouchPoint data: Missing id");
         return;
       }
-
-      // Helper function for haversine distance
-      const haversineDistance = (lat1, lon1, lat2, lon2) => {
-        const R = 6371; // Radius of the Earth in km
-        const dLat = ((lat2 - lat1) * Math.PI) / 180;
-        const dLon = ((lon2 - lon1) * Math.PI) / 180;
-        const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos((lat1 * Math.PI) / 180) *
-            Math.cos((lat2 * Math.PI) / 180) *
-            Math.sin(dLon / 2) *
-            Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c; // Distance in km
-      };
-
       jobTouchPoint.forEach((tp) => {
         let matched = false;
 
-        while (!matched && threshold <= maxThreshold) {
-          // Avoid infinite loop
+        while (!matched) {
           const lat2 = Number(tp.TouchLat);
           const lon2 = Number(tp.TouchLong);
 
@@ -149,6 +131,23 @@ const JobModal = ({
     } finally {
       setLoading(false);
     }
+  };
+    
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) return NaN;
+
+    const R = 6371; // Radius of Earth in km
+    const toRad = (x) => (x * Math.PI) / 180;
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   };
 
   // useEffect(() => {
