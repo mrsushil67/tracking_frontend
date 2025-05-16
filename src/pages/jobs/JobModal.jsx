@@ -81,10 +81,6 @@ const JobModal = ({
       const results = [];
       let threshold = 0.5; // Initial range in km
 
-      if (!jobTouchPoint || jobTouchPoint.some(tp => tp.id == null)) {
-        console.warn("Invalid jobTouchPoint data: Missing id");
-        return;
-      }
       jobTouchPoint.forEach((tp) => {
         let matched = false;
 
