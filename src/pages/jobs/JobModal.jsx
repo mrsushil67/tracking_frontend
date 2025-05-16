@@ -102,11 +102,22 @@ const JobModal = ({
         });
 
         if (matchedStops.length > 0) {
+          const mergedStop = matchedStops.reduce(
+            (acc, stop, index) => {
+              if (index === 0) {
+                acc.startTime = stop.startTime;
+              }
+              acc.endTime = stop.endTime;
+              acc.totalTime += stop.totalTime || 0;
+              acc.stops.push(stop);
+              return acc;
+            },
+            { startTime: null, endTime: null, totalTime: 0, stops: [] }
+          );
+
           results.push({
             touchPoint: tp.TouchPoint,
-            matchedStops: matchedStops.map((stop) => ({
-              stopDetails: stop,
-            })),
+            matchedStops: [mergedStop],
           });
         }
       });
@@ -118,63 +129,6 @@ const JobModal = ({
       setLoading(false);
     }
   };
-
-  const haversineDistance = (lat1, lon1, lat2, lon2) => {
-    if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) return NaN;
-
-    const R = 6371; // Radius of Earth in km
-    const toRad = (x) => (x * Math.PI) / 180;
-
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
-
-  // useEffect(() => {
-  //   const threshold = 0.5; // km
-  //   const results = [];
-
-  //   jobPath.forEach((stop, index) => {
-  //     jobTouchPoint.forEach((tp) => {
-  //       const lat1 = Number(stop.latitude || stop.location?.lat);
-  //       const lon1 = Number(stop.longitude || stop.location?.long);
-
-  //       if (isNaN(lat1) || isNaN(lon1)) {
-  //         console.warn(`Invalid coordinates at stop ${index + 1}:`, stop);
-  //         return; // Skip this stop
-  //       }
-
-  //       const lat2 = Number(tp.TouchLat);
-  //       const lon2 = Number(tp.TouchLong);
-
-  //       const distance = haversineDistance(lat1, lon1, lat2, lon2);
-
-  //       console.log(`Stop ${index + 1} → ${tp.TouchPoint}:`, {
-  //         lat1,
-  //         lon1,
-  //         lat2,
-  //         lon2,
-  //         distance,
-  //       });
-
-  //       if (!isNaN(distance) && distance <= threshold) {
-  //         results.push({
-  //           stopIndex: index,
-  //           matchedTouchPoint: tp.TouchPoint,
-  //           distance: distance.toFixed(3),
-  //         });
-  //       }
-  //     });
-  //   });
-
-  //   setMatchedStops(results);
-  // }, []);
 
   useEffect(() => {
     getTripData();
