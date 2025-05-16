@@ -105,7 +105,7 @@ const JobModal = ({
           const mergedStop = matchedStops.reduce(
             (acc, stop, index) => {
               if (index === 0) {
-                acc.startTime = stop.startTime;
+          acc.startTime = stop.startTime;
               }
               acc.endTime = stop.endTime;
               acc.totalTime += stop.totalTime || 0;
@@ -115,9 +115,12 @@ const JobModal = ({
             { startTime: null, endTime: null, totalTime: 0, stops: [] }
           );
 
+          const totalDuration = new Date(mergedStop.endTime) - new Date(mergedStop.startTime);
+
           results.push({
             touchPoint: tp.TouchPoint,
             matchedStops: [mergedStop],
+            totalDuration: totalDuration > 0 ? totalDuration : 0, // Ensure non-negative duration
           });
         }
       });
