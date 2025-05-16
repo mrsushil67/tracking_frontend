@@ -96,7 +96,7 @@ const JobModal = ({
           // Allow some difference in latitudes and longitudes
           const latDiff = Math.abs(lat1 - lat2);
           const lonDiff = Math.abs(lon1 - lon2);
-          const threshold = 0.2; // Adjust threshold as needed
+          const threshold = 0.05; // Adjust threshold as needed
 
           return latDiff <= threshold && lonDiff <= threshold;
         });
