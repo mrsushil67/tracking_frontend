@@ -79,45 +79,37 @@ const JobModal = ({
       setLoading(false);
 
       const results = [];
-      let threshold = 0.5; // Initial range in km
 
       jobTouchPoint.forEach((tp) => {
-        let matched = false;
+        const lat2 = Number(tp.TouchLat);
+        const lon2 = Number(tp.TouchLong);
 
-        while (!matched) {
-          const lat2 = Number(tp.TouchLat);
-          const lon2 = Number(tp.TouchLong);
+        const matchedStops = tripData.data.stops.filter((stop) => {
+          const lat1 = Number(stop.latitude || stop.location?.lat);
+          const lon1 = Number(stop.longitude || stop.location?.long);
 
-          const matchedStops = tripData.data.stops.filter((stop) => {
-            const lat1 = Number(stop.latitude || stop.location?.lat);
-            const lon1 = Number(stop.longitude || stop.location?.long);
-
-            if (isNaN(lat1) || isNaN(lon1)) {
-              console.warn(`Invalid coordinates for stop:`, stop);
-              return false; // Skip invalid stops
-            }
-
-            const distance = haversineDistance(lat1, lon1, lat2, lon2);
-            return !isNaN(distance) && distance <= threshold;
-          });
-
-          if (matchedStops.length > 0) {
-            results.push({
-              touchPoint: tp.TouchPoint,
-              matchedStops: matchedStops.map((stop) => ({
-                stopDetails: stop,
-                distance: haversineDistance(
-                  Number(stop.latitude || stop.location?.lat),
-                  Number(stop.longitude || stop.location?.long),
-                  lat2,
-                  lon2
-                ).toFixed(3),
-              })),
-            });
-            matched = true;
-          } else {
-            threshold += 0.5; // Increase range by 0.5 km if no match found
+          if (isNaN(lat1) || isNaN(lon1)) {
+            console.warn(`Invalid coordinates for stop:`, stop);
+            return false; // Skip invalid stops
           }
+
+          const distance = haversineDistance(lat1, lon1, lat2, lon2);
+          return !isNaN(distance) && distance <= 1; // Check only within 1 km radius
+        });
+
+        if (matchedStops.length > 0) {
+          results.push({
+            touchPoint: tp.TouchPoint,
+            matchedStops: matchedStops.map((stop) => ({
+              stopDetails: stop,
+              distance: haversineDistance(
+                Number(stop.latitude || stop.location?.lat),
+                Number(stop.longitude || stop.location?.long),
+                lat2,
+                lon2
+              ).toFixed(3),
+            })),
+          });
         }
       });
 
@@ -128,7 +120,7 @@ const JobModal = ({
       setLoading(false);
     }
   };
-    
+
   const haversineDistance = (lat1, lon1, lat2, lon2) => {
     if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) return NaN;
 
