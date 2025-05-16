@@ -194,7 +194,7 @@ const containerStyle = {
 
 const center = { lat: 28.7041, lng: 77.1025 };
 
-const MapModal = ({ jobPath, jobStops, loading }) => {
+const MapModal = ({ jobPath, jobStops, loading, matchedTouchPoints }) => {
   const mapRef = useRef(null);
   const [zoom, setZoom] = useState(4);
   const [activeMarker, setActiveMarker] = useState(null);
@@ -220,12 +220,10 @@ const MapModal = ({ jobPath, jobStops, loading }) => {
     seconds: point.duration.seconds,
   }));
 
-  console.log("stopsCoordinates : ", stopsCoordinates);
-  console.log("jobStops : ", jobStops);
-
   const handleShowInfoWindow = (index) => {
     setActiveMarker(index);
   };
+  console.log("matchedTouch : ",matchedTouchPoints)
 
   if (!isLoaded) return <div>Loading...</div>;
 

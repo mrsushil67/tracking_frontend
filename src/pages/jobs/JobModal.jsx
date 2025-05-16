@@ -35,6 +35,7 @@ const JobModal = ({
   const [jobPath, setJobPath] = useState([]);
   const [jobStops, setJobStops] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [matchedStops, setMatchedStops] = useState([]);
 
   const sourceCoords = latlongData
     ? { lat: latlongData.SourceLat, long: latlongData.SourceLong }
@@ -49,10 +50,6 @@ const JobModal = ({
       setLoading(true);
       console.log("jobDetails : ", jobDetails);
 
-      // const formatDate = (date) => {
-      //   return new Date(date).toISOString().replace(/\.000Z$/, "");
-      // };
-
       const payload = {
         vehicleNo: jobDetails.Vehicle_no,
         source: {
@@ -63,11 +60,8 @@ const JobModal = ({
           lat: jobDetails.DestLat,
           long: jobDetails.DestLong,
         },
-
         jobArr_Date: jobDetails.Job_Arrivle,
         jobDept_Date: jobDetails.Job_Departure,
-        // jobArr_Date : formatDate(new Date(jobDetails.Job_Arrivle)),
-        // jobDept_Date : formatDate(new Date(jobDetails.Job_Departure)),
       };
 
       console.log(payload);
@@ -83,12 +77,109 @@ const JobModal = ({
       setJobPath(tripData.data.path);
       setJobStops(tripData.data.stops);
       setLoading(false);
+
+      const threshold = 0.5; // km
+      const results = [];
+
+      tripData.data.stops.forEach((stop, index) => {
+        const lat1 = Number(stop.latitude || stop.location?.lat);
+        const lon1 = Number(stop.longitude || stop.location?.long);
+
+        if (isNaN(lat1) || isNaN(lon1)) {
+          console.warn(`Invalid coordinates at stop ${index + 1}:`, stop);
+          return; // Skip this stop
+        }
+
+        const matchedTouchPoints = jobTouchPoint.filter((tp) => {
+          const lat2 = Number(tp.TouchLat);
+          const lon2 = Number(tp.TouchLong);
+
+          const distance = haversineDistance(lat1, lon1, lat2, lon2);
+
+          return !isNaN(distance) && distance <= threshold;
+        });
+
+        if (matchedTouchPoints.length > 0) {
+          results.push({
+            stopIndex: index,
+            stopDetails: stop,
+            matchedTouchPoints: matchedTouchPoints.map((tp) => ({
+              touchPoint: tp.TouchPoint,
+              distance: haversineDistance(
+                lat1,
+                lon1,
+                Number(tp.TouchLat),
+                Number(tp.TouchLong)
+              ).toFixed(3),
+            })),
+          });
+        }
+      });
+
+      setMatchedStops(results);
     } catch (error) {
       console.error("Error fetching trip data: ", error);
     } finally {
       setLoading(false);
     }
   };
+    
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) return NaN;
+
+    const R = 6371; // Radius of Earth in km
+    const toRad = (x) => (x * Math.PI) / 180;
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  // useEffect(() => {
+  //   const threshold = 0.5; // km
+  //   const results = [];
+
+  //   jobPath.forEach((stop, index) => {
+  //     jobTouchPoint.forEach((tp) => {
+  //       const lat1 = Number(stop.latitude || stop.location?.lat);
+  //       const lon1 = Number(stop.longitude || stop.location?.long);
+
+  //       if (isNaN(lat1) || isNaN(lon1)) {
+  //         console.warn(`Invalid coordinates at stop ${index + 1}:`, stop);
+  //         return; // Skip this stop
+  //       }
+
+  //       const lat2 = Number(tp.TouchLat);
+  //       const lon2 = Number(tp.TouchLong);
+
+  //       const distance = haversineDistance(lat1, lon1, lat2, lon2);
+
+  //       console.log(`Stop ${index + 1} → ${tp.TouchPoint}:`, {
+  //         lat1,
+  //         lon1,
+  //         lat2,
+  //         lon2,
+  //         distance,
+  //       });
+
+  //       if (!isNaN(distance) && distance <= threshold) {
+  //         results.push({
+  //           stopIndex: index,
+  //           matchedTouchPoint: tp.TouchPoint,
+  //           distance: distance.toFixed(3),
+  //         });
+  //       }
+  //     });
+  //   });
+
+  //   setMatchedStops(results);
+  // }, []);
 
   useEffect(() => {
     getTripData();
@@ -112,12 +203,8 @@ const JobModal = ({
       !isNaN(num.location.lng) &&
       num.location.lng !== 0 &&
       num.location.lng !== null;
-    // console.log("num:", num.location.lat, num.location.lng);
     return isValidLat && isValidLng;
   });
-
-  // console.log(jobDetails)
-  // console.log(filteredTouch)
 
   return (
     <div>
@@ -163,6 +250,7 @@ const JobModal = ({
                   touch={filteredTouch}
                   jobPath={jobPath}
                   jobStops={jobStops}
+                  matchedTouchPoints={matchedStops}
                   loading={loading}
                 />
               </div>
