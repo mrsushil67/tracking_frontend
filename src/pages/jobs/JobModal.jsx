@@ -93,8 +93,12 @@ const JobModal = ({
             return false; // Skip invalid stops
           }
 
-          const distance = haversineDistance(lat1, lon1, lat2, lon2);
-          return !isNaN(distance) && distance <= 1; // Check only within 1 km radius
+          // Allow some difference in latitudes and longitudes
+          const latDiff = Math.abs(lat1 - lat2);
+          const lonDiff = Math.abs(lon1 - lon2);
+          const threshold = 0.15; // Adjust threshold as needed
+
+          return latDiff <= threshold && lonDiff <= threshold;
         });
 
         if (matchedStops.length > 0) {
@@ -102,12 +106,6 @@ const JobModal = ({
             touchPoint: tp.TouchPoint,
             matchedStops: matchedStops.map((stop) => ({
               stopDetails: stop,
-              distance: haversineDistance(
-                Number(stop.latitude || stop.location?.lat),
-                Number(stop.longitude || stop.location?.long),
-                lat2,
-                lon2
-              ).toFixed(3),
             })),
           });
         }
