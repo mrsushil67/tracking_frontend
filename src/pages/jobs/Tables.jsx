@@ -118,7 +118,6 @@ const Tables = () => {
         `https://rcm.snaptrak.tech/VehicleJobList?${queryParams}`
       );
 
-      console.log(">>>>>>>>> ", response.data.data);
       setJobs(response.data.data);
       setTotaljobs(response.data.total);
       setLoading(false);
