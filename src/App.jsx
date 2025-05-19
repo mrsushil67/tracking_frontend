@@ -6,6 +6,7 @@ import TestingMap from "./pages/main/SplashMap";
 import Tables from "./pages/jobs/Tables";
 import JobModal from "./pages/jobs/JobModal";
 import Streaming from "./pages/main/Streaming";
+import { Bounce, ToastContainer } from "react-toastify";
 
 const App = () => {
   return (
@@ -17,6 +18,18 @@ const App = () => {
           <Route path="/stream" element={<Streaming />} />
         </Route>
       </Routes>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        rtl={false}
+        closeOnClick={false}
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </Router>
   );
 };

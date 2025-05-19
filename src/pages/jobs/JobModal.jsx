@@ -8,6 +8,7 @@ import { IoClose } from "react-icons/io5";
 import axios from "axios";
 import config from "../../config/services";
 import { Commet } from "react-loading-indicators";
+import { toast } from "react-toastify";
 
 const customStyles = {
   content: {
@@ -36,6 +37,7 @@ const JobModal = ({
   const [jobStops, setJobStops] = useState([]);
   const [loading, setLoading] = useState(false);
   const [matchedStops, setMatchedStops] = useState([]);
+  const [activeMarker, setActiveMarker ] =  useState(null)
 
   const sourceCoords = latlongData
     ? { lat: latlongData.SourceLat, long: latlongData.SourceLong }
@@ -48,7 +50,6 @@ const JobModal = ({
   const getTripData = async () => {
     try {
       setLoading(true);
-      console.log("jobDetails : ", jobDetails);
 
       const payload = {
         vehicleNo: jobDetails.Vehicle_no,
@@ -70,9 +71,7 @@ const JobModal = ({
         payload
       );
       console.log(tripData);
-      if (tripData.data.status === 404) {
-        console.log(tripData.data?.message);
-      }
+      
       console.log("Received tripData: ", tripData.data);
       setJobPath(tripData.data.path);
       setJobStops(tripData.data.stops);
@@ -132,6 +131,7 @@ const JobModal = ({
       });
       setMatchedStops(results);
     } catch (error) {
+      toast.error(error.response.data.message)
       console.error("Error fetching trip data: ", error);
     } finally {
       setLoading(false);
@@ -145,6 +145,8 @@ const JobModal = ({
   function closeModal() {
     setIsOpen(false);
     setLatlongData({});
+    setJobPath([]);
+    setJobStops([]);
   }
 
   const touch = jobTouchPoint.map((job) => ({
@@ -198,6 +200,9 @@ const JobModal = ({
                 <AtoB_Path
                   jobTouchPoint={jobTouchPoint}
                   jobDetails={jobDetails}
+                  matchedStops={matchedStops}
+                  jobPath={jobPath}
+                  jobStops={jobStops}
                 />
               </div>
               <div className="border border-gray-400">
@@ -209,6 +214,8 @@ const JobModal = ({
                   jobStops={jobStops}
                   matchedTouchPoints={matchedStops}
                   loading={loading}
+                  activeMarker={activeMarker}
+                  setActiveMarker = {setActiveMarker}
                 />
               </div>
             </div>

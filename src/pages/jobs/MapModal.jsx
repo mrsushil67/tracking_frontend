@@ -194,10 +194,10 @@ const containerStyle = {
 
 const center = { lat: 28.7041, lng: 77.1025 };
 
-const MapModal = ({ jobPath, jobStops, loading, matchedTouchPoints }) => {
+const MapModal = ({ jobPath, jobStops, loading, matchedTouchPoints,activeMarker, setActiveMarker }) => {
   const mapRef = useRef(null);
   const [zoom, setZoom] = useState(4);
-  const [activeMarker, setActiveMarker] = useState(null);
+  // const [] = useState(null);
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
@@ -287,7 +287,7 @@ const MapModal = ({ jobPath, jobStops, loading, matchedTouchPoints }) => {
                       closeBoxURL: "",
                       enableEventPropagation: true,
                     }}
-                    onCloseClick={() => setShowInfoWindow(false)}
+                    // onCloseClick={() => setShowInfoWindow(false)}
                   >
                     <div className="p-2 rounded-2xl shadow-md bg-white w-[250px]">
                       <div className="mb-2">

@@ -10,7 +10,14 @@ import {
   Box,
 } from "@mui/material";
 
-const AtoB_Path = ({ jobTouchPoint, jobDetails }) => {
+const AtoB_Path = ({
+  jobTouchPoint,
+  jobDetails,
+  matchedStops,
+  jobPath,
+  jobStops,
+}) => {
+  console.log("jobStops  : ", jobStops);
   return (
     <Box className="w-[400px] h-[420px] overflow-y-auto rounded-lg shadow-lg relative p-4">
       <Box className="flex justify-center">
@@ -26,35 +33,65 @@ const AtoB_Path = ({ jobTouchPoint, jobDetails }) => {
                   </StepLabel>
                   <StepContent>
                     <Box className="text-gray-600 font-medium text-xs">
-                      Job Start:
+                      Sch time:
                       {jobDetails ? jobDetails.Job_Departure : ""}
                     </Box>
+                    {jobStops.length > 0 && (
+                      <Box className="text-gray-600 font-medium text-xs">
+                        Act time :
+                        {
+                          new Date(jobStops[0].endTime)
+                            .toISOString()
+                            .replace("T", " ")
+                            .split(".")[0]
+                        }
+                      </Box>
+                    )}
                   </StepContent>
                 </Step>
 
-                {jobTouchPoint.map((stop, index) => (
-                  <Step key={index} active={true}>
-                    <StepLabel>
-                      <Box className="text-sm font-semibold text-green-700">
-                        {stop.TouchPoint}
-                      </Box>
-                    </StepLabel>
-                    <StepContent>
-                      <Box className="text-gray-600 font-medium text-xs">
-                        <Box>Sch Arr: {stop.ShuArr}</Box>
-                        <Box>Sch Dept: {stop.ShuDept}</Box>
-                      </Box>
-                      <Box className="text-gray-600 font-medium text-xs">
-                        <Box>
-                          Act Arr: {stop.Indate} {stop.Intime}
+                {jobTouchPoint.map((stop, index) => {
+                  const matchedStop = matchedStops.find(
+                    (ms) => ms.touchPoint === stop.TouchPoint
+                  );
+                  return (
+                    <Step key={index} active={true}>
+                      <StepLabel>
+                        <Box className="text-sm font-semibold text-green-700">
+                          {stop.TouchPoint}
                         </Box>
-                        <Box>
-                          Act Dept: {stop.OutDate} {stop.OutTime}
+                      </StepLabel>
+                      <StepContent>
+                        <Box className="text-gray-600 font-medium text-xs">
+                          <Box>Sch Arr: {stop.ShuArr}</Box>
+                          <Box>Sch Dept: {stop.ShuDept}</Box>
                         </Box>
-                      </Box>
-                    </StepContent>
-                  </Step>
-                ))}
+                        {matchedStop && (
+                          <Box className="text-gray-600 font-medium text-xs">
+                            <Box>
+                              Act Arr:{" "}
+                              {
+                                new Date(matchedStop.matchedStops[0].startTime)
+                                  .toISOString()
+                                  .replace("T", " ")
+                                  .split(".")[0]
+                              }
+                            </Box>
+                            <Box>
+                              Act Dept:{" "}
+                              {
+                                new Date(matchedStop.matchedStops[0].endTime)
+                                  .toISOString()
+                                  .replace("T", " ")
+                                  .split(".")[0]
+                              }
+                            </Box>
+                          </Box>
+                        )}
+                      </StepContent>
+                    </Step>
+                  );
+                })}
 
                 <Step active={true}>
                   <StepLabel>
@@ -65,22 +102,48 @@ const AtoB_Path = ({ jobTouchPoint, jobDetails }) => {
                   <StepContent>
                     {jobDetails.TripType === 2 ? (
                       <Box>
-                        <Box className="text-gray-600 font-medium text-xs">
-                          Arr at :
-                          {jobDetails &&
-                          jobDetails.Arr &&
-                          jobDetails.Arr.split(",")[0]
-                            ? jobDetails.Arr.split(",")[0].trim()
-                            : jobDetails.Arr}
+                        <Box>
+                          <Box className="text-gray-600 font-medium text-xs">
+                            Arr at :
+                            {jobDetails &&
+                            jobDetails.Arr &&
+                            jobDetails.Arr.split(",")[0]
+                              ? jobDetails.Arr.split(",")[0].trim()
+                              : jobDetails.Arr}
+                          </Box>
+                          <Box className="text-gray-600 font-medium text-xs">
+                            Dept at :
+                            {jobDetails &&
+                            jobDetails.Dept &&
+                            jobDetails.Dept.split(",")[1]
+                              ? jobDetails.Dept.split(",")[1].trim()
+                              : jobDetails.Dept}
+                          </Box>
                         </Box>
-                        <Box className="text-gray-600 font-medium text-xs">
-                          Dept at :
-                          {jobDetails &&
-                          jobDetails.Dept &&
-                          jobDetails.Dept.split(",")[1]
-                            ? jobDetails.Dept.split(",")[1].trim()
-                            : jobDetails.Dept}
-                        </Box>
+                        {jobStops.length > 0 && (
+                          <Box>
+                            <Box className="text-gray-600 font-medium text-xs">
+                              Act Arr at :
+                              {
+                                new Date(
+                                  jobStops[jobStops.length - 1].startTime
+                                )
+                                  .toISOString()
+                                  .replace("T", " ")
+                                  .split(".")[0]
+                              }
+                            </Box>
+                            <Box className="text-gray-600 font-medium text-xs">
+                              Act Dept at :
+                              {
+                                new Date(jobStops[jobStops.length - 1].endTime)
+                                  .toISOString()
+                                  .replace("T", " ")
+                                  .split(".")[0]
+                              }
+                            </Box>
+                          </Box>
+                        )}
                       </Box>
                     ) : (
                       <Box className="text-gray-600 font-medium text-xs">
