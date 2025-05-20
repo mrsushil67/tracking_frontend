@@ -111,9 +111,6 @@ const Tables = () => {
       if (searchByVehicle) {
         queryParams += `&vehicle=${searchByVehicle}`;
       }
-
-      console.log("Query Params:", queryParams);
-
       const response = await axios.get(
         `https://rcm.snaptrak.tech/VehicleJobList?${queryParams}`
       );
