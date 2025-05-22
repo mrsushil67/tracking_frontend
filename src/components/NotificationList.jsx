@@ -24,7 +24,7 @@ const NotificationList = ({ notify }) => {
         <Grid2 container >
           <Grid2 size={2}>
            <Box className="flex justify-center items-center h-full">
-            {notify.notificationType === "Vehicle Stopped" ? <WarningAmberOutlinedIcon /> : <ErrorOutlineOutlinedIcon />}
+            {notify.notificationType === "Vehicle Stopped" ? <WarningAmberOutlinedIcon color="warning"/> : <ErrorOutlineOutlinedIcon color="error"/>}
            </Box>
           </Grid2>
           <Grid2 size={10}>

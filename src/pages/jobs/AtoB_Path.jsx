@@ -36,16 +36,24 @@ const AtoB_Path = ({
                       Sch Dept time:
                       {jobDetails ? jobDetails.Job_Departure : ""}
                     </Box>
-                    {jobStops.length > 0 && (
-                      <Box className="text-gray-600 font-medium text-xs">
-                        Act Dept time :
-                        {
-                          new Date(jobStops[0].endTime)
+                    {jobPath.length > 0 && (
+                    <Box className="text-gray-600 font-medium text-xs">
+                      Act Dept time :
+                      {jobStops.length === 0
+                        ? new Date(jobPath[0].createdAt)
                             .toISOString()
                             .replace("T", " ")
                             .split(".")[0]
-                        }
-                      </Box>
+                        : jobStops[0].duration > jobStops[1].duration
+                        ? new Date(jobStops[0].endTime)
+                            .toISOString()
+                            .replace("T", " ")
+                            .split(".")[0]
+                        : new Date(jobStops[1].endTime)
+                            .toISOString()
+                            .replace("T", " ")
+                            .split(".")[0]}
+                    </Box>
                     )}
                   </StepContent>
                 </Step>
@@ -120,18 +128,29 @@ const AtoB_Path = ({
                               : jobDetails.Dept}
                           </Box>
                         </Box>
-                        {jobStops.length > 0 && (
+                        {jobPath.length > 0 && (
                           <Box>
                             <Box className="text-gray-600 font-medium text-xs">
                               Act Arr at :
-                              {
-                                new Date(
-                                  jobStops[jobStops.length - 1].startTime
-                                )
-                                  .toISOString()
-                                  .replace("T", " ")
-                                  .split(".")[0]
-                              }
+                              {jobStops.length === 0
+                                ? new Date(jobPath[0].createdAt)
+                                    .toISOString()
+                                    .replace("T", " ")
+                                    .split(".")[0]
+                                : jobStops[jobStops.length - 1].duration >
+                                  jobStops[jobStops.length - 2].duration
+                                ? new Date(
+                                    jobStops[jobStops.length - 1].startTime
+                                  )
+                                    .toISOString()
+                                    .replace("T", " ")
+                                    .split(".")[0]
+                                : new Date(
+                                    jobStops[jobStops.length - 2].startTime
+                                  )
+                                    .toISOString()
+                                    .replace("T", " ")
+                                    .split(".")[0]}
                             </Box>
                             <Box className="text-gray-600 font-medium text-xs">
                               Act Dept at :
