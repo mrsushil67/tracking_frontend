@@ -37,23 +37,23 @@ const AtoB_Path = ({
                       {jobDetails ? jobDetails.Job_Departure : ""}
                     </Box>
                     {jobPath.length > 0 && (
-                    <Box className="text-gray-600 font-medium text-xs">
-                      Act Dept time :
-                      {jobStops.length === 0
-                        ? new Date(jobPath[0].createdAt)
-                            .toISOString()
-                            .replace("T", " ")
-                            .split(".")[0]
-                        : jobStops[0].duration > jobStops[1].duration
-                        ? new Date(jobStops[0].endTime)
-                            .toISOString()
-                            .replace("T", " ")
-                            .split(".")[0]
-                        : new Date(jobStops[1].endTime)
-                            .toISOString()
-                            .replace("T", " ")
-                            .split(".")[0]}
-                    </Box>
+                      <Box className="text-gray-600 font-medium text-xs">
+                        Act Dept time :
+                        {jobStops.length === 0
+                          ? new Date(jobPath[0].createdAt)
+                              .toISOString()
+                              .replace("T", " ")
+                              .split(".")[0]
+                          : jobStops[0].duration > jobStops[1].duration
+                          ? new Date(jobStops[0].endTime)
+                              .toISOString()
+                              .replace("T", " ")
+                              .split(".")[0]
+                          : new Date(jobStops[1].endTime)
+                              .toISOString()
+                              .replace("T", " ")
+                              .split(".")[0]}
+                      </Box>
                     )}
                   </StepContent>
                 </Step>
@@ -205,17 +205,26 @@ const AtoB_Path = ({
                   </StepLabel>
                   <StepContent>
                     <Box className="text-gray-600 font-medium text-xs">
-                      Job Start: {jobDetails ? jobDetails.Job_Departure : ""}
+                      Sch Dept time :{" "}
+                      {jobDetails ? jobDetails.Job_Departure : ""}
                     </Box>
-                    {jobStops.length > 0 && (
+                    {jobPath.length > 0 && (
                       <Box className="text-gray-600 font-medium text-xs">
-                        Act time :
-                        {
-                          new Date(jobStops[0].endTime)
-                            .toISOString()
-                            .replace("T", " ")
-                            .split(".")[0]
-                        }
+                        Act Dept time :
+                        {jobStops.length === 0
+                          ? new Date(jobPath[0].createdAt)
+                              .toISOString()
+                              .replace("T", " ")
+                              .split(".")[0]
+                          : jobStops[0].duration > jobStops[1].duration
+                          ? new Date(jobStops[0].endTime)
+                              .toISOString()
+                              .replace("T", " ")
+                              .split(".")[0]
+                          : new Date(jobStops[1].endTime)
+                              .toISOString()
+                              .replace("T", " ")
+                              .split(".")[0]}
                       </Box>
                     )}
                   </StepContent>
@@ -233,12 +242,25 @@ const AtoB_Path = ({
                         {jobStops.length > 0 && (
                           <Box className="text-gray-600 font-medium text-xs">
                             Act Arr time :
-                            {
-                              new Date(jobStops[jobStops.length - 1].startTime)
-                                .toISOString()
-                                .replace("T", " ")
-                                .split(".")[0]
-                            }
+                            {jobStops.length === 0
+                              ? new Date(jobPath[0].createdAt)
+                                  .toISOString()
+                                  .replace("T", " ")
+                                  .split(".")[0]
+                              : jobStops[jobStops.length - 1].duration >
+                                jobStops[jobStops.length - 2].duration
+                              ? new Date(
+                                  jobStops[jobStops.length - 1].startTime
+                                )
+                                  .toISOString()
+                                  .replace("T", " ")
+                                  .split(".")[0]
+                              : new Date(
+                                  jobStops[jobStops.length - 2].startTime
+                                )
+                                  .toISOString()
+                                  .replace("T", " ")
+                                  .split(".")[0]}
                           </Box>
                         )}
                         <Box className="text-gray-600 font-medium text-xs">
