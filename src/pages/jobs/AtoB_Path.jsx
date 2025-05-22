@@ -82,22 +82,30 @@ const AtoB_Path = ({
                         {matchedStop && (
                           <Box className="text-gray-600 font-medium text-xs">
                             <Box>
-                              Act Arr at :{" "}
-                              {
-                                new Date(matchedStop.matchedStops[0].startTime)
-                                  .toISOString()
-                                  .replace("T", " ")
-                                  .split(".")[0]
-                              }
+                              Act Arr at :&nbsp;
+                              {(() => {
+                                const timestamp =
+                                  matchedStop.matchedStops[0].startTime;
+
+                                return timestamp
+                                  ? dayjs(timestamp)
+                                      .tz("Asia/Kolkata")
+                                      .format("YYYY-MM-DD HH:mm:ss")
+                                  : "N/A";
+                              })()}
                             </Box>
                             <Box>
-                              Act Dept at :{" "}
-                              {
-                                new Date(matchedStop.matchedStops[0].endTime)
-                                  .toISOString()
-                                  .replace("T", " ")
-                                  .split(".")[0]
-                              }
+                              Act Dept at : &nbsp;
+                              {(() => {
+                                const timestamp =
+                                  matchedStop.matchedStops[0].endTime;
+
+                                return timestamp
+                                  ? dayjs(timestamp)
+                                      .tz("Asia/Kolkata")
+                                      .format("YYYY-MM-DD HH:mm:ss")
+                                  : "N/A";
+                              })()}
                             </Box>
                           </Box>
                         )}
@@ -136,23 +144,30 @@ const AtoB_Path = ({
                         {jobPath.length > 0 && (
                           <Box>
                             <Box className="text-gray-600 font-medium text-xs">
-                              Act Arr at :
-                              {jobPath.length > 0 &&
-                                new Date(
-                                  jobStops[jobStops.length - 1].startTime
-                                )
-                                  .toISOString()
-                                  .replace("T", " ")
-                                  .split(".")[0]}
+                              Act Arr at :&nbsp;
+                              {(() => {
+                                const timestamp =
+                                  jobStops[jobStops.length - 1].startTime;
+
+                                return timestamp
+                                  ? dayjs(timestamp)
+                                      .tz("Asia/Kolkata")
+                                      .format("YYYY-MM-DD HH:mm:ss")
+                                  : "N/A";
+                              })()}
                             </Box>
                             <Box className="text-gray-600 font-medium text-xs">
-                              Act Dept at :
-                              {
-                                new Date(jobStops[jobStops.length - 1].endTime)
-                                  .toISOString()
-                                  .replace("T", " ")
-                                  .split(".")[0]
-                              }
+                              Act Dept at : &nbsp;
+                              {(() => {
+                                const timestamp =
+                                  jobStops[jobStops.length - 1].endTime;
+
+                                return timestamp
+                                  ? dayjs(timestamp)
+                                      .tz("Asia/Kolkata")
+                                      .format("YYYY-MM-DD HH:mm:ss")
+                                  : "N/A";
+                              })()}
                             </Box>
                           </Box>
                         )}
@@ -230,24 +245,29 @@ const AtoB_Path = ({
                   <StepContent>
                     {jobDetails.TripType === 2 ? (
                       <Box>
+                        <Box className="text-gray-600 font-medium text-xs">
+                          Sch Arr time :
+                          {jobDetails &&
+                          jobDetails.Arr &&
+                          jobDetails.Arr.split(",")[1]
+                            ? jobDetails.Arr.split(",")[1].trim()
+                            : jobDetails.Arr}
+                        </Box>
                         {jobStops.length > 0 && (
                           <Box className="text-gray-600 font-medium text-xs">
-                            Act Arr time :
-                            {jobPath.length > 0 &&
-                              new Date(jobStops[jobStops.length - 1].startTime)
-                                .toISOString()
-                                .replace("T", " ")
-                                .split(".")[0]}
+                            Act Arr time : &nbsp;
+                            {(() => {
+                              const timestamp =
+                                jobPath[jobPath.length - 1].createdAt;
+
+                              return timestamp
+                                ? dayjs(timestamp)
+                                    .tz("Asia/Kolkata")
+                                    .format("YYYY-MM-DD HH:mm:ss")
+                                : "N/A";
+                            })()}
                           </Box>
                         )}
-                        <Box className="text-gray-600 font-medium text-xs">
-                          Act Dept at :
-                          {jobDetails &&
-                          jobDetails.Dept &&
-                          jobDetails.Dept.split(",")[1]
-                            ? jobDetails.Dept.split(",")[1].trim()
-                            : jobDetails.Dept}
-                        </Box>
                       </Box>
                     ) : (
                       <Box className="text-gray-600 font-medium text-xs">
