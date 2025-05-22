@@ -40,14 +40,22 @@ const AtoB_Path = ({
                       <Box className="text-gray-600 font-medium text-xs">
                         Act Dept time :
                         {jobStops.length === 0
-                          ? new Date(jobPath[0].createdAt)
-                              .toISOString()
-                              .replace("T", " ")
-                              .split(".")[0]
-                          : new Date(jobStops[0].endTime)
-                              .toISOString()
-                              .replace("T", " ")
-                              .split(".")[0]}
+                          ? jobPath[0]?.createdAt
+                            ? new Date(jobPath[0].createdAt).toLocaleString(
+                                "en-US",
+                                {
+                                  timeZone: "kolkata",
+                                }
+                              )
+                            : "N/A"
+                          : jobStops[0]?.endTime
+                          ? new Date(jobStops[0].endTime).toLocaleString(
+                              "en-US",
+                              {
+                                timeZone: "kolkata",
+                              }
+                            )
+                          : "N/A"}
                       </Box>
                     )}
                   </StepContent>
@@ -194,11 +202,23 @@ const AtoB_Path = ({
                     {jobPath.length > 0 && (
                       <Box className="text-gray-600 font-medium text-xs">
                         Act Dept time :
-                        {jobPath.length > 0 &&
-                          new Date(jobStops[0].endTime)
-                            .toISOString()
-                            .replace("T", " ")
-                            .split(".")[0]}
+                        {jobStops.length === 0
+                          ? jobPath[0]?.createdAt
+                            ? new Date(jobPath[0].createdAt).toLocaleString(
+                                "en-US",
+                                {
+                                  timeZone: "kolkata",
+                                }
+                              )
+                            : "N/A"
+                          : jobStops[0]?.endTime
+                          ? new Date(jobStops[0].endTime).toLocaleString(
+                              "en-US",
+                              {
+                                timeZone: "kolkata",
+                              }
+                            )
+                          : "N/A"}
                       </Box>
                     )}
                   </StepContent>
