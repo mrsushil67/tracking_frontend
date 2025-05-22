@@ -31,7 +31,26 @@ const AtoB_Path = ({
         {jobDetails !== null || undefined ? (
           jobTouchPoint[0].Id !== null ? (
             <Box>
-              <Stepper orientation="vertical" sx={{}}>
+              <Stepper
+                orientation="vertical"
+                sx={{
+                  "& .MuiStepLabel-root": {
+                    "& .MuiStepLabel-label": {
+                      fontSize: "0.875rem",
+                      fontWeight: "bold",
+                      color: "#2d3748",
+                    },
+                  },
+                  "& .MuiStepContent-root": {
+                    borderLeft: "2px solid #4caf50",
+                    paddingLeft: "16px",
+                  },
+                  "& .MuiStepIcon-root": {
+                    color: "#4caf50",
+                  },
+                }}
+              >
+                {" "}
                 <Step active={true}>
                   <StepLabel>
                     <Box className="text-sm font-semibold text-green-700">
@@ -62,7 +81,6 @@ const AtoB_Path = ({
                     )}
                   </StepContent>
                 </Step>
-
                 {jobTouchPoint.map((stop, index) => {
                   const matchedStop = matchedStops.find(
                     (ms) => ms.touchPoint === stop.TouchPoint
@@ -113,7 +131,6 @@ const AtoB_Path = ({
                     </Step>
                   );
                 })}
-
                 <Step active={true}>
                   <StepLabel>
                     <Box className="text-sm font-semibold text-green-700">
@@ -180,7 +197,6 @@ const AtoB_Path = ({
                     )}
                   </StepContent>
                 </Step>
-
                 {jobDetails.TripType === 2 && (
                   <Step active={true}>
                     <StepLabel>
