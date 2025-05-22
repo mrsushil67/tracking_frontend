@@ -40,12 +40,12 @@ const AtoB_Path = ({
                   </StepLabel>
                   <StepContent>
                     <Box className="text-gray-600 font-medium text-xs">
-                      Sch Dept time:
+                      Sch Dept time :
                       {jobDetails ? jobDetails.Job_Departure : ""}
                     </Box>
                     {jobPath.length > 0 && (
                       <Box className="text-gray-600 font-medium text-xs">
-                        Act Dept time:&nbsp;
+                        Act Dept time :&nbsp;
                         {(() => {
                           const timestamp =
                             jobStops.length === 0
@@ -76,8 +76,8 @@ const AtoB_Path = ({
                       </StepLabel>
                       <StepContent>
                         <Box className="text-gray-600 font-medium text-xs">
-                          <Box>Sch Arr at : {stop.ShuArr}</Box>
-                          <Box>Sch Dept at : {stop.ShuDept}</Box>
+                          <Box>Sch Arr at :&nbsp; {stop.ShuArr}</Box>
+                          <Box>Sch Dept at :&nbsp;{stop.ShuDept}</Box>
                         </Box>
                         {matchedStop && (
                           <Box className="text-gray-600 font-medium text-xs">
@@ -125,7 +125,7 @@ const AtoB_Path = ({
                       <Box>
                         <Box>
                           <Box className="text-gray-600 font-medium text-xs">
-                            Sch Arr at :
+                            Sch Arr at :&nbsp;
                             {jobDetails &&
                             jobDetails.Arr &&
                             jobDetails.Arr.split(",")[0]
@@ -133,7 +133,7 @@ const AtoB_Path = ({
                               : jobDetails.Arr}
                           </Box>
                           <Box className="text-gray-600 font-medium text-xs">
-                            Sch Dept at :
+                            Sch Dept at :&nbsp;
                             {jobDetails &&
                             jobDetails.Dept &&
                             jobDetails.Dept.split(",")[1]
@@ -174,7 +174,7 @@ const AtoB_Path = ({
                       </Box>
                     ) : (
                       <Box className="text-gray-600 font-medium text-xs">
-                        Sch Arr at :
+                        Sch Arr at :&nbsp;
                         {jobDetails && jobDetails.Arr ? jobDetails.Arr : ""}
                       </Box>
                     )}
@@ -190,7 +190,7 @@ const AtoB_Path = ({
                     </StepLabel>
                     <StepContent>
                       <Box className="text-gray-600 font-medium text-xs">
-                        Sch Arr at :
+                        Sch Arr at :&nbsp;
                         {jobDetails &&
                         jobDetails.Arr &&
                         jobDetails.Arr.split(",")[1]
@@ -213,12 +213,12 @@ const AtoB_Path = ({
                   </StepLabel>
                   <StepContent>
                     <Box className="text-gray-600 font-medium text-xs">
-                      Sch Dept time :{" "}
+                      Sch Dept time :&nbsp;
                       {jobDetails ? jobDetails.Job_Departure : ""}
                     </Box>
                     {jobPath.length > 0 && (
                       <Box className="text-gray-600 font-medium text-xs">
-                        Act Dept time:&nbsp;
+                        Act Dept time :&nbsp;
                         {(() => {
                           const timestamp =
                             jobStops.length === 0
@@ -246,7 +246,7 @@ const AtoB_Path = ({
                     {jobDetails.TripType === 2 ? (
                       <Box>
                         <Box className="text-gray-600 font-medium text-xs">
-                          Sch Arr time :
+                          Sch Arr time : &nbsp;
                           {jobDetails &&
                           jobDetails.Arr &&
                           jobDetails.Arr.split(",")[1]
@@ -271,7 +271,7 @@ const AtoB_Path = ({
                       </Box>
                     ) : (
                       <Box className="text-gray-600 font-medium text-xs">
-                        Arr at :
+                        Arr at :&nbsp;
                         {jobDetails && jobDetails.Arr ? jobDetails.Arr : ""}
                       </Box>
                     )}
@@ -287,7 +287,7 @@ const AtoB_Path = ({
                     </StepLabel>
                     <StepContent>
                       <Box className="text-gray-600 font-medium text-xs">
-                        Sch Arr at :
+                        Sch Arr at :&nbsp;
                         {jobDetails &&
                         jobDetails.Arr &&
                         jobDetails.Arr.split(",")[1]
