@@ -127,17 +127,13 @@ const AtoB_Path = ({
                           <Box>
                             <Box className="text-gray-600 font-medium text-xs">
                               Act Arr at :
-                              {jobStops.length === 0
-                                ? new Date(jobPath[0].createdAt)
-                                    .toISOString()
-                                    .replace("T", " ")
-                                    .split(".")[0]
-                                : new Date(
-                                    jobStops[jobStops.length - 1].startTime
-                                  )
-                                    .toISOString()
-                                    .replace("T", " ")
-                                    .split(".")[0]}
+                              {jobPath.length > 0 &&
+                                new Date(
+                                  jobStops[jobStops.length - 1].startTime
+                                )
+                                  .toISOString()
+                                  .replace("T", " ")
+                                  .split(".")[0]}
                             </Box>
                             <Box className="text-gray-600 font-medium text-xs">
                               Act Dept at :
@@ -198,15 +194,11 @@ const AtoB_Path = ({
                     {jobPath.length > 0 && (
                       <Box className="text-gray-600 font-medium text-xs">
                         Act Dept time :
-                        {jobStops.length === 0
-                          ? new Date(jobPath[0].createdAt)
-                              .toISOString()
-                              .replace("T", " ")
-                              .split(".")[0]
-                          : new Date(jobStops[0].endTime)
-                              .toISOString()
-                              .replace("T", " ")
-                              .split(".")[0]}
+                        {jobPath.length > 0 &&
+                          new Date(jobStops[0].endTime)
+                            .toISOString()
+                            .replace("T", " ")
+                            .split(".")[0]}
                       </Box>
                     )}
                   </StepContent>
@@ -224,17 +216,11 @@ const AtoB_Path = ({
                         {jobStops.length > 0 && (
                           <Box className="text-gray-600 font-medium text-xs">
                             Act Arr time :
-                            {jobStops.length === 0
-                              ? new Date(jobPath[0].createdAt)
-                                  .toISOString()
-                                  .replace("T", " ")
-                                  .split(".")[0]
-                              : new Date(
-                                  jobStops[jobStops.length - 1].startTime
-                                )
-                                  .toISOString()
-                                  .replace("T", " ")
-                                  .split(".")[0]}
+                            {jobpATH.length > 0 &&
+                              new Date(jobStops[jobStops.length - 1].startTime)
+                                .toISOString()
+                                .replace("T", " ")
+                                .split(".")[0]}
                           </Box>
                         )}
                         <Box className="text-gray-600 font-medium text-xs">
