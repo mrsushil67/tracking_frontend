@@ -38,24 +38,19 @@ const AtoB_Path = ({
                     </Box>
                     {jobPath.length > 0 && (
                       <Box className="text-gray-600 font-medium text-xs">
-                        Act Dept time :
-                        {jobStops.length === 0
-                          ? jobPath[0]?.createdAt
-                            ? new Date(jobPath[0].createdAt).toLocaleString(
-                                "en-US",
-                                {
-                                  timeZone: "kolkata",
-                                }
-                              )
-                            : "N/A"
-                          : jobStops[0]?.endTime
-                          ? new Date(jobStops[0].endTime).toLocaleString(
-                              "en-US",
-                              {
-                                timeZone: "kolkata",
-                              }
-                            )
-                          : "N/A"}
+                        Act Dept time:&nbsp;
+                        {(() => {
+                          const timestamp =
+                            jobStops.length === 0
+                              ? jobPath[0]?.createdAt
+                              : jobStops[0]?.endTime;
+
+                          return timestamp
+                            ? new Date(timestamp).toLocaleString("en-US", {
+                                timeZone: "Asia/Kolkata",
+                              })
+                            : "N/A";
+                        })()}
                       </Box>
                     )}
                   </StepContent>
@@ -201,24 +196,19 @@ const AtoB_Path = ({
                     </Box>
                     {jobPath.length > 0 && (
                       <Box className="text-gray-600 font-medium text-xs">
-                        Act Dept time :
-                        {jobStops.length === 0
-                          ? jobPath[0]?.createdAt
-                            ? new Date(jobPath[0].createdAt).toLocaleString(
-                                "en-US",
-                                {
-                                  timeZone: "kolkata",
-                                }
-                              )
-                            : "N/A"
-                          : jobStops[0]?.endTime
-                          ? new Date(jobStops[0].endTime).toLocaleString(
-                              "en-US",
-                              {
-                                timeZone: "kolkata",
-                              }
-                            )
-                          : "N/A"}
+                       Act Dept time:&nbsp;
+                        {(() => {
+                          const timestamp =
+                            jobStops.length === 0
+                              ? jobPath[0]?.createdAt
+                              : jobStops[0]?.endTime;
+
+                          return timestamp
+                            ? new Date(timestamp).toLocaleString("en-US", {
+                                timeZone: "Asia/Kolkata",
+                              })
+                            : "N/A";
+                        })()}
                       </Box>
                     )}
                   </StepContent>
