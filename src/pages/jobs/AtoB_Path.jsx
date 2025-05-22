@@ -216,7 +216,7 @@ const AtoB_Path = ({
                         {jobStops.length > 0 && (
                           <Box className="text-gray-600 font-medium text-xs">
                             Act Arr time :
-                            {jobpATH.length > 0 &&
+                            {jobPath.length > 0 &&
                               new Date(jobStops[jobStops.length - 1].startTime)
                                 .toISOString()
                                 .replace("T", " ")
