@@ -24,6 +24,7 @@
     "@react-pdf/renderer": "^4.3.0",
     "@tailwindcss/vite": "^4.0.9",
     "axios": "^1.8.1",
+    "dayjs": "^1.11.13",
     "file-saver": "^2.0.5",
     "material-ui-popup-state": "^5.3.5",
     "moment": "^2.30.1",

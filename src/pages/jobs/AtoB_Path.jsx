@@ -9,6 +9,9 @@ import {
   Typography,
   Box,
 } from "@mui/material";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 const AtoB_Path = ({
   jobTouchPoint,
@@ -18,6 +21,10 @@ const AtoB_Path = ({
   jobStops,
 }) => {
   console.log("jobStops  : ", jobStops);
+
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+
   return (
     <Box className="w-[400px] h-[420px] overflow-y-auto rounded-lg shadow-lg relative p-4">
       <Box className="flex justify-center">
@@ -46,9 +53,9 @@ const AtoB_Path = ({
                               : jobStops[0]?.endTime;
 
                           return timestamp
-                            ? new Date(timestamp).toLocaleString("en-US", {
-                                timeZone: "Asia/Kolkata",
-                              })
+                            ? dayjs(timestamp)
+                                .tz("Asia/Kolkata")
+                                .format("YYYY-MM-DD HH:mm:ss")
                             : "N/A";
                         })()}
                       </Box>
@@ -196,7 +203,7 @@ const AtoB_Path = ({
                     </Box>
                     {jobPath.length > 0 && (
                       <Box className="text-gray-600 font-medium text-xs">
-                       Act Dept time:&nbsp;
+                        Act Dept time:&nbsp;
                         {(() => {
                           const timestamp =
                             jobStops.length === 0
@@ -204,9 +211,9 @@ const AtoB_Path = ({
                               : jobStops[0]?.endTime;
 
                           return timestamp
-                            ? new Date(timestamp).toLocaleString("en-US", {
-                                timeZone: "Asia/Kolkata",
-                              })
+                            ? dayjs(timestamp)
+                                .tz("Asia/Kolkata")
+                                .format("YYYY-MM-DD HH:mm:ss")
                             : "N/A";
                         })()}
                       </Box>
