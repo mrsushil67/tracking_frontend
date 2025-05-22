@@ -44,12 +44,7 @@ const AtoB_Path = ({
                               .toISOString()
                               .replace("T", " ")
                               .split(".")[0]
-                          : jobStops[0].duration > jobStops[1].duration
-                          ? new Date(jobStops[0].endTime)
-                              .toISOString()
-                              .replace("T", " ")
-                              .split(".")[0]
-                          : new Date(jobStops[1].endTime)
+                          : new Date(jobStops[0].endTime)
                               .toISOString()
                               .replace("T", " ")
                               .split(".")[0]}
@@ -137,16 +132,8 @@ const AtoB_Path = ({
                                     .toISOString()
                                     .replace("T", " ")
                                     .split(".")[0]
-                                : jobStops[jobStops.length - 1].duration >
-                                  jobStops[jobStops.length - 2].duration
-                                ? new Date(
-                                    jobStops[jobStops.length - 1].startTime
-                                  )
-                                    .toISOString()
-                                    .replace("T", " ")
-                                    .split(".")[0]
                                 : new Date(
-                                    jobStops[jobStops.length - 2].startTime
+                                    jobStops[jobStops.length - 1].startTime
                                   )
                                     .toISOString()
                                     .replace("T", " ")
@@ -216,12 +203,7 @@ const AtoB_Path = ({
                               .toISOString()
                               .replace("T", " ")
                               .split(".")[0]
-                          : jobStops[0].duration > jobStops[1].duration
-                          ? new Date(jobStops[0].endTime)
-                              .toISOString()
-                              .replace("T", " ")
-                              .split(".")[0]
-                          : new Date(jobStops[1].endTime)
+                          : new Date(jobStops[0].endTime)
                               .toISOString()
                               .replace("T", " ")
                               .split(".")[0]}
@@ -247,16 +229,8 @@ const AtoB_Path = ({
                                   .toISOString()
                                   .replace("T", " ")
                                   .split(".")[0]
-                              : jobStops[jobStops.length - 1].duration >
-                                jobStops[jobStops.length - 2].duration
-                              ? new Date(
-                                  jobStops[jobStops.length - 1].startTime
-                                )
-                                  .toISOString()
-                                  .replace("T", " ")
-                                  .split(".")[0]
                               : new Date(
-                                  jobStops[jobStops.length - 2].startTime
+                                  jobStops[jobStops.length - 1].startTime
                                 )
                                   .toISOString()
                                   .replace("T", " ")
