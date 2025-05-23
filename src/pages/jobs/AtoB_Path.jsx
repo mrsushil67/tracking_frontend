@@ -31,26 +31,7 @@ const AtoB_Path = ({
         {jobDetails !== null || undefined ? (
           jobTouchPoint[0].Id !== null ? (
             <Box>
-              <Stepper
-                orientation="vertical"
-                sx={{
-                  "& .MuiStepLabel-root": {
-                    "& .MuiStepLabel-label": {
-                      fontSize: "0.875rem",
-                      fontWeight: "bold",
-                      color: "#2d3748",
-                    },
-                  },
-                  "& .MuiStepContent-root": {
-                    borderLeft: "2px solid #4caf50",
-                    paddingLeft: "16px",
-                  },
-                  "& .MuiStepIcon-root": {
-                    color: "#4caf50",
-                  },
-                }}
-              >
-                {" "}
+              <Stepper orientation="vertical">
                 <Step active={true}>
                   <StepLabel>
                     <Box className="text-sm font-semibold text-green-700">
@@ -62,7 +43,7 @@ const AtoB_Path = ({
                       Sch Dept time :
                       {jobDetails ? jobDetails.Job_Departure : ""}
                     </Box>
-                    {jobPath.length > 0 && (
+                    {jobStops.length > 0 && (
                       <Box className="text-gray-600 font-medium text-xs">
                         Act Dept time :&nbsp;
                         {(() => {
@@ -158,7 +139,7 @@ const AtoB_Path = ({
                               : jobDetails.Dept}
                           </Box>
                         </Box>
-                        {jobPath.length > 0 && (
+                        {jobStops.length > 0 && (
                           <Box>
                             <Box className="text-gray-600 font-medium text-xs">
                               Act Arr at :&nbsp;
